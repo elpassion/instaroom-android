@@ -8,10 +8,11 @@ data class Room(
     val name: String? = "",
     val calendarId: String = "",
     val events: List<Event> = emptyList(),
-    val isFreeNow: Boolean,
-    val isBooked: Boolean,
-    val isOwnBooked: Boolean
-)
+    val isOwnBooked: Boolean = false
+) {
+    val isBooked: Boolean
+        get() = events.firstOrNull()?.run { startTime.isAfter(ZonedDateTime.now()) } ?: false
+}
 
 data class Event(
     val name: String?,
