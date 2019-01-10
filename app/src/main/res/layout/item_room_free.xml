@@ -145,7 +145,7 @@
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 
     <Button
-        android:id="@+id/itemRoomBookButton"
+        android:id="@+id/itemRoomFreeBookButton"
         style="@style/Button.Black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

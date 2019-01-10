@@ -7,10 +7,11 @@ import kotlinx.android.synthetic.main.item_room_free.view.*
 import kotlinx.android.synthetic.main.item_room_own_booked.view.*
 import pl.elpassion.instaroom.api.Room
 
-class RoomFreeViewHolder(itemView: View) : ViewHolderBinder<Room>(itemView) {
+class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) : ViewHolderBinder<Room>(itemView) {
 
     override fun bind(item: Room) = with(itemView) {
         itemRoomFreeName.text = item.name
+        itemRoomFreeBookButton.setOnClickListener { onBook(item) }
     }
 }
 

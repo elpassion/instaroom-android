@@ -36,11 +36,24 @@ fun CoroutineScope.launchDashboardModel(
             state.set(DashboardState(rooms, false, e.message()))
         }
 
+    suspend fun bookRoom(room: Room) = withContext(Dispatchers.IO) {
+        try {
+            state.set(DashboardState(rooms, true))
+            loginRepository.googleToken?.let { accessToken ->
+                instaRoomApi.bookRoom(accessToken, room.calendarId).await()
+            }
+            loadRooms()
+        } catch (e: HttpException) {
+            state.set(DashboardState(rooms, false, e.message()))
+        }
+    }
+
     loadRooms()
 
     actionS.consumeEach { action ->
         when (action) {
             is DashboardAction.RefreshRooms -> loadRooms()
+            is DashboardAction.BookRoom -> bookRoom(action.room)
         }
     }
 }
@@ -48,6 +61,8 @@ fun CoroutineScope.launchDashboardModel(
 sealed class DashboardAction {
 
     object RefreshRooms : DashboardAction()
+
+    data class BookRoom(val room: Room) : DashboardAction()
 }
 
 data class DashboardState(

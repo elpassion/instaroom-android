@@ -35,7 +35,7 @@ class LoginFragment : Fragment() {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
-            .requestScopes(Scope("https://www.googleapis.com/auth/calendar.events"))
+            .requestScopes(Scope("profile"), Scope("https://www.googleapis.com/auth/calendar.events"))
             .build()
 
         val googleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)

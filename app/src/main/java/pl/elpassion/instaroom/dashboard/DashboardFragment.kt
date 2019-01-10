@@ -36,14 +36,13 @@ class DashboardFragment : Fragment() {
             when {
                 room.isOwnBooked -> R.layout.item_room_own_booked to ::RoomOwnBookedViewHolder
                 room.isBooked -> R.layout.item_room_booked to ::RoomBookedViewHolder
-                else -> R.layout.item_room_free to ::RoomFreeViewHolder
+                else -> R.layout.item_room_free to { view -> RoomFreeViewHolder(view, ::onRoomBook) }
             }
         }
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
         roomsSwipeRefresh.setOnRefreshListener {
             model.dashboardActionS.accept(DashboardAction.RefreshRooms)
         }
-
     }
 
     private fun updateView(state: DashboardState?) {
@@ -51,5 +50,9 @@ class DashboardFragment : Fragment() {
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
+    }
+
+    private fun onRoomBook(room: Room) {
+        model.dashboardActionS.accept(DashboardAction.BookRoom(room))
     }
 }
