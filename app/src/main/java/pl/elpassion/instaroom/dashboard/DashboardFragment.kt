@@ -34,12 +34,17 @@ class DashboardFragment : Fragment() {
     private fun setUpList() {
         roomsRecyclerView.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room_booked, ::bindRoom)
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
+        roomsSwipeRefresh.setOnRefreshListener {
+            model.dashboardActionS.accept(DashboardAction.RefreshRooms)
+        }
+
     }
 
     private fun updateView(state: DashboardState?) {
         rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { context?.toast(it) }
+        roomsSwipeRefresh.isRefreshing = state?.isRefresh ?: false
     }
 
     private fun bindRoom(holder: ViewHolderBinder<Room>, item: Room) = with(holder.itemView) {

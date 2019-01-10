@@ -20,23 +20,34 @@ fun CoroutineScope.launchDashboardModel(
 ) = launch {
     var rooms = emptyList<Room>()
 
-    withContext(Dispatchers.IO) {
+    suspend fun loadRooms() {
         try {
             loginRepository.googleToken?.let { accessToken ->
                 val response = instaRoomApi.getRooms(accessToken).await()
                 rooms = response.rooms
-                state.postValue(DashboardState(response.rooms))
+                state.postValue(DashboardState(rooms, false))
             }
         } catch (e: HttpException) {
-            state.postValue(DashboardState(rooms, e.message()))
+            state.postValue(DashboardState(rooms, false, e.message()))
         }
     }
-    actionS.consumeEach { /* TODO */ }
+
+    withContext(Dispatchers.IO) { loadRooms() }
+
+    actionS.consumeEach { action ->
+        when (action) {
+            is DashboardAction.RefreshRooms -> withContext(Dispatchers.IO) { loadRooms() }
+        }
+    }
 }
 
-object DashboardAction
+sealed class DashboardAction {
+
+    object RefreshRooms : DashboardAction()
+}
 
 data class DashboardState(
     val rooms: List<Room>,
+    val isRefresh: Boolean,
     val errorMessage: String? = null
 )
