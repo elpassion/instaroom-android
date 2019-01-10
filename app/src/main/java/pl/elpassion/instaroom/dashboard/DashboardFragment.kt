@@ -16,6 +16,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.api.Room
+import pl.elpassion.instaroom.util.replaceWith
 
 class DashboardFragment : Fragment() {
 
@@ -41,7 +42,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateView(state: DashboardState?) {
-        rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
+        rooms.replaceWith(state?.rooms.orEmpty())
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
