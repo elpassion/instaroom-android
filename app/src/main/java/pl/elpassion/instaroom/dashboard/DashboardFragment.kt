@@ -8,10 +8,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.elpassion.android.commons.recycler.adapters.basicAdapterWithLayoutAndBinder
-import com.elpassion.android.commons.recycler.basic.ViewHolderBinder
+import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
 import kotlinx.android.synthetic.main.dashboard_fragment.*
-import kotlinx.android.synthetic.main.item_room_booked.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
@@ -33,7 +31,14 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setUpList() {
-        roomsRecyclerView.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room_booked, ::bindRoom)
+        roomsRecyclerView.adapter = basicAdapterWithConstructors(rooms) { position ->
+            val room = rooms[position]
+            when {
+                room.isOwnBooked -> R.layout.item_room_own_booked to ::RoomOwnBookedViewHolder
+                room.isBooked -> R.layout.item_room_booked to ::RoomBookedViewHolder
+                else -> R.layout.item_room_free to ::RoomFreeViewHolder
+            }
+        }
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
         roomsSwipeRefresh.setOnRefreshListener {
             model.dashboardActionS.accept(DashboardAction.RefreshRooms)
@@ -46,10 +51,5 @@ class DashboardFragment : Fragment() {
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
-    }
-
-    private fun bindRoom(holder: ViewHolderBinder<Room>, item: Room) = with(holder.itemView) {
-        itemRoomBookingName.text = item.name
-        itemRoomBookingTitle.text = item.events.firstOrNull()?.name
     }
 }

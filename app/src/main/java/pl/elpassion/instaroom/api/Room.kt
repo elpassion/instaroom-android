@@ -8,7 +8,9 @@ data class Room(
     val name: String? = "",
     val calendarId: String = "",
     val events: List<Event> = emptyList(),
-    val isFreeNow: Boolean
+    val isFreeNow: Boolean,
+    val isBooked: Boolean,
+    val isOwnBooked: Boolean
 )
 
 data class Event(
