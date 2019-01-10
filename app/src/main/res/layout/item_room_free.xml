@@ -6,7 +6,7 @@
     android:layout_marginBottom="12dp">
 
     <TextView
-        android:id="@+id/ItemRoomName"
+        android:id="@+id/itemRoomName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="yellow room"
@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ItemRoomFreeIcon"
+        android:id="@+id/itemRoomFreeIcon"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginTop="@dimen/basic_padding"
@@ -23,10 +23,10 @@
         android:src="@drawable/ic_android"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomName" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomName" />
 
     <TextView
-        android:id="@+id/ItemRoomFreeInfo"
+        android:id="@+id/itemRoomFreeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/small_padding"
@@ -34,169 +34,169 @@
         android:text="@string/this_room_is_free_now"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomFreeIcon" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomFreeIcon" />
 
     <TextView
-        android:id="@+id/ItemRoomEventTitle"
+        android:id="@+id/itemRoomEventTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Interview with John Doe"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomFreeInfo" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomFreeInfo" />
 
     <TextView
-        android:id="@+id/ItemRoomEventTimeBegin"
+        android:id="@+id/itemRoomEventTimeBegin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="11:00"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomEventTitle" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomEventTitle" />
 
     <TextView
-        android:id="@+id/ItemRoomEventTimeBeginZone"
+        android:id="@+id/itemRoomEventTimeBeginZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="AM"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomEventTimeBegin" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomEventTimeBegin" />
 
     <View
-        android:id="@+id/ItemRoomEventTime"
+        android:id="@+id/itemRoomEventTime"
         android:layout_width="6dp"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomEventTimeBeginZone"
-        app:layout_constraintTop_toTopOf="@id/ItemRoomEventTimeBegin" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomEventTimeBeginZone"
+        app:layout_constraintTop_toTopOf="@id/itemRoomEventTimeBegin" />
 
     <TextView
-        android:id="@+id/ItemRoomEventTimeEnd"
+        android:id="@+id/itemRoomEventTimeEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="12:00"
-        app:layout_constraintBaseline_toBaselineOf="@id/ItemRoomEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomEventTime" />
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomEventTime" />
 
     <TextView
-        android:id="@+id/ItemRoomEventTimeEndZone"
+        android:id="@+id/itemRoomEventTimeEndZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="AM"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomEventTimeEnd"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomEventTimeEnd" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomEventTimeEnd"
+        app:layout_constraintStart_toEndOf="@id/itemRoomEventTimeEnd" />
 
     <ImageView
-        android:id="@+id/ItemRoomEventIcon"
+        android:id="@+id/itemRoomEventIcon"
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:padding="10dp"
         android:src="@drawable/ic_android"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomEventTimeBegin"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomEventTimeBegin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/ItemRoomEventTitle" />
+        app:layout_constraintTop_toTopOf="@id/itemRoomEventTitle" />
 
     <View
-        android:id="@+id/ItemRoomNextEventHelperTop"
+        android:id="@+id/itemRoomNextEventHelperTop"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/colorPrimary"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomEventTimeBegin" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomEventTimeBegin" />
 
     <ImageView
-        android:id="@+id/ItemRoomNextEventArrow"
+        android:id="@+id/itemRoomNextEventArrow"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:src="@drawable/ic_arrow_forward"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomNextEventHelperTop" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomNextEventHelperTop" />
 
     <TextView
-        android:id="@+id/ItemRoomNextEventTimeBegin"
+        android:id="@+id/itemRoomNextEventTimeBegin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1:00"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventArrow"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomNextEventHelperTop" />
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventArrow"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomNextEventHelperTop" />
 
     <TextView
-        android:id="@+id/ItemRoomNextEventTimeBeginZone"
+        android:id="@+id/itemRoomNextEventTimeBeginZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PM"
-        app:layout_constraintBaseline_toBaselineOf="@id/ItemRoomNextEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTimeBegin"
-        app:layout_constraintTop_toTopOf="@id/ItemRoomNextEventTimeBegin" />
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTimeBegin"
+        app:layout_constraintTop_toTopOf="@id/itemRoomNextEventTimeBegin" />
 
     <View
-        android:id="@+id/ItemRoomNextEventTime"
+        android:id="@+id/itemRoomNextEventTime"
         android:layout_width="6dp"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomNextEventTimeBeginZone"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTimeBeginZone"
-        app:layout_constraintTop_toTopOf="@id/ItemRoomNextEventTimeBeginZone" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomNextEventTimeBeginZone"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTimeBeginZone"
+        app:layout_constraintTop_toTopOf="@id/itemRoomNextEventTimeBeginZone" />
 
     <TextView
-        android:id="@+id/ItemRoomNextEventTimeEnd"
+        android:id="@+id/itemRoomNextEventTimeEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2:00"
-        app:layout_constraintBaseline_toBaselineOf="@id/ItemRoomNextEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTime" />
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTime" />
 
     <TextView
-        android:id="@+id/ItemRoomNextEventTimeEndZone"
+        android:id="@+id/itemRoomNextEventTimeEndZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PM"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomNextEventTimeEnd"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTimeEnd" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomNextEventTimeEnd"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTimeEnd" />
 
     <View
-        android:id="@+id/ItemRoomNextEventTimeHelper"
+        android:id="@+id/itemRoomNextEventTimeHelper"
         android:layout_width="1dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/ItemRoomNextEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTimeEndZone"
-        app:layout_constraintTop_toTopOf="@id/ItemRoomNextEventTimeBegin" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomNextEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTimeEndZone"
+        app:layout_constraintTop_toTopOf="@id/itemRoomNextEventTimeBegin" />
 
     <TextView
-        android:id="@+id/ItemRoomNextEventTitle"
+        android:id="@+id/itemRoomNextEventTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Co-Action English Lesson"
-        app:layout_constraintBaseline_toBaselineOf="@id/ItemRoomNextEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomNextEventTimeHelper" />
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomNextEventTimeHelper" />
 
     <View
-        android:id="@+id/ItemRoomNextEventTimeHelperBottom"
+        android:id="@+id/itemRoomNextEventTimeHelperBottom"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="@dimen/small_padding"
         android:background="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomNextEventTimeEndZone" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomNextEventTimeEndZone" />
 
     <TextView
-        android:id="@+id/ItemRoomStatusLabel"
+        android:id="@+id/itemRoomStatusLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="occupied"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomNextEventTimeHelperBottom" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomNextEventTimeHelperBottom" />
 
     <TextView
-        android:id="@+id/ItemRoomStatusInfo"
+        android:id="@+id/itemRoomStatusInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="for the next 30 minutes"
-        app:layout_constraintBaseline_toBaselineOf="@id/ItemRoomStatusLabel"
-        app:layout_constraintStart_toEndOf="@id/ItemRoomStatusLabel" />
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
+        app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 
     <Button
-        android:id="@+id/ItemRoomBookButton"
+        android:id="@+id/itemRoomBookButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="book now"
-        app:layout_constraintTop_toBottomOf="@id/ItemRoomStatusLabel" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomStatusLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
