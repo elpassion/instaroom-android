@@ -8,7 +8,10 @@ import androidx.core.widget.toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.elpassion.android.commons.recycler.adapters.basicAdapterWithLayoutAndBinder
+import com.elpassion.android.commons.recycler.basic.ViewHolderBinder
 import kotlinx.android.synthetic.main.dashboard_fragment.*
+import kotlinx.android.synthetic.main.item_room_free.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
@@ -29,24 +32,18 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setUpList() {
-        /*FIXME
-        dashboard_recycler_view.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room) { holder, item ->
-            holder.itemView.item_room_name_tv.text = item.name
-            holder.itemView.item_room_meeting_title_tv.text = item.events.firstOrNull()?.name
-            holder.itemView.setOnClickListener {
-                onRoomClicked(item)
-            }
-        }*/
-        dashboard_recycler_view.layoutManager = LinearLayoutManager(context)
+        roomsRecyclerView.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room_free, ::bindRoom)
+        roomsRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     private fun updateView(state: DashboardState?) {
         rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
-        dashboard_recycler_view.adapter?.notifyDataSetChanged()
+        roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { context?.toast(it) }
     }
 
-    fun onRoomClicked(room: Room) {
-
+    private fun bindRoom(holder: ViewHolderBinder<Room>, item: Room) = with(holder.itemView) {
+        itemRoomName.text = item.name
+        itemRoomEventTitle.text = item.events.firstOrNull()?.name
     }
 }
