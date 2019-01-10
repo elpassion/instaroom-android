@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.api.InstaRoomApi
 import pl.elpassion.instaroom.api.Room
 import pl.elpassion.instaroom.login.LoginRepository
+import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
 
 fun CoroutineScope.launchDashboardModel(
@@ -20,23 +21,26 @@ fun CoroutineScope.launchDashboardModel(
 ) = launch {
     var rooms = emptyList<Room>()
 
-    suspend fun loadRooms() {
-        try {
-            loginRepository.googleToken?.let { accessToken ->
-                val response = instaRoomApi.getRooms(accessToken).await()
-                rooms = response.rooms
-                state.postValue(DashboardState(rooms, false))
-            }
-        } catch (e: HttpException) {
-            state.postValue(DashboardState(rooms, false, e.message()))
-        }
+    suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
+        loginRepository.googleToken?.let { accessToken ->
+            instaRoomApi.getRooms(accessToken).await()
+        }?.rooms.orEmpty()
     }
 
-    withContext(Dispatchers.IO) { loadRooms() }
+    suspend fun loadRooms() =
+        try {
+            state.set(DashboardState(rooms, true))
+            rooms = getRooms()
+            state.set(DashboardState(rooms, false))
+        } catch (e: HttpException) {
+            state.set(DashboardState(rooms, false, e.message()))
+        }
+
+    loadRooms()
 
     actionS.consumeEach { action ->
         when (action) {
-            is DashboardAction.RefreshRooms -> withContext(Dispatchers.IO) { loadRooms() }
+            is DashboardAction.RefreshRooms -> loadRooms()
         }
     }
 }
@@ -48,6 +52,6 @@ sealed class DashboardAction {
 
 data class DashboardState(
     val rooms: List<Room>,
-    val isRefresh: Boolean,
+    val isRefreshing: Boolean,
     val errorMessage: String? = null
 )

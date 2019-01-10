@@ -44,7 +44,7 @@ class DashboardFragment : Fragment() {
         rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { context?.toast(it) }
-        roomsSwipeRefresh.isRefreshing = state?.isRefresh ?: false
+        roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
     }
 
     private fun bindRoom(holder: ViewHolderBinder<Room>, item: Room) = with(holder.itemView) {
