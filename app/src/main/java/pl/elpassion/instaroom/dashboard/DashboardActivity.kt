@@ -6,23 +6,24 @@ import androidx.core.widget.toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithLayoutAndBinder
-import kotlinx.android.synthetic.main.activity_dashboard.*
-import kotlinx.android.synthetic.main.item_room.view.*
+import kotlinx.android.synthetic.main.activity_dashboard.dashboard_recycler_view
+import kotlinx.android.synthetic.main.item_room.view.item_room_meeting_title_tv
+import kotlinx.android.synthetic.main.item_room.view.item_room_name_tv
 import org.koin.android.viewmodel.ext.android.viewModel
+import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.api.Room
 
 class DashboardActivity : AppCompatActivity() {
 
-    private val model: DashboardViewModel by viewModel()
+    private val model by viewModel<AppViewModel>()
     private val rooms = mutableListOf<Room>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        model.getRooms().observe(this, Observer(::updateRooms))
-        model.getError().observe(this, Observer { toast(it) })
+        model.dashboardState.observe(this, Observer(::updateView))
 
         setUpList()
     }
@@ -38,9 +39,10 @@ class DashboardActivity : AppCompatActivity() {
         dashboard_recycler_view.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun updateRooms(rooms: List<Room>) {
-        this.rooms.run { clear(); addAll(rooms) }
+    private fun updateView(state: DashboardState?) {
+        rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
         dashboard_recycler_view.adapter?.notifyDataSetChanged()
+        state?.errorMessage?.let { toast(it) }
     }
 
     fun onRoomClicked(room: Room) {

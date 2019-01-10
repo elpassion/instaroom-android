@@ -11,18 +11,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
-import kotlinx.android.synthetic.main.login_activity.*
+import kotlinx.android.synthetic.main.login_activity.signInButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
 import org.koin.android.viewmodel.ext.android.viewModel
+import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.dashboard.DashboardActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    private val model: LoginViewModel by viewModel()
+    private val model by viewModel<AppViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +44,8 @@ class LoginActivity : AppCompatActivity() {
             )
         }
 
-        model.getGoogleToken().observe(this, Observer { token ->
-            if (token != null) showRoomsScreen()
+        model.loginState.observe(this, Observer { state ->
+            if (state?.googleToken != null) showRoomsScreen()
         })
     }
 
@@ -65,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
                     result!!.account,
                     "oauth2:https://www.googleapis.com/auth/calendar.events"
                 )
-                model.saveGoogleToken(token)
+                model.loginActionS.accept(LoginAction.SaveGoogleToken(token))
             }
         } catch (e: Exception) {
             e.printStackTrace()
