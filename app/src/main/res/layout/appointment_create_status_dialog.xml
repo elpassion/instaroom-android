@@ -9,7 +9,7 @@
     android:paddingBottom="@dimen/basic_padding">
 
     <TextView
-        android:id="@+id/appointmentCreatedTitle"
+        android:id="@+id/appointmentStatusTitle"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,67 +19,67 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/appointmentCreatedName"
+        android:id="@+id/appointmentStatusName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedTitle"
+        app:layout_constraintTop_toBottomOf="@id/appointmentStatusTitle"
         tools:text="John Doe's booking" />
 
     <TextView
-        android:id="@+id/appointmentCreatedBeginTime"
+        android:id="@+id/appointmentStatusBeginTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedName"
+        app:layout_constraintTop_toBottomOf="@id/appointmentStatusName"
         tools:text="12:30" />
 
     <TextView
-        android:id="@+id/appointmentCreatedBeginTimeZone"
+        android:id="@+id/appointmentStatusBeginTimeZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentCreatedBeginTime"
+        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentStatusBeginTime"
         tools:text="AM" />
 
     <View
-        android:id="@+id/appointmentCreatedTime"
+        android:id="@+id/appointmentStatusTime"
         android:layout_width="6dp"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentCreatedBeginTimeZone"
-        app:layout_constraintTop_toTopOf="@id/appointmentCreatedBeginTime" />
+        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentStatusBeginTimeZone"
+        app:layout_constraintTop_toTopOf="@id/appointmentStatusBeginTime" />
 
     <TextView
-        android:id="@+id/appointmentCreatedEndTime"
+        android:id="@+id/appointmentStatusEndTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@id/appointmentCreatedBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentCreatedTime"
+        app:layout_constraintBaseline_toBaselineOf="@id/appointmentStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentStatusTime"
         tools:text="12:30" />
 
     <TextView
-        android:id="@+id/appointmentCreatedEndTimeZone"
+        android:id="@+id/appointmentStatusEndTimeZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedEndTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentCreatedEndTime"
+        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusEndTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentStatusEndTime"
         tools:text="AM" />
 
     <TextView
-        android:id="@+id/appointmentCreatedRoomName"
+        android:id="@+id/appointmentStatusRoomName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         android:text="in Green Room"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedBeginTime" />
+        app:layout_constraintTop_toBottomOf="@id/appointmentStatusBeginTime" />
 
     <Button
-        android:id="@+id/appointmentCreatedEditButton"
+        android:id="@+id/appointmentStatusEditButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/basic_padding"
@@ -88,10 +88,10 @@
         android:text="@string/edit_in_google_calendar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedRoomName" />
+        app:layout_constraintTop_toBottomOf="@id/appointmentStatusRoomName" />
 
     <Button
-        android:id="@+id/appointmentCreatedDismissButton"
+        android:id="@+id/appointmentStatusDismissButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
@@ -99,6 +99,6 @@
         android:text="@string/dismiss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedEditButton" />
+        app:layout_constraintTop_toBottomOf="@id/appointmentStatusEditButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
