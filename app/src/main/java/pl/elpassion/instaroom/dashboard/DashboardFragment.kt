@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.toast
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,7 +43,7 @@ class DashboardFragment : Fragment() {
     private fun updateView(state: DashboardState?) {
         rooms.run { clear(); addAll(state?.rooms.orEmpty()) }
         roomsRecyclerView.adapter?.notifyDataSetChanged()
-        state?.errorMessage?.let { context?.toast(it) }
+        state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
     }
 
