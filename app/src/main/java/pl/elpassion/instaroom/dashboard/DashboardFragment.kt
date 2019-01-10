@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithLayoutAndBinder
 import com.elpassion.android.commons.recycler.basic.ViewHolderBinder
 import kotlinx.android.synthetic.main.dashboard_fragment.*
-import kotlinx.android.synthetic.main.item_room_free.view.*
+import kotlinx.android.synthetic.main.item_room_booked.view.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
@@ -32,7 +32,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setUpList() {
-        roomsRecyclerView.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room_free, ::bindRoom)
+        roomsRecyclerView.adapter = basicAdapterWithLayoutAndBinder(rooms, R.layout.item_room_booked, ::bindRoom)
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
@@ -43,7 +43,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun bindRoom(holder: ViewHolderBinder<Room>, item: Room) = with(holder.itemView) {
-        itemRoomName.text = item.name
-        itemRoomEventTitle.text = item.events.firstOrNull()?.name
+        itemRoomBookingName.text = item.name
+        itemRoomBookingTitle.text = item.events.firstOrNull()?.name
     }
 }
