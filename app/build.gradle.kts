@@ -58,7 +58,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.7.0")
     implementation("com.squareup.retrofit2:retrofit:2.4.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.4.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-experimental-adapter:1.0.0")
+    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     implementation("org.jetbrains.anko:anko-appcompat-v7:$ankoVersion")
     implementation("com.google.android.material:material:1.0.0-beta01")
     implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
