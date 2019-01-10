@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/appointmentBookingHelper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/bookingTitleLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="@dimen/basic_padding"
+        android:text="@string/appointment_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/bookingTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingTitleLabel"
+        tools:text="John Doe's booking" />
+
+    <TextView
+        android:id="@+id/bookingDurationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="@dimen/large_padding"
+        android:text="@string/appointment_duration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingTitle" />
+
+    <TextView
+        android:id="@+id/bookingFromNowFor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:text="@string/from_now_for"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingDurationLabel" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/bookingTimeBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginEnd="@dimen/basic_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingFromNowFor" />
+
+    <TextView
+        android:id="@+id/bookingTimeFromLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="@dimen/basic_padding"
+        android:text="@string/from"
+        android:textAllCaps="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
+
+    <TextView
+        android:id="@+id/bookingTimeOptionFirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15 min"
+        app:layout_constraintStart_toStartOf="@id/bookingTimeBar"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
+
+    <TextView
+        android:id="@+id/bookingTimeOptionSecond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30 min"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
+        app:layout_constraintEnd_toStartOf="@id/bookingTimeOptionThird"
+        app:layout_constraintStart_toEndOf="@id/bookingTimeOptionFirst" />
+
+    <TextView
+        android:id="@+id/bookingTimeOptionThird"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="45 min"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
+        app:layout_constraintEnd_toStartOf="@id/bookingTimeOptionFourth"
+        app:layout_constraintStart_toEndOf="@id/bookingTimeOptionSecond" />
+
+    <TextView
+        android:id="@+id/bookingTimeOptionFourth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="60 min"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
+        app:layout_constraintEnd_toStartOf="@id/bookingTimeOptionFifth"
+        app:layout_constraintStart_toEndOf="@id/bookingTimeOptionThird" />
+
+    <TextView
+        android:id="@+id/bookingTimeOptionFifth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2 hr"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
+        app:layout_constraintEnd_toEndOf="@id/bookingTimeBar" />
+
+    <TextView
+        android:id="@+id/bookingTimeToLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/to"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeFromLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/appointmentBookingHelper" />
+
+    <EditText
+        android:id="@+id/bookingTimeFrom"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/bookingTimeFromLabel"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
+
+    <View
+        android:layout_width="12dp"
+        android:layout_height="2dp"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@id/bookingTimeFrom"
+        app:layout_constraintEnd_toStartOf="@id/bookingTimeTo"
+        app:layout_constraintStart_toEndOf="@id/bookingTimeFrom"
+        app:layout_constraintTop_toTopOf="@id/bookingTimeFrom" />
+
+    <EditText
+        android:id="@+id/bookingTimeTo"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/bookingTimeToLabel"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
+
+    <TextView
+        android:id="@+id/bookingTimeAllDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="@dimen/basic_padding"
+        android:text="@string/all_day_appointment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeFrom" />
+
+    <Switch
+        android:id="@+id/bookingAllDaySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        app:layout_constraintBottom_toBottomOf="@id/bookingTimeAllDay"
+        app:layout_constraintStart_toEndOf="@id/bookingTimeAllDay"
+        app:layout_constraintTop_toTopOf="@id/bookingTimeAllDay" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

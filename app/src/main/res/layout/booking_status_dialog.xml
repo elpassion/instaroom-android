@@ -9,7 +9,7 @@
     android:paddingBottom="@dimen/basic_padding">
 
     <TextView
-        android:id="@+id/appointmentStatusTitle"
+        android:id="@+id/bookingStatusTitle"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,67 +19,67 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/appointmentStatusName"
+        android:id="@+id/bookingStatusName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentStatusTitle"
+        app:layout_constraintTop_toBottomOf="@id/bookingStatusTitle"
         tools:text="John Doe's booking" />
 
     <TextView
-        android:id="@+id/appointmentStatusBeginTime"
+        android:id="@+id/bookingStatusBeginTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentStatusName"
+        app:layout_constraintTop_toBottomOf="@id/bookingStatusName"
         tools:text="12:30" />
 
     <TextView
-        android:id="@+id/appointmentStatusBeginTimeZone"
+        android:id="@+id/bookingStatusBeginTimeZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentStatusBeginTime"
+        app:layout_constraintBottom_toBottomOf="@id/bookingStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/bookingStatusBeginTime"
         tools:text="AM" />
 
     <View
-        android:id="@+id/appointmentStatusTime"
+        android:id="@+id/bookingStatusTime"
         android:layout_width="6dp"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentStatusBeginTimeZone"
-        app:layout_constraintTop_toTopOf="@id/appointmentStatusBeginTime" />
+        app:layout_constraintBottom_toBottomOf="@id/bookingStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/bookingStatusBeginTimeZone"
+        app:layout_constraintTop_toTopOf="@id/bookingStatusBeginTime" />
 
     <TextView
-        android:id="@+id/appointmentStatusEndTime"
+        android:id="@+id/bookingStatusEndTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@id/appointmentStatusBeginTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentStatusTime"
+        app:layout_constraintBaseline_toBaselineOf="@id/bookingStatusBeginTime"
+        app:layout_constraintStart_toEndOf="@id/bookingStatusTime"
         tools:text="12:30" />
 
     <TextView
-        android:id="@+id/appointmentStatusEndTimeZone"
+        android:id="@+id/bookingStatusEndTimeZone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/appointmentStatusEndTime"
-        app:layout_constraintStart_toEndOf="@id/appointmentStatusEndTime"
+        app:layout_constraintBottom_toBottomOf="@id/bookingStatusEndTime"
+        app:layout_constraintStart_toEndOf="@id/bookingStatusEndTime"
         tools:text="AM" />
 
     <TextView
-        android:id="@+id/appointmentStatusRoomName"
+        android:id="@+id/bookingStatusRoomName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         android:text="in Green Room"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentStatusBeginTime" />
+        app:layout_constraintTop_toBottomOf="@id/bookingStatusBeginTime" />
 
     <Button
-        android:id="@+id/appointmentStatusEditButton"
+        android:id="@+id/bookingStatusEditButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/basic_padding"
@@ -88,10 +88,10 @@
         android:text="@string/edit_in_google_calendar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentStatusRoomName" />
+        app:layout_constraintTop_toBottomOf="@id/bookingStatusRoomName" />
 
     <Button
-        android:id="@+id/appointmentStatusDismissButton"
+        android:id="@+id/bookingStatusDismissButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
@@ -99,6 +99,6 @@
         android:text="@string/dismiss"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appointmentStatusEditButton" />
+        app:layout_constraintTop_toBottomOf="@id/bookingStatusEditButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
