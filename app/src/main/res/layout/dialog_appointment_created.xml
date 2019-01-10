@@ -1,92 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingTop="@dimen/large_padding"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:paddingBottom="@dimen/basic_padding">
 
     <TextView
-        android:layout_marginStart="@dimen/large_padding"
+        android:id="@+id/appointmentCreatedTitle"
         style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large_padding"
         android:text="@string/appointment_created"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:layout_marginTop="@dimen/xxlarge_padding"
-        android:layout_marginStart="@dimen/large_padding"
-        tools:text="John Doe's booking"
+        android:id="@+id/appointmentCreatedName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <LinearLayout
-        android:layout_marginTop="@dimen/small_padding"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            tools:text="12:30"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            tools:text="AM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <View
-            android:layout_gravity="center"
-            android:background="@android:color/black"
-            android:layout_width="6dp"
-            android:layout_height="0.7dp" />
-
-        <TextView
-            tools:text="12:30"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            tools:text="AM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedTitle"
+        tools:text="John Doe's booking" />
 
     <TextView
-        android:layout_marginTop="@dimen/small_padding"
+        android:id="@+id/appointmentCreatedBeginTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/large_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedName"
+        tools:text="12:30" />
+
+    <TextView
+        android:id="@+id/appointmentCreatedBeginTimeZone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentCreatedBeginTime"
+        tools:text="AM" />
+
+    <View
+        android:id="@+id/appointmentCreatedTime"
+        android:layout_width="6dp"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentCreatedBeginTimeZone"
+        app:layout_constraintTop_toTopOf="@id/appointmentCreatedBeginTime" />
+
+    <TextView
+        android:id="@+id/appointmentCreatedEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@id/appointmentCreatedBeginTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentCreatedTime"
+        tools:text="12:30" />
+
+    <TextView
+        android:id="@+id/appointmentCreatedEndTimeZone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/appointmentCreatedEndTime"
+        app:layout_constraintStart_toEndOf="@id/appointmentCreatedEndTime"
+        tools:text="AM" />
+
+    <TextView
+        android:id="@+id/appointmentCreatedRoomName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/large_padding"
         android:text="in Green Room"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedBeginTime" />
 
-    <LinearLayout
-        android:paddingBottom="@dimen/medium_padding"
-        android:orientation="vertical"
+    <Button
+        android:id="@+id/appointmentCreatedEditButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginEnd="@dimen/basic_padding"
+        android:layout_marginBottom="@dimen/medium_padding"
+        android:text="@string/edit_in_google_calendar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedRoomName" />
 
-        <View
-            android:layout_marginBottom="@dimen/medium_padding"
-            android:layout_width="match_parent"
-            android:layout_height="1dp" />
+    <Button
+        android:id="@+id/appointmentCreatedDismissButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginEnd="@dimen/basic_padding"
+        android:text="@string/dismiss"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreatedEditButton" />
 
-        <Button
-            style="@style/Button.White"
-            android:layout_marginBottom="@dimen/medium_padding"
-            android:text="@string/edit_in_google_calendar"
-            android:layout_width="match_parent"
-            android:layout_marginStart="@dimen/basic_padding"
-            android:layout_marginEnd="@dimen/basic_padding"
-            android:layout_height="wrap_content" />
-
-        <Button
-            style="@style/Button.Blue"
-            android:layout_marginEnd="@dimen/basic_padding"
-            android:layout_marginStart="@dimen/basic_padding"
-            android:text="@string/dismiss"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
