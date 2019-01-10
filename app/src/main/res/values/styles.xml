@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
     </style>
 
     <style name="TextWhite">
@@ -90,11 +91,11 @@
 
     <style name="Button.White">
         <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:background">@drawable/button_white</item>
+        <item name="android:background">@drawable/background_black_button</item>
     </style>
 
-    <style name="Button.Blue">
+    <style name="Button.Black">
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@drawable/button_blue</item>
+        <item name="android:background">@drawable/background_black_button</item>
     </style>
 </resources>
