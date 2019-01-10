@@ -2,8 +2,12 @@ package pl.elpassion.instaroom.login
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -11,31 +15,30 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
-import kotlinx.android.synthetic.main.login_activity.signInButton
+import kotlinx.android.synthetic.main.login_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivity
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.dashboard.DashboardActivity
 
-class LoginActivity : AppCompatActivity() {
+class LoginFragment : Fragment() {
 
-    private val model by viewModel<AppViewModel>()
+    private val model by sharedViewModel<AppViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.login_fragment, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
             .requestScopes(Scope("https://www.googleapis.com/auth/calendar.events"))
             .build()
 
-        val googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
+        val googleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)
 
         signInButton.setOnClickListener {
             startActivityForResult(
@@ -45,7 +48,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         model.loginState.observe(this, Observer { state ->
-            if (state?.googleToken != null) showRoomsScreen()
+            if (state?.googleToken != null) {
+                findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
+            }
         })
     }
 
@@ -62,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
             val result = task.getResult(ApiException::class.java)
             GlobalScope.launch(Dispatchers.IO) {
                 val token = GoogleAuthUtil.getToken(
-                    this@LoginActivity,
+                    activity!!,
                     result!!.account,
                     "oauth2:https://www.googleapis.com/auth/calendar.events"
                 )
@@ -72,8 +77,6 @@ class LoginActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-
-    private fun showRoomsScreen() = startActivity<DashboardActivity>()
 
     companion object {
         const val SIGN_IN_REQUEST_CODE = 627

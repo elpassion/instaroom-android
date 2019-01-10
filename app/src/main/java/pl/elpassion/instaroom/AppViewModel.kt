@@ -19,8 +19,8 @@ import pl.elpassion.instaroom.login.launchLoginModel
 import kotlin.coroutines.CoroutineContext
 
 class AppViewModel(
-    private val loginRepository: LoginRepository,
-    private val instaRoomApi: InstaRoomApi
+    loginRepository: LoginRepository,
+    instaRoomApi: InstaRoomApi
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext

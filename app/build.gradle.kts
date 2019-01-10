@@ -45,6 +45,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion")
     implementation("androidx.core:core-ktx:1.0.0-alpha1")
     implementation("androidx.appcompat:appcompat:1.0.0")
+    implementation("android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha08")
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-livedata:$lifecycleVersion")
