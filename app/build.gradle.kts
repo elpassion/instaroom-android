@@ -61,6 +61,7 @@ dependencies {
     implementation("com.google.android.material:material:1.1.0-alpha02")
     implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
     implementation("com.jakewharton.rxrelay2:rxrelay:2.1.0")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.1.1")
 
     testImplementation("junit:junit:4.12")
 

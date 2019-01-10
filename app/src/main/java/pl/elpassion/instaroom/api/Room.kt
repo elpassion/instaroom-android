@@ -1,5 +1,7 @@
 package pl.elpassion.instaroom.api
 
+import org.threeten.bp.ZonedDateTime
+
 data class RoomsResponse(val rooms: List<Room>)
 
 data class Room(
@@ -10,5 +12,7 @@ data class Room(
 )
 
 data class Event(
-    val name: String?
+    val name: String?,
+    val startTime: ZonedDateTime,
+    val endTime: ZonedDateTime
 )
