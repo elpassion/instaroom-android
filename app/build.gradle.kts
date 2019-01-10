@@ -34,7 +34,6 @@ android {
 }
 
 dependencies {
-    val ankoVersion = "0.10.7"
     val lifecycleVersion = "2.0.0"
     val androidCommonsVersion = "0.0.23"
     val coroutinesVersion = "1.0.1"
@@ -59,7 +58,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.5.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.5.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
-    implementation("org.jetbrains.anko:anko-appcompat-v7:$ankoVersion")
     implementation("com.google.android.material:material:1.1.0-alpha02")
     implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
     implementation("com.jakewharton.rxrelay2:rxrelay:2.1.0")
