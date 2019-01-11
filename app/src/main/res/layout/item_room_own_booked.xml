@@ -1,83 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp">
+    style="@style/ItemRoom">
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="yellow room"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/itemRoomOwnBookedRoomName"
+        style="@style/ItemRoomGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="yellow room"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomEventTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Interview with John Doe"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomName"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTitle"
+        style="@style/ItemRoomBookedTitle"
+        android:text="Interview with John Doe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomName" />
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomEventTimeBegin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="11:00"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTitle"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTimeBegin"
+        style="@style/TextBold.Black.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xbasic_padding"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:text="11:00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTitle" />
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomEventTimeBeginZone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AM"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBegin"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTimeBeginZone"
+        style="@style/TextBold.Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
+        android:text="AM"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBegin" />
 
     <View
-            android:id="@+id/itemRoomOwnBookedRoomEventTime"
-            android:layout_width="6dp"
-            android:layout_height="1dp"
-            android:background="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBeginZone"
-            app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTimeBegin"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTime"
+        android:layout_width="6dp"
+        android:layout_height="0.7dp"
+        android:layout_marginStart="@dimen/small_padding"
+        android:background="@color/textBlack"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBeginZone"
+        app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTimeBegin" />
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomEventTimeEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="12:00"
-            app:layout_constraintBaseline_toBaselineOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTime"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTimeEnd"
+        style="@style/TextBold.Black.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_padding"
+        android:text="12:00"
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTime" />
 
     <TextView
-            android:id="@+id/itemRoomOwnBookedRoomEventTimeEndZone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AM"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd"
-            app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeEnd"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventTimeEndZone"
+        style="@style/TextBold.Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
+        android:text="AM"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd"
+        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
     <ImageView
-            android:id="@+id/itemRoomOwnBookedRoomEventIcon"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:padding="10dp"
-            android:src="@drawable/ic_android"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTitle"/>
+        android:id="@+id/itemRoomOwnBookedRoomEventIcon"
+        style="@style/ItemRoomCalendarIcon"
+        android:src="@drawable/ic_android"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTitle" />
 
     <Button
-            android:id="@+id/itemRoomOwnBookedRoomBookButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="book now"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd"/>
+        android:id="@+id/itemRoomOwnBookedRoomBookButton"
+        style="@style/ItemRoomBookedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/xxlarge_padding"
+        android:text="@string/book_now"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

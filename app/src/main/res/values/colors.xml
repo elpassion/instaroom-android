@@ -7,4 +7,22 @@
     <color name="greyDark">#FF7D8598</color>
     <color name="blueDark">#FF3E485F</color>
     <color name="windowBackground">#F6F6F6</color>
+
+    <color name="textGrey">#FF88888B</color>
+    <color name="textBlack">#FF1E1E1E</color>
+    <color name="free">#FF25B963</color>
+    <color name="freeTrans">#FFE9F9F0</color>
+    <color name="greenRoom">#FF25B963</color>
+    <color name="yellowRoom">#FFC3720A</color>
+    <color name="yellowRoomTrans">#FFFFF1DF</color>
+    <color name="peopleRoom">#FFE6DEDA</color>
+    <color name="peopleRoomTrans">#FFE6DEDA</color>
+    <color name="salesRoom">#FF12789E</color>
+    <color name="salesRoomTrans">#FFD9F4FE</color>
+    <color name="uiRoom">#FF5D34D2</color>
+    <color name="uiRoomTrans">#FFEBE4FF</color>
+    <color name="devRoom">#FFD73F4C</color>
+    <color name="devRoomTrans">#FFE9EB</color>
+    <color name="occupied">#FFE4E4E4</color>
+    <color name="occupiedText">#FF919191</color>
 </resources>

@@ -4,6 +4,7 @@
     <dimen name="tiny_padding">4dp</dimen>
     <dimen name="small_padding">8dp</dimen>
     <dimen name="medium_padding">12dp</dimen>
+    <dimen name="xbasic_padding">14dp</dimen>
     <dimen name="basic_padding">16dp</dimen>
     <dimen name="large_padding">20dp</dimen>
     <dimen name="xlarge_padding">22dp</dimen>
@@ -12,4 +13,12 @@
     <dimen name="text_9">9sp</dimen>
     <dimen name="text_12">12sp</dimen>
     <dimen name="text_14">14sp</dimen>
+    <dimen name="item_room_corners_radius">6dp</dimen>
+    <dimen name="item_room_bottom_stroke">1.5dp</dimen>
+    <dimen name="item_room_free_icon_size">28dp</dimen>
+    <dimen name="item_room_free_icon_padding">4dp</dimen>
+    <dimen name="item_room_calendar_icon_padding">10dp</dimen>
+    <dimen name="item_room_calendar_icon_elevation">2dp</dimen>
+    <dimen name="item_room_calendar_icon_size">48dp</dimen>
+    <item name="room_separator" type="dimen" format="float">0.4dp</item>
 </resources>

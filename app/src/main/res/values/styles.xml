@@ -82,15 +82,196 @@
 
     <style name="Button" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">@dimen/text_14</item>
+        <item name="android:fontFamily">@font/avenir_black</item>
     </style>
 
     <style name="Button.White">
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:background">@drawable/background_black_button</item>
+        <item name="android:textColor">@color/textBlack</item>
+        <item name="android:background">@drawable/background_white_button</item>
     </style>
 
     <style name="Button.Black">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:background">@drawable/background_black_button</item>
+    </style>
+
+    <style name="ItemRoomFreeButton" parent="Button.Black">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/xbasic_padding</item>
+    </style>
+
+    <style name="ItemRoomBookedButton" parent="Button.White">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/xbasic_padding</item>
+    </style>
+
+    <style name="AvenirBook">
+        <item name="android:fontFamily">@font/avenir_book</item>
+    </style>
+
+    <style name="AvenirBold">
+        <item name="android:fontFamily">@font/avenir_black</item>
+    </style>
+
+    <style name="TextLight" parent="AvenirBook">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextBold" parent="AvenirBook">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextLight.Grey">
+        <item name="android:textColor">@color/textGrey</item>
+    </style>
+
+    <style name="TextLight.Black">
+        <item name="android:textColor">@color/textBlack</item>
+    </style>
+
+    <style name="TextLight.Grey.Tiny">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="TextLight.Grey.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextLight.Grey.Large">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextLight.Grey.xLarge">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextLight.Black.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextLight.Black.Large">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextBold.Black">
+        <item name="android:textColor">@color/textBlack</item>
+    </style>
+
+    <style name="TextBold.Black.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextBold.Black.Large">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextBold.Black.xLarge">
+        <item name="android:textSize">19sp</item>
+    </style>
+
+    <style name="ItemRoomSeparator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/room_separator</item>
+        <item name="android:background">@color/textGrey</item>
+    </style>
+
+    <style name="ItemRoomStatusLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/xbasic_padding</item>
+        <item name="android:layout_marginStart">@dimen/xbasic_padding</item>
+        <item name="android:paddingStart">@dimen/xbasic_padding</item>
+        <item name="android:paddingTop">@dimen/tiny_padding</item>
+        <item name="android:paddingEnd">@dimen/xbasic_padding</item>
+        <item name="android:paddingBottom">@dimen/tiny_padding</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ItemRoomStatusLabel.Free">
+        <item name="android:textColor">@color/free</item>
+        <item name="android:background">@drawable/background_room_free_rectangle</item>
+    </style>
+
+    <style name="ItemRoomStatusLabel.Occupied">
+        <item name="android:textColor">@color/occupiedText</item>
+        <item name="android:background">@drawable/background_room_occupied_rectangle</item>
+    </style>
+
+    <style name="ItemRoomName" parent="TextBold.Black.Large">
+        <item name="android:paddingStart">@dimen/xbasic_padding</item>
+        <item name="android:paddingTop">@dimen/large_padding</item>
+        <item name="android:paddingEnd">@dimen/xbasic_padding</item>
+        <item name="android:paddingBottom">@dimen/large_padding</item>
+    </style>
+
+    <style name="ItemRoomGreen" parent="ItemRoomName">
+        <item name="android:textColor">@color/free</item>
+        <item name="android:background">@drawable/background_green_room</item>
+    </style>
+
+    <style name="ItemRoomYellow" parent="ItemRoomName">
+        <item name="android:textColor">@color/yellowRoom</item>
+        <item name="android:background">@drawable/background_yellow_room</item>
+    </style>
+
+    <style name="ItemRoomDev" parent="ItemRoomName">
+        <item name="android:textColor">@color/devRoom</item>
+        <item name="android:background">@drawable/background_dev_room</item>
+    </style>
+
+    <style name="ItemRoomPeople" parent="ItemRoomName">
+        <item name="android:textColor">@color/peopleRoom</item>
+        <item name="android:background">@drawable/background_people_room</item>
+    </style>
+
+    <style name="ItemRoomSales" parent="ItemRoomName">
+        <item name="android:textColor">@color/salesRoom</item>
+        <item name="android:background">@drawable/background_sales_room</item>
+    </style>
+
+    <style name="ItemRoomUI" parent="ItemRoomName">
+        <item name="android:textColor">@color/uiRoom</item>
+        <item name="android:background">@drawable/background_ui_room</item>
+    </style>
+
+    <style name="ItemRoomFreeStatusIcon">
+        <item name="android:layout_width">@dimen/item_room_free_icon_size</item>
+        <item name="android:layout_height">@dimen/item_room_free_icon_size</item>
+        <item name="android:layout_marginTop">@dimen/large_padding</item>
+        <item name="android:background">@drawable/background_room_free_round</item>
+        <item name="android:padding">@dimen/item_room_free_icon_padding</item>
+    </style>
+
+    <style name="ItemRoomStatusInfo" parent="TextBold.Black">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/medium_padding</item>
+    </style>
+
+    <style name="ItemRoom">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginBottom">12dp</item>
+    </style>
+
+    <style name="ItemRoomBookedTitle" parent="TextBold.Black.xLarge">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/xbasic_padding</item>
+        <item name="android:layout_marginTop">@dimen/xxlarge_padding</item>
+    </style>
+
+    <style name="ItemRoomCalendarIcon">
+        <item name="android:layout_width">@dimen/item_room_calendar_icon_size</item>
+        <item name="android:layout_height">@dimen/item_room_calendar_icon_size</item>
+        <item name="android:layout_marginEnd">@dimen/xbasic_padding</item>
+        <item name="android:background">@drawable/background_calendar_icon</item>
+        <item name="android:elevation">@dimen/item_room_calendar_icon_elevation</item>
+        <item name="android:padding">@dimen/item_room_calendar_icon_padding</item>
     </style>
 </resources>

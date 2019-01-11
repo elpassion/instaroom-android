@@ -1,105 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp">
+    style="@style/ItemRoom">
 
     <TextView
-            android:id="@+id/itemRoomBookedName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="yellow room"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/itemRoomBookedName"
+        style="@style/ItemRoomGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="yellow room"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-            android:id="@+id/itemRoomBookedTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Interview with John Doe"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomBookedName"/>
+        android:id="@+id/itemRoomBookedTitle"
+        style="@style/ItemRoomBookedTitle"
+        android:text="Interview with John Doe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomBookedName" />
 
     <TextView
-            android:id="@+id/itemRoomBookedTimeBegin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="11:00"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomBookedTitle"/>
+        android:id="@+id/itemRoomBookedTimeBegin"
+        style="@style/TextBold.Black.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/xbasic_padding"
+        android:layout_marginTop="@dimen/medium_padding"
+        android:text="11:00"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomBookedTitle" />
 
     <TextView
-            android:id="@+id/itemRoomBookedTimeBeginZone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AM"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeBegin"/>
+        android:id="@+id/itemRoomBookedTimeBeginZone"
+        style="@style/TextBold.Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
+        android:text="AM"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeBegin" />
 
     <View
-            android:id="@+id/itemRoomBookedTime"
-            android:layout_width="6dp"
-            android:layout_height="1dp"
-            android:background="@android:color/black"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeBeginZone"
-            app:layout_constraintTop_toTopOf="@id/itemRoomBookedTimeBegin"/>
+        android:id="@+id/itemRoomBookedTime"
+        android:layout_width="6dp"
+        android:layout_height="0.7dp"
+        android:layout_marginStart="@dimen/small_padding"
+        android:background="@color/textBlack"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeBeginZone"
+        app:layout_constraintTop_toTopOf="@id/itemRoomBookedTimeBegin" />
 
     <TextView
-            android:id="@+id/itemRoomBookedTimeEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="12:00"
-            app:layout_constraintBaseline_toBaselineOf="@id/itemRoomBookedTimeBegin"
-            app:layout_constraintStart_toEndOf="@id/itemRoomBookedTime"/>
+        android:id="@+id/itemRoomBookedTimeEnd"
+        style="@style/TextBold.Black.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_padding"
+        android:text="12:00"
+        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomBookedTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomBookedTime" />
 
     <TextView
-            android:id="@+id/itemRoomBookedTimeEndZone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AM"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeEnd"
-            app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeEnd"/>
+        android:id="@+id/itemRoomBookedTimeEndZone"
+        style="@style/TextBold.Black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
+        android:text="AM"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeEnd"
+        app:layout_constraintStart_toEndOf="@id/itemRoomBookedTimeEnd" />
 
     <ImageView
-            android:id="@+id/itemRoomBookedIcon"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:padding="10dp"
-            android:src="@drawable/ic_android"
-            app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/itemRoomBookedTitle"/>
+        android:id="@+id/itemRoomBookedIcon"
+        android:src="@drawable/ic_android"
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/itemRoomBookedTitle"
+        style="@style/ItemRoomCalendarIcon" />
 
     <View
-            android:id="@+id/itemRoomNextBookingHelperTop"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorPrimary"
-            app:layout_constraintTop_toBottomOf="@id/itemRoomBookedTimeBegin"/>
+        android:id="@+id/itemRoomNextBookingHelperTop"
+        style="@style/ItemRoomSeparator"
+        android:layout_marginTop="@dimen/xxlarge_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomBookedTimeBegin" />
 
     <ImageView
         android:id="@+id/itemRoomNextBookingArrow"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:layout_marginStart="@dimen/xbasic_padding"
+        android:layout_marginTop="@dimen/basic_padding"
         android:src="@drawable/ic_arrow_forward"
+        android:tint="@color/textGrey"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomNextBookingHelperTop" />
 
     <TextView
         android:id="@+id/itemRoomNextBookingTimeBegin"
+        style="@style/TextLight.Grey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_padding"
+        android:layout_marginTop="@dimen/basic_padding"
         android:text="1:00"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingArrow"
         app:layout_constraintTop_toBottomOf="@id/itemRoomNextBookingHelperTop" />
 
     <TextView
         android:id="@+id/itemRoomNextBookingTimeBeginZone"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
         android:text="PM"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTimeBegin"
@@ -108,54 +123,64 @@
     <View
         android:id="@+id/itemRoomNextBookingTime"
         android:layout_width="6dp"
-        android:layout_height="1dp"
-        android:background="@android:color/black"
+        android:layout_height="0.7dp"
+        android:layout_marginStart="@dimen/tiny_padding"
+        android:background="@color/textGrey"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomNextBookingTimeBeginZone"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTimeBeginZone"
         app:layout_constraintTop_toTopOf="@id/itemRoomNextBookingTimeBeginZone" />
 
     <TextView
         android:id="@+id/itemRoomNextBookingTimeEnd"
+        style="@style/TextLight.Grey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
         android:text="2:00"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTime" />
 
     <TextView
         android:id="@+id/itemRoomNextBookingTimeEndZone"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/tiny_padding"
         android:text="PM"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomNextBookingTimeEnd"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTimeEnd" />
 
     <View
         android:id="@+id/itemRoomNextBookingTimeHelper"
-        android:layout_width="1dp"
+        android:layout_width="0.7dp"
         android:layout_height="0dp"
+        android:layout_marginStart="@dimen/small_padding"
+        android:background="@color/textGrey"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomNextBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTimeEndZone"
         app:layout_constraintTop_toTopOf="@id/itemRoomNextBookingTimeBegin" />
 
     <TextView
         android:id="@+id/itemRoomNextBookingTitle"
+        style="@style/TextLight.Grey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/small_padding"
         android:text="Co-Action English Lesson"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomNextBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomNextBookingTimeHelper" />
 
     <View
         android:id="@+id/itemRoomNextBookingTimeHelperBottom"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="@dimen/small_padding"
-        android:background="@android:color/black"
+        style="@style/ItemRoomSeparator"
+        android:layout_marginTop="@dimen/basic_padding"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomNextBookingTimeEndZone" />
 
     <TextView
         android:id="@+id/itemRoomStatusLabel"
+        style="@style/ItemRoomStatusLabel.Occupied"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/occupied"
@@ -164,17 +189,17 @@
 
     <TextView
         android:id="@+id/itemRoomStatusInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ItemRoomStatusInfo"
         android:text="for the next 30 minutes"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 
     <Button
         android:id="@+id/itemRoomBookButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/ItemRoomBookedButton"
         android:text="@string/book_for_later"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomStatusLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
