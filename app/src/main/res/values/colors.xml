@@ -17,8 +17,8 @@
     <color name="greenRoomStroke">#FFB1F3DC</color>
     <color name="yellowRoom">#FFC3720A</color>
     <color name="yellowRoomTrans">#FFFFF1DF</color>
-    <color name="yellowRoomStroke">#FFFFFDFB</color>
-    <color name="peopleRoom">#FFE6DEDA</color>
+    <color name="yellowRoomStroke">#FFFFE2BE</color>
+    <color name="peopleRoom">#FF451A05</color>
     <color name="peopleRoomTrans">#FFE6DEDA</color>
     <color name="peopleRoomStroke">#FFCEBDB6</color>
     <color name="salesRoom">#FF12789E</color>

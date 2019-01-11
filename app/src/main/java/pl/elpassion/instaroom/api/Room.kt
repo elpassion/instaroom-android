@@ -8,6 +8,9 @@ data class Room(
     val name: String? = "",
     val calendarId: String = "",
     val events: List<Event> = emptyList(),
+    val titleColor: String,
+    val borderColor: String,
+    val backgroundColor: String,
     val isOwnBooked: Boolean = false
 ) {
     val isBooked: Boolean

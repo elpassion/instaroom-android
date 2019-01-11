@@ -1,11 +1,13 @@
 package pl.elpassion.instaroom.dashboard
 
+import android.graphics.Color
 import android.view.View
 import com.elpassion.android.commons.recycler.basic.ViewHolderBinder
 import kotlinx.android.synthetic.main.item_header.view.*
 import kotlinx.android.synthetic.main.item_room_booked.view.*
 import kotlinx.android.synthetic.main.item_room_free.view.*
 import kotlinx.android.synthetic.main.item_room_own_booked.view.*
+import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.api.Room
 import pl.elpassion.instaroom.util.DateTimeFormatters
 
@@ -14,6 +16,8 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :
 
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
+        itemRoomFreeName.setTextColor(Color.parseColor(item.room.titleColor))
+        itemRoomFreeName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomFreeName.text = item.room.name
         itemRoomFreeBookButton.setOnClickListener { onBook(item.room) }
         val event = item.room.events.first()
@@ -27,6 +31,8 @@ class RoomBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(ite
 
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
+        itemRoomBookedName.setTextColor(Color.parseColor(item.room.titleColor))
+        itemRoomBookedName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomBookedName.text = item.room.name
         val event = item.room.events.first()
         itemRoomBookedTitle.text = event.name
@@ -45,6 +51,8 @@ class RoomOwnBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(
 
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
+        itemRoomOwnBookedRoomName.setTextColor(Color.parseColor(item.room.titleColor))
+        itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
         val event = item.room.events.first()
         itemRoomOwnBookedRoomEventTitle.text = event.name
@@ -59,4 +67,13 @@ class HeaderViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(itemVie
         item as HeaderItem
         itemHeaderTitle.text = item.name
     }
+}
+
+private fun getRoomBackground(room: Room): Int = when (room.backgroundColor) {
+    "#FFE9F9F0" -> R.drawable.background_green_room
+    "#FFFFF1DF" -> R.drawable.background_yellow_room
+    "#FFE6DEDA" -> R.drawable.background_people_room
+    "#FFD9F4FE" -> R.drawable.background_sales_room
+    "#FFEBE4FF" -> R.drawable.background_ui_room
+    else -> R.drawable.background_dev_room
 }
