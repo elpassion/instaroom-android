@@ -27,4 +27,7 @@
     <string name="free">free</string>
     <string name="book_now">book now</string>
     <string name="edit">edit</string>
+    <string name="free_rooms">Free rooms</string>
+    <string name="your_bookings">Your bookings</string>
+    <string name="occupied_rooms">Occupied rooms</string>
 </resources>

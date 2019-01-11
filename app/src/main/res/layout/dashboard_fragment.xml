@@ -22,7 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:padding="16dp"
+            android:paddingStart="@dimen/basic_padding"
+            android:paddingTop="@dimen/medium_padding"
+            android:paddingEnd="@dimen/basic_padding"
+            android:paddingBottom="@dimen/medium_padding"
             tools:listitem="@layout/item_room_free" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

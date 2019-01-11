@@ -1,5 +1,6 @@
 package pl.elpassion.instaroom.dashboard
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +21,7 @@ import pl.elpassion.instaroom.util.replaceWith
 class DashboardFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
-    private val rooms = mutableListOf<Room>()
+    private val items = mutableListOf<DashboardItem>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
@@ -44,13 +45,21 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupList() {
-        roomsRecyclerView.adapter = basicAdapterWithConstructors(rooms) { position ->
-            val room = rooms[position]
-            when {
-                room.isOwnBooked -> R.layout.item_room_own_booked to ::RoomOwnBookedViewHolder
-                room.isBooked -> R.layout.item_room_booked to ::RoomBookedViewHolder
-                else -> R.layout.item_room_free to { view -> RoomFreeViewHolder(view, ::onRoomBook) }
+        roomsRecyclerView.adapter = basicAdapterWithConstructors(items) { position ->
+            val item = items[position]
+
+            when (item) {
+                is HeaderItem -> R.layout.item_header to ::HeaderViewHolder
+                is RoomItem -> {
+                    val room = item.room
+                    when {
+                        room.isOwnBooked -> R.layout.item_room_own_booked to ::RoomOwnBookedViewHolder
+                        room.isBooked -> R.layout.item_room_booked to ::RoomBookedViewHolder
+                        else -> R.layout.item_room_free to { view: View -> RoomFreeViewHolder(view, ::onRoomBook) }
+                    }
+                }
             }
+
         }
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
         roomsSwipeRefresh.setOnRefreshListener {
@@ -59,7 +68,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateView(state: DashboardState?) {
-        rooms.replaceWith(state?.rooms.orEmpty())
+        items.replaceWith(createItems(state?.rooms.orEmpty(), requireContext()))
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
@@ -68,4 +77,39 @@ class DashboardFragment : Fragment() {
     private fun onRoomBook(room: Room) {
         model.dashboardActionS.accept(DashboardAction.BookRoom(room))
     }
+}
+
+sealed class DashboardItem
+
+data class RoomItem(val room: Room) : DashboardItem()
+data class HeaderItem(val name: String) : DashboardItem()
+
+private fun createItems(currentList: List<Room>, context: Context): List<DashboardItem> {
+
+    fun List<Room>.appendYourBookings(index: Int, room: Room) =
+        index == 0 || this[index - 1].isOwnBooked != room.isOwnBooked
+
+    fun List<Room>.appendFreeRooms(index: Int, room: Room) =
+        index == 0 || !this[index - 1].isBooked != !room.isBooked
+
+    fun List<Room>.appendOccupiedRooms(index: Int, room: Room) =
+        index == 0 || this[index - 1].isBooked != room.isBooked
+
+    val items = mutableListOf<DashboardItem>()
+
+    currentList.forEachIndexed { index, room ->
+        when {
+            currentList.appendYourBookings(
+                index,
+                room
+            ) -> items.add(HeaderItem(context.getString(R.string.your_bookings)))
+            currentList.appendFreeRooms(index, room) -> items.add(HeaderItem(context.getString(R.string.free_rooms)))
+            currentList.appendOccupiedRooms(
+                index,
+                room
+            ) -> items.add(HeaderItem(context.getString(R.string.occupied_rooms)))
+        }
+        items.add(RoomItem(room))
+    }
+    return items
 }
