@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
 import kotlinx.android.synthetic.main.dashboard_fragment.*
@@ -27,10 +28,22 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.dashboardState.observe(this, Observer(::updateView))
-        setUpList()
+        setupMenu()
+        setupList()
     }
 
-    private fun setUpList() {
+    private fun setupMenu() {
+        dashboardToolbar.inflateMenu(R.menu.dashboard_menu)
+        dashboardToolbar.setOnMenuItemClickListener { menuItem ->
+            if (menuItem.itemId == R.id.sign_out_action) {
+                model.dashboardActionS.accept(DashboardAction.SelectSignOut)
+                findNavController().navigate(R.id.action_dashboardFragment_to_loginFragment)
+            }
+            true
+        }
+    }
+
+    private fun setupList() {
         roomsRecyclerView.adapter = basicAdapterWithConstructors(rooms) { position ->
             val room = rooms[position]
             when {

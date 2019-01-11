@@ -22,11 +22,17 @@ fun CoroutineScope.launchLoginModel(
                 callDashboardAction(DashboardAction.RefreshRooms)
                 state.set(LoginState(action.googleToken))
             }
+            is LoginAction.SignOut -> {
+                repository.googleToken = null
+                state.set(LoginState(null))
+            }
         }
     }
 }
 
 sealed class LoginAction {
+    object SignOut : LoginAction()
+
     data class SaveGoogleToken(val googleToken: String) : LoginAction()
 }
 

@@ -5,6 +5,7 @@
     <string name="sign_in">Sign in with Google</string>
 
     <!-- DASHBOARD -->
+    <string name="sign_out">Sign out</string>
     <string name="this_room_is_free_now">This room is free now.</string>
     <string name="appointment_created">Appointment created</string>
     <string name="dismiss">Dismiss</string>

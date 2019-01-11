@@ -46,6 +46,7 @@ class AppViewModel(
         )
         launchDashboardModel(
             dashboardActionS,
+            loginActionS::accept,
             _dashboardState,
             loginRepository,
             instaRoomApi

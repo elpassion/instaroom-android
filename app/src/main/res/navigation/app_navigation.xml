@@ -20,6 +20,11 @@
         android:id="@+id/dashboardFragment"
         android:name="pl.elpassion.instaroom.dashboard.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/dashboard_fragment" />
+        tools:layout="@layout/dashboard_fragment">
+        <action
+            android:id="@+id/action_dashboardFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/app_navigation" />
+    </fragment>
 
 </navigation>
