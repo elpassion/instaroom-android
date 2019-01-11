@@ -60,20 +60,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_padding"
         android:layout_marginTop="@dimen/basic_padding"
-        android:text="1:00"
+        tools:text="1:00"
         app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingArrow"
         app:layout_constraintTop_toBottomOf="@id/itemRoomUpcomingBookingHelperTop" />
-
-    <TextView
-        android:id="@+id/itemRoomUpcomingBookingTimeBeginZone"
-        style="@style/TextLight.Grey.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tiny_padding"
-        android:text="PM"
-        app:layout_constraintBaseline_toBaselineOf="@id/itemRoomUpcomingBookingTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeBegin"
-        app:layout_constraintTop_toTopOf="@id/itemRoomUpcomingBookingTimeBegin" />
 
     <View
         android:id="@+id/itemRoomUpcomingBookingTime"
@@ -81,9 +70,9 @@
         android:layout_height="0.7dp"
         android:layout_marginStart="@dimen/tiny_padding"
         android:background="@color/textGrey"
-        app:layout_constraintBottom_toBottomOf="@id/itemRoomUpcomingBookingTimeBeginZone"
-        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeBeginZone"
-        app:layout_constraintTop_toTopOf="@id/itemRoomUpcomingBookingTimeBeginZone" />
+        app:layout_constraintBottom_toBottomOf="@id/itemRoomUpcomingBookingTimeBegin"
+        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeBegin"
+        app:layout_constraintTop_toTopOf="@id/itemRoomUpcomingBookingTimeBegin" />
 
     <TextView
         android:id="@+id/itemRoomUpcomingBookingTimeEnd"
@@ -91,19 +80,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/tiny_padding"
-        android:text="2:00"
+        tools:text="2:00"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomUpcomingBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTime" />
-
-    <TextView
-        android:id="@+id/itemRoomUpcomingBookingTimeEndZone"
-        style="@style/TextLight.Grey.Small"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tiny_padding"
-        android:text="PM"
-        app:layout_constraintBottom_toBottomOf="@id/itemRoomUpcomingBookingTimeEnd"
-        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeEnd" />
 
     <View
         android:id="@+id/itemRoomUpcomingBookingTimeHelper"
@@ -112,7 +91,7 @@
         android:layout_marginStart="@dimen/small_padding"
         android:background="@color/textGrey"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomUpcomingBookingTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeEndZone"
+        app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeEnd"
         app:layout_constraintTop_toTopOf="@id/itemRoomUpcomingBookingTimeBegin" />
 
     <TextView
@@ -121,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_padding"
-        android:text="Co-Action English Lesson"
+        tools:text="Co-Action English Lesson"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomUpcomingBookingTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomUpcomingBookingTimeHelper" />
 
@@ -145,7 +124,7 @@
     <TextView
         android:id="@+id/itemRoomStatusInfo"
         style="@style/ItemRoomStatusInfo"
-        android:text="for the next 30 minutes"
+        tools:text="for the next 30 minutes"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 

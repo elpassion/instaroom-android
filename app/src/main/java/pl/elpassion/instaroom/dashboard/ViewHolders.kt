@@ -15,6 +15,10 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :
         item as RoomItem
         itemRoomFreeName.text = item.room.name
         itemRoomFreeBookButton.setOnClickListener { onBook(item.room) }
+        val event = item.events.first()
+        itemRoomUpcomingBookingTitle.text = event.name
+        itemRoomUpcomingBookingTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
+        itemRoomUpcomingBookingTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
     }
 }
 
@@ -23,7 +27,14 @@ class RoomBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(ite
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
         itemRoomBookedName.text = item.room.name
-        itemRoomBookedTitle.text = item.room.events.firstOrNull()?.name
+        itemRoomBookedTitle.text = event.name
+        itemRoomBookedTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
+        itemRoomBookedTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
+        item.events.getOrNull(1)?.let { nextEvent ->
+            itemRoomNextBookingTitle.text = nextEvent.name
+            itemRoomNextBookingTimeBegin.text = nextEvent.startTime.format(DateTimeFormatters.time)
+            itemRoomNextBookingTimeEnd.text = nextEvent.endTime.format(DateTimeFormatters.time)
+        }
     }
 }
 
@@ -32,7 +43,10 @@ class RoomOwnBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
         itemRoomOwnBookedRoomName.text = item.room.name
-        itemRoomOwnBookedRoomEventTitle.text = item.room.events.firstOrNull()?.name
+        val event = item.events.first()
+        itemRoomOwnBookedRoomEventTitle.text = event.name
+        itemRoomOwnBookedRoomEventTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
+        itemRoomOwnBookedRoomEventTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
     }
 }
 

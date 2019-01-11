@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/ItemRoom">
 
     <TextView
@@ -8,7 +9,7 @@
         style="@style/ItemRoomGreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="yellow room"
+        tools:text="yellow room"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -16,7 +17,7 @@
     <TextView
         android:id="@+id/itemRoomOwnBookedRoomEventTitle"
         style="@style/ItemRoomBookedTitle"
-        android:text="Interview with John Doe"
+        tools:text="Interview with John Doe"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomName" />
 
@@ -27,19 +28,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/xbasic_padding"
         android:layout_marginTop="@dimen/medium_padding"
-        android:text="11:00"
+        tools:text="11:00"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTitle" />
-
-    <TextView
-        android:id="@+id/itemRoomOwnBookedRoomEventTimeBeginZone"
-        style="@style/TextBold.Black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tiny_padding"
-        android:text="AM"
-        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBegin" />
 
     <View
         android:id="@+id/itemRoomOwnBookedRoomEventTime"
@@ -48,7 +39,7 @@
         android:layout_marginStart="@dimen/small_padding"
         android:background="@color/textBlack"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
-        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBeginZone"
+        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
         app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTimeBegin" />
 
     <TextView
@@ -57,19 +48,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_padding"
-        android:text="12:00"
+        tools:text="12:00"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
         app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTime" />
-
-    <TextView
-        android:id="@+id/itemRoomOwnBookedRoomEventTimeEndZone"
-        style="@style/TextBold.Black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/tiny_padding"
-        android:text="AM"
-        app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd"
-        app:layout_constraintStart_toEndOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
     <ImageView
         android:id="@+id/itemRoomOwnBookedRoomEventIcon"
