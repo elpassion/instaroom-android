@@ -10,7 +10,7 @@
         android:id="@+id/dashboardToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/app_name" />
+        app:title="@string/dashboard" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/roomsSwipeRefresh"

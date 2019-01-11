@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/startFragment"
         android:name="pl.elpassion.instaroom.start.StartFragment"
-        android:label="StartFragment">
+        android:label="@string/start">
         <action
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="pl.elpassion.instaroom.login.LoginFragment"
-        android:label="Login"
+        android:label="@string/login"
         tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_loginFragment_to_dashboardFragment"
@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="pl.elpassion.instaroom.dashboard.DashboardFragment"
-        android:label="Dashboard"
+        android:label="@string/dashboard"
         tools:layout="@layout/dashboard_fragment">
         <action
             android:id="@+id/action_dashboardFragment_to_loginFragment"
