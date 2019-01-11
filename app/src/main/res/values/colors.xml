@@ -13,16 +13,23 @@
     <color name="free">#FF25B963</color>
     <color name="freeTrans">#FFE9F9F0</color>
     <color name="greenRoom">#FF25B963</color>
+    <color name="greenRoomTrans">#FFE9F9F0</color>
+    <color name="greenRoomStroke">#FFB1F3DC</color>
     <color name="yellowRoom">#FFC3720A</color>
     <color name="yellowRoomTrans">#FFFFF1DF</color>
+    <color name="yellowRoomStroke">#FFFFFDFB</color>
     <color name="peopleRoom">#FFE6DEDA</color>
     <color name="peopleRoomTrans">#FFE6DEDA</color>
+    <color name="peopleRoomStroke">#FFCEBDB6</color>
     <color name="salesRoom">#FF12789E</color>
     <color name="salesRoomTrans">#FFD9F4FE</color>
+    <color name="salesRoomStroke">#FFFFFDFB</color>
     <color name="uiRoom">#FF5D34D2</color>
     <color name="uiRoomTrans">#FFEBE4FF</color>
+    <color name="uiRoomStroke">#FFD7C9FF</color>
     <color name="devRoom">#FFD73F4C</color>
     <color name="devRoomTrans">#FFE9EB</color>
+    <color name="devRoomStroke">#FFFFD2D6</color>
     <color name="occupied">#FFE4E4E4</color>
     <color name="occupiedText">#FF919191</color>
 </resources>

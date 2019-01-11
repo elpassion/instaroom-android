@@ -7,7 +7,7 @@
             <corners
                 android:topLeftRadius="@dimen/item_room_corners_radius"
                 android:topRightRadius="@dimen/item_room_corners_radius" />
-            <solid android:color="@color/freeTrans" />
+            <solid android:color="@color/greenRoomTrans" />
 
         </shape>
     </item>
@@ -19,7 +19,7 @@
         <shape>
             <stroke
                 android:width="@dimen/item_room_bottom_stroke"
-                android:color="#FFB1F3DC" />
+                android:color="@color/greenRoomStroke" />
         </shape>
     </item>
 

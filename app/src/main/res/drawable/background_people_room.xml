@@ -19,7 +19,7 @@
         <shape>
             <stroke
                 android:width="@dimen/item_room_bottom_stroke"
-                android:color="#FFCEBDB6" />
+                android:color="@color/peopleRoomStroke" />
         </shape>
     </item>
 

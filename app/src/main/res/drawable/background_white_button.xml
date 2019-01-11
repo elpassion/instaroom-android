@@ -5,17 +5,17 @@
         <shape android:shape="rectangle">
 
             <corners
-                android:topLeftRadius="@dimen/item_room_corners_radius"
-                android:topRightRadius="@dimen/item_room_corners_radius" />
+                android:bottomLeftRadius="@dimen/item_room_corners_radius"
+                android:bottomRightRadius="@dimen/item_room_corners_radius" />
             <solid android:color="@android:color/white" />
 
         </shape>
     </item>
 
     <item
+        android:bottom="-2dp"
         android:left="-2dp"
-        android:right="-2dp"
-        android:bottom="-2dp">
+        android:right="-2dp">
         <shape>
             <stroke
                 android:width="0.4dp"
