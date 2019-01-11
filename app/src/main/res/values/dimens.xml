@@ -20,5 +20,5 @@
     <dimen name="item_room_calendar_icon_padding">10dp</dimen>
     <dimen name="item_room_calendar_icon_elevation">2dp</dimen>
     <dimen name="item_room_calendar_icon_size">48dp</dimen>
-    <item name="room_separator" type="dimen" format="float">0.4dp</item>
+    <dimen name="room_separator">0.4dp</dimen>
 </resources>
