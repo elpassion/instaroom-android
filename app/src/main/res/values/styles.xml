@@ -1,11 +1,10 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Primary</item>
         <item name="android:windowBackground">@color/windowBackground</item>
     </style>
 
@@ -17,9 +16,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="ItemRoomMeetingTextStyle" parent="TextWhite">
-
-    </style>
+    <style name="ItemRoomMeetingTextStyle" parent="TextWhite" />
 
     <style name="ItemRoomNextMeetingTextStyle" parent="TextWhite">
         <item name="android:includeFontPadding">false</item>
@@ -30,9 +27,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ItemRoomTimeUnitStyle" parent="TextWhite">
-
-    </style>
+    <style name="ItemRoomTimeUnitStyle" parent="TextWhite" />
 
     <style name="ItemRoomButton" parent="Base.Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">@dimen/text_12</item>
