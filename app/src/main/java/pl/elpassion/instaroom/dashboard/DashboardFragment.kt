@@ -84,32 +84,17 @@ sealed class DashboardItem
 data class RoomItem(val room: Room) : DashboardItem()
 data class HeaderItem(val name: String) : DashboardItem()
 
-private fun createItems(currentList: List<Room>, context: Context): List<DashboardItem> {
+private fun createItems(rooms: List<Room>, context: Context): List<DashboardItem> {
+    val yourBookings = rooms.filter { it.isBooked && it.isOwnBooked }.map(::RoomItem)
+    val freeRooms = rooms.filter { !it.isBooked }.map(::RoomItem)
+    val occupiedRooms = rooms.filter { it.isBooked }.map(::RoomItem)
 
-    fun List<Room>.appendYourBookings(index: Int, room: Room) =
-        index == 0 || this[index - 1].isOwnBooked != room.isOwnBooked
-
-    fun List<Room>.appendFreeRooms(index: Int, room: Room) =
-        index == 0 || !this[index - 1].isBooked != !room.isBooked
-
-    fun List<Room>.appendOccupiedRooms(index: Int, room: Room) =
-        index == 0 || this[index - 1].isBooked != room.isBooked
-
-    val items = mutableListOf<DashboardItem>()
-
-    currentList.forEachIndexed { index, room ->
-        when {
-            currentList.appendYourBookings(
-                index,
-                room
-            ) -> items.add(HeaderItem(context.getString(R.string.your_bookings)))
-            currentList.appendFreeRooms(index, room) -> items.add(HeaderItem(context.getString(R.string.free_rooms)))
-            currentList.appendOccupiedRooms(
-                index,
-                room
-            ) -> items.add(HeaderItem(context.getString(R.string.occupied_rooms)))
-        }
-        items.add(RoomItem(room))
+    return mutableListOf<DashboardItem>().apply {
+        if (yourBookings.isNotEmpty()) add(HeaderItem(context.getString(R.string.your_bookings)))
+        addAll(yourBookings)
+        if (freeRooms.isNotEmpty()) add(HeaderItem(context.getString(R.string.free_rooms)))
+        addAll(freeRooms)
+        if (occupiedRooms.isNotEmpty()) add(HeaderItem(context.getString(R.string.occupied_rooms)))
+        addAll(occupiedRooms)
     }
-    return items
 }
