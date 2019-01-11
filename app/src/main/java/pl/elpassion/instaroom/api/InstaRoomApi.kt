@@ -14,5 +14,5 @@ interface InstaRoomApi {
     fun bookRoom(
         @Header("AccessToken") accessToken: String,
         @Header("CalendarId") roomCalendarId: String
-    ): Deferred<String>
+    ): Deferred<Unit>
 }

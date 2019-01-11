@@ -23,6 +23,6 @@ object RetrofitInstaRoomApi : InstaRoomApi {
     override fun getRooms(accessToken: String): Deferred<RoomsResponse> =
         service.getRooms(accessToken)
 
-    override fun bookRoom(accessToken: String, roomCalendarId: String): Deferred<String> =
+    override fun bookRoom(accessToken: String, roomCalendarId: String): Deferred<Unit> =
         service.bookRoom(accessToken, roomCalendarId)
 }

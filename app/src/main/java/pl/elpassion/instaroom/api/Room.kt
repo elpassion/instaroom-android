@@ -11,7 +11,7 @@ data class Room(
     val isOwnBooked: Boolean = false
 ) {
     val isBooked: Boolean
-        get() = events.firstOrNull()?.run { startTime.isAfter(ZonedDateTime.now()) } ?: false
+        get() = events.firstOrNull()?.run { startTime.isBefore(ZonedDateTime.now()) } ?: false
 }
 
 data class Event(
