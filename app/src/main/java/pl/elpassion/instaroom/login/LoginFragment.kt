@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
 
         val googleSignInClient = GoogleSignIn.getClient(activity!!, googleSignInOptions)
 
-        signInButton.setOnClickListener {
+        authWithGoogleButton.setOnClickListener {
             startActivityForResult(
                 googleSignInClient.signInIntent,
                 SIGN_IN_REQUEST_CODE

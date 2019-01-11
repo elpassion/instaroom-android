@@ -85,6 +85,16 @@
         <item name="android:fontFamily">@font/avenir_black</item>
     </style>
 
+    <style name="GoogleTheme">
+        <item name="android:colorButtonNormal">#ffffff</item>
+    </style>
+
+    <style name="Button.Google">
+        <item name="android:background">@drawable/background_google_button</item>
+        <item name="android:textColor">@color/textBlack</item>
+        <item name="android:theme">@style/GoogleTheme</item>
+    </style>
+
     <style name="Button.White">
         <item name="android:textColor">@color/textBlack</item>
         <item name="android:background">@drawable/background_white_button</item>

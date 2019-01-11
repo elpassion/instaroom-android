@@ -30,4 +30,5 @@
     <string name="free_rooms">Free rooms</string>
     <string name="your_bookings">Your bookings</string>
     <string name="occupied_rooms">Occupied rooms</string>
+    <string name="sign_in_with_google">Sign in with google</string>
 </resources>
