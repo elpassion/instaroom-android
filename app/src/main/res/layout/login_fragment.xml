@@ -25,28 +25,11 @@
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="0dp"
-        android:visibility="invisible"
         app:buttonSize="wide"
         app:colorScheme="dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appLogo" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/authWithGoogleButton"
-        style="@style/Button.Google"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_google"
-        android:drawablePadding="@dimen/small_padding"
-        android:paddingStart="36dp"
-        android:paddingEnd="36dp"
-        android:text="@string/sign_in_with_google"
-        app:layout_constraintBottom_toBottomOf="@id/signInButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/signInButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
