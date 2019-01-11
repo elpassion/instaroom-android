@@ -194,7 +194,7 @@
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/itemRoomBookButton"
         style="@style/ItemRoomBookedButton"
         android:text="@string/book_for_later"

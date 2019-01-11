@@ -149,10 +149,13 @@
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/itemRoomFreeBookButton"
         style="@style/ItemRoomFreeButton"
         android:text="@string/instant_book"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomStatusLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -79,13 +79,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTitle" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/itemRoomOwnBookedRoomBookButton"
         style="@style/ItemRoomBookedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xxlarge_padding"
-        android:text="@string/book_now"
+        android:text="@string/edit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
