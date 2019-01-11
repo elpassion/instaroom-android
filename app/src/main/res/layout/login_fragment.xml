@@ -20,14 +20,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
-    <Button
+    <com.google.android.gms.common.SignInButton
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/common_google_signin_btn_text_dark"
-        android:text="@string/sign_in"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
+        app:buttonSize="wide"
+        app:colorScheme="dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
