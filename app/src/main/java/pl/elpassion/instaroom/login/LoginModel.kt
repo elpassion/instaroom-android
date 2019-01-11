@@ -5,10 +5,12 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
+import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.util.set
 
 fun CoroutineScope.launchLoginModel(
     actionS: Observable<LoginAction>,
+    callDashboardAction: (DashboardAction) -> Unit,
     state: MutableLiveData<LoginState>,
     repository: LoginRepository
 ) = launch {
@@ -17,6 +19,7 @@ fun CoroutineScope.launchLoginModel(
         when (action) {
             is LoginAction.SaveGoogleToken -> {
                 repository.googleToken = action.googleToken
+                callDashboardAction(DashboardAction.RefreshRooms)
                 state.set(LoginState(action.googleToken))
             }
         }

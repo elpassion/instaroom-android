@@ -40,6 +40,7 @@ class AppViewModel(
     init {
         launchLoginModel(
             loginActionS,
+            dashboardActionS::accept,
             _loginState,
             loginRepository
         )
