@@ -14,17 +14,18 @@ fun CoroutineScope.launchLoginModel(
     state: MutableLiveData<LoginState>,
     repository: LoginRepository
 ) = launch {
-    state.set(LoginState(repository.googleToken))
+    state.set(LoginState(isSignedIn = repository.googleToken != null))
+
     actionS.consumeEach { action ->
         when (action) {
             is LoginAction.SaveGoogleToken -> {
                 repository.googleToken = action.googleToken
                 callDashboardAction(DashboardAction.RefreshRooms)
-                state.set(LoginState(action.googleToken))
+                state.set(LoginState(isSignedIn = true))
             }
             is LoginAction.SignOut -> {
                 repository.googleToken = null
-                state.set(LoginState(null))
+                state.set(LoginState(isSignedIn = false))
             }
         }
     }
@@ -36,4 +37,4 @@ sealed class LoginAction {
     data class SaveGoogleToken(val googleToken: String) : LoginAction()
 }
 
-data class LoginState(val googleToken: String?)
+data class LoginState(val isSignedIn: Boolean)

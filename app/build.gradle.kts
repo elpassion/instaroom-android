@@ -62,6 +62,7 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxkotlin:2.3.0")
     implementation("com.jakewharton.rxrelay2:rxrelay:2.1.0")
     implementation("com.jakewharton.threetenabp:threetenabp:1.1.1")
+    implementation("com.shopify:livedata-ktx:2.0.1")
 
     testImplementation("junit:junit:4.12")
 

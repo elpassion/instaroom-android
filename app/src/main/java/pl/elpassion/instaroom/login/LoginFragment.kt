@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -46,12 +45,6 @@ class LoginFragment : Fragment() {
                 SIGN_IN_REQUEST_CODE
             )
         }
-
-        model.loginState.observe(this, Observer { state ->
-            if (state?.googleToken != null) {
-                findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
-            }
-        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -72,6 +65,7 @@ class LoginFragment : Fragment() {
                     "oauth2:https://www.googleapis.com/auth/calendar.events"
                 )
                 model.loginActionS.accept(LoginAction.SaveGoogleToken(token))
+                findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
             }
         } catch (e: Exception) {
             e.printStackTrace()

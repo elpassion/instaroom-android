@@ -13,7 +13,7 @@ object RetrofitInstaRoomApi : InstaRoomApi {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("http://pacific-lowlands-76710.herokuapp.com")
+        .baseUrl("https://pacific-lowlands-76710.herokuapp.com")
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
