@@ -175,7 +175,7 @@
     <style name="ItemRoomSeparator">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/room_separator</item>
-        <item name="android:background">@color/textGrey</item>
+        <item name="android:background">@color/divider</item>
     </style>
 
     <style name="ItemRoomStatusLabel">

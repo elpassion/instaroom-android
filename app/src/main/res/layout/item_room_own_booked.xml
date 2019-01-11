@@ -74,7 +74,7 @@
     <ImageView
         android:id="@+id/itemRoomOwnBookedRoomEventIcon"
         style="@style/ItemRoomCalendarIcon"
-        android:src="@drawable/ic_android"
+        android:src="@drawable/ic_calendar"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeBegin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTitle" />
@@ -83,7 +83,7 @@
         android:id="@+id/itemRoomOwnBookedRoomBookButton"
         style="@style/ItemRoomBookedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="46dp"
         android:layout_marginTop="@dimen/xxlarge_padding"
         android:text="@string/edit"
         app:layout_constraintBottom_toBottomOf="parent"

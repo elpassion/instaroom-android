@@ -32,4 +32,5 @@
     <color name="devRoomStroke">#FFFFD2D6</color>
     <color name="occupied">#FFE4E4E4</color>
     <color name="occupiedText">#FF919191</color>
+    <color name="divider">#FFE8ECED</color>
 </resources>

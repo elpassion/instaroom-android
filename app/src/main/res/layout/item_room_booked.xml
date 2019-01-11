@@ -73,11 +73,11 @@
 
     <ImageView
         android:id="@+id/itemRoomBookedIcon"
-        android:src="@drawable/ic_android"
+        style="@style/ItemRoomCalendarIcon"
+        android:src="@drawable/ic_calendar"
         app:layout_constraintBottom_toBottomOf="@id/itemRoomBookedTimeBegin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/itemRoomBookedTitle"
-        style="@style/ItemRoomCalendarIcon" />
+        app:layout_constraintTop_toTopOf="@id/itemRoomBookedTitle" />
 
     <View
         android:id="@+id/itemRoomNextBookingHelperTop"

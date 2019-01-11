@@ -18,7 +18,7 @@
     <dimen name="item_room_free_icon_size">28dp</dimen>
     <dimen name="item_room_free_icon_padding">4dp</dimen>
     <dimen name="item_room_calendar_icon_padding">10dp</dimen>
-    <dimen name="item_room_calendar_icon_elevation">2dp</dimen>
+    <dimen name="item_room_calendar_icon_elevation">1dp</dimen>
     <dimen name="item_room_calendar_icon_size">48dp</dimen>
     <dimen name="room_separator">0.4dp</dimen>
 </resources>

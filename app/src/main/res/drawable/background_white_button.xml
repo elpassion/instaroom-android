@@ -19,7 +19,7 @@
         <shape>
             <stroke
                 android:width="0.4dp"
-                android:color="@color/textGrey" />
+                android:color="@color/divider" />
         </shape>
     </item>
 
