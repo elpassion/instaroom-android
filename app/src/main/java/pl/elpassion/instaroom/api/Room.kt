@@ -20,5 +20,6 @@ data class Room(
 data class Event(
     val name: String?,
     val startTime: ZonedDateTime,
-    val endTime: ZonedDateTime
+    val endTime: ZonedDateTime,
+    val htmlLink: String?
 )

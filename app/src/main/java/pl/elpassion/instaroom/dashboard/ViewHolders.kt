@@ -27,7 +27,8 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :
     }
 }
 
-class RoomBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(itemView) {
+class RoomBookedViewHolder(itemView: View, private val onOpenCalendar: (String) -> Unit) :
+    ViewHolderBinder<DashboardItem>(itemView) {
 
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
@@ -35,6 +36,7 @@ class RoomBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(ite
         itemRoomBookedName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomBookedName.text = item.room.name
         val event = item.room.events.first()
+        itemRoomBookedIcon.setOnClickListener { event.htmlLink?.let { link -> onOpenCalendar(link) } }
         itemRoomBookedTitle.text = event.name
         itemRoomBookedTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
         itemRoomBookedTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
@@ -47,7 +49,8 @@ class RoomBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(ite
     }
 }
 
-class RoomOwnBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(itemView) {
+class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (String) -> Unit) :
+    ViewHolderBinder<DashboardItem>(itemView) {
 
     override fun bind(item: DashboardItem) = with(itemView) {
         item as RoomItem
@@ -55,6 +58,7 @@ class RoomOwnBookedViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(
         itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
         val event = item.room.events.first()
+        itemRoomOwnBookedRoomEventIcon.setOnClickListener { event.htmlLink?.let { link -> onOpenCalendar(link) } }
         itemRoomOwnBookedRoomEventTitle.text = event.name
         itemRoomOwnBookedRoomEventTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
         itemRoomOwnBookedRoomEventTimeEnd.text = event.endTime.format(DateTimeFormatters.time)

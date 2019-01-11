@@ -1,6 +1,8 @@
 package pl.elpassion.instaroom.dashboard
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,9 +55,15 @@ class DashboardFragment : Fragment() {
                 is RoomItem -> {
                     val room = item.room
                     when {
-                        room.isOwnBooked -> R.layout.item_room_own_booked to ::RoomOwnBookedViewHolder
-                        room.isBooked -> R.layout.item_room_booked to ::RoomBookedViewHolder
-                        else -> R.layout.item_room_free to { view: View -> RoomFreeViewHolder(view, ::onRoomBook) }
+                        room.isOwnBooked -> R.layout.item_room_own_booked to { view: View ->
+                            RoomOwnBookedViewHolder(view, ::onCalendarOpen)
+                        }
+                        room.isBooked -> R.layout.item_room_booked to { view: View ->
+                            RoomBookedViewHolder(view, ::onCalendarOpen)
+                        }
+                        else -> R.layout.item_room_free to { view: View ->
+                            RoomFreeViewHolder(view, ::onRoomBook)
+                        }
                     }
                 }
             }
@@ -74,8 +82,19 @@ class DashboardFragment : Fragment() {
         roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
     }
 
+    private fun onCalendarOpen(link: String) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(link)
+        }
+        startActivityForResult(intent, REQ_OPEN_CALENDAR)
+    }
+
     private fun onRoomBook(room: Room) {
         model.dashboardActionS.accept(DashboardAction.BookRoom(room))
+    }
+
+    companion object {
+        private const val REQ_OPEN_CALENDAR = 1
     }
 }
 
