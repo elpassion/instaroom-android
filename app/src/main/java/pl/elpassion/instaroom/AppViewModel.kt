@@ -8,7 +8,6 @@ import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import pl.elpassion.instaroom.api.InstaRoomApi
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.launchDashboardModel
@@ -19,8 +18,7 @@ import pl.elpassion.instaroom.login.launchLoginModel
 import kotlin.coroutines.CoroutineContext
 
 class AppViewModel(
-    loginRepository: LoginRepository,
-    instaRoomApi: InstaRoomApi
+    loginRepository: LoginRepository
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -48,8 +46,7 @@ class AppViewModel(
             dashboardActionS,
             loginActionS::accept,
             _dashboardState,
-            loginRepository,
-            instaRoomApi
+            loginRepository
         )
     }
 

@@ -8,7 +8,6 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
-import pl.elpassion.instaroom.api.InstaRoomApi
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.kalendar.bookSomeRoom
 import pl.elpassion.instaroom.kalendar.getSomeRooms
@@ -22,13 +21,13 @@ fun CoroutineScope.launchDashboardModel(
     actionS: Observable<DashboardAction>,
     callLoginAction: (LoginAction) -> Unit,
     state: MutableLiveData<DashboardState>,
-    loginRepository: LoginRepository,
-    instaRoomApi: InstaRoomApi
+    loginRepository: LoginRepository
 ) = launch {
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
         loginRepository.googleToken?.let { accessToken ->
+            println("google token = ${loginRepository.googleToken}")
             getSomeRooms(accessToken)
         }.orEmpty()
     }
