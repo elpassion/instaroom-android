@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom.api
+package pl.elpassion.instaroom.util
 
 import org.threeten.bp.ZonedDateTime
 import pl.elpassion.instaroom.kalendar.Event
