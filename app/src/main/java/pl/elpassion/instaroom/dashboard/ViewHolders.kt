@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.item_room_booked.view.*
 import kotlinx.android.synthetic.main.item_room_free.view.*
 import kotlinx.android.synthetic.main.item_room_own_booked.view.*
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.api.Room
+import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.DateTimeFormatters
 
 class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :

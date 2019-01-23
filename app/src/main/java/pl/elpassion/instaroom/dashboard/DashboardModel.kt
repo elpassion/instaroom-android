@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.api.InstaRoomApi
-import pl.elpassion.instaroom.api.Room
+import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.kalendar.bookSomeRoom
+import pl.elpassion.instaroom.kalendar.getSomeRooms
 import pl.elpassion.instaroom.login.LoginAction
 import pl.elpassion.instaroom.login.LoginRepository
 import pl.elpassion.instaroom.util.replaceWith
@@ -27,8 +29,8 @@ fun CoroutineScope.launchDashboardModel(
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
         loginRepository.googleToken?.let { accessToken ->
-            instaRoomApi.getRooms(accessToken).await()
-        }?.rooms.orEmpty()
+            getSomeRooms(accessToken)
+        }.orEmpty()
     }
 
     suspend fun loadRooms() =
@@ -44,7 +46,7 @@ fun CoroutineScope.launchDashboardModel(
         try {
             state.set(DashboardState(rooms, true))
             loginRepository.googleToken?.let { accessToken ->
-                instaRoomApi.bookRoom(accessToken, room.calendarId).await()
+                bookSomeRoom(accessToken, room.calendarId)
             }
             loadRooms()
         } catch (e: HttpException) {

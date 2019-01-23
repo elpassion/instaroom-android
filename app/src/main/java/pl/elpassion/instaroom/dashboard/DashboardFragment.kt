@@ -17,7 +17,9 @@ import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.api.Room
+import pl.elpassion.instaroom.api.isBooked
+import pl.elpassion.instaroom.api.isOwnBooked
+import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.replaceWith
 
 class DashboardFragment : Fragment() {

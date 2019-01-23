@@ -64,6 +64,8 @@ dependencies {
     implementation("com.jakewharton.threetenabp:threetenabp:1.1.1")
     implementation("com.shopify:livedata-ktx:2.0.1")
 
+    implementation("com.github.elpassion:instaroom:1a67784827")
+
     testImplementation("junit:junit:4.12")
 
     androidTestImplementation("androidx.test:runner:1.1.1")

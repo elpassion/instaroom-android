@@ -1,25 +1,27 @@
 package pl.elpassion.instaroom.api
 
 import org.threeten.bp.ZonedDateTime
+import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.kalendar.Room
 
-data class RoomsResponse(val rooms: List<Room>)
 
-data class Room(
-    val name: String? = "",
-    val calendarId: String = "",
-    val events: List<Event> = emptyList(),
-    val titleColor: String,
-    val borderColor: String,
-    val backgroundColor: String,
-    val isOwnBooked: Boolean = false
-) {
-    val isBooked: Boolean
-        get() = events.firstOrNull()?.run { startTime.isBefore(ZonedDateTime.now()) } ?: false
-}
+//) {
+    val Room.isBooked: Boolean
+        get() = events.firstOrNull()?.run { startDateTime.isBefore(ZonedDateTime.now()) } ?: false
 
-data class Event(
-    val name: String?,
-    val startTime: ZonedDateTime,
-    val endTime: ZonedDateTime,
-    val htmlLink: String?
-)
+    val Event.startDateTime: ZonedDateTime
+        get() = startTime.let(ZonedDateTime::parse)
+
+    val Event.endDateTime: ZonedDateTime
+        get() = endTime.let(ZonedDateTime::parse)
+
+    val Room.isOwnBooked: Boolean
+        get() = false
+//}
+
+//data class Event(
+//    val name: String?,
+//    val startTime: ZonedDateTime,
+//    val endTime: ZonedDateTime,
+//    val htmlLink: String?
+//)
