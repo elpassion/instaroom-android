@@ -32,7 +32,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestServerAuthCode(getString(R.string.server_client_id), true)
+            .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
             .requestScopes(Scope("profile"), Scope("https://www.googleapis.com/auth/calendar.events"))
             .build()
@@ -51,7 +51,6 @@ class LoginFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SIGN_IN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            println("data = ${data?.extras}")
             handleSignInResult(task)
         }
     }
