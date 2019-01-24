@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/booking_fragment_background">
 
     <ImageView
         android:id="@+id/appointmentBookingIcon"
@@ -49,10 +50,11 @@
             android:text="@string/precise" />
     </com.google.android.material.tabs.TabLayout>
 
-    <FrameLayout
+    <include
         android:id="@+id/appointmentBookingContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        layout="@layout/booking_details_fragment"
         app:layout_constraintTop_toBottomOf="@id/appointmentBookingTabs" />
 
     <Button
