@@ -8,6 +8,9 @@ import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import pl.elpassion.instaroom.booking.BookingAction
+import pl.elpassion.instaroom.booking.BookingState
+import pl.elpassion.instaroom.booking.launchBookingModel
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.launchDashboardModel
@@ -26,12 +29,15 @@ class AppViewModel(
 
     val loginState: LiveData<LoginState> get() = _loginState
     val dashboardState: LiveData<DashboardState> get() = _dashboardState
+    val bookingState: LiveData<BookingState> get() = _bookingState
 
     val loginActionS: PublishRelay<LoginAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
+    val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
 
     private val _loginState = MutableLiveData<LoginState>()
     private val _dashboardState = MutableLiveData<DashboardState>()
+    private val _bookingState = MutableLiveData<BookingState>()
 
     private val job = Job()
 
@@ -46,6 +52,12 @@ class AppViewModel(
             dashboardActionS,
             loginActionS::accept,
             _dashboardState,
+            loginRepository
+        )
+        launchBookingModel(
+            bookingActionS,
+            dashboardActionS::accept,
+            _bookingState,
             loginRepository
         )
     }

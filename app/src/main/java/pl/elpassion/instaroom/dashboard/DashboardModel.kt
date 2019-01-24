@@ -34,29 +34,30 @@ fun CoroutineScope.launchDashboardModel(
 
     suspend fun loadRooms() =
         try {
-            state.set(DashboardState(rooms, true))
+            state.set(DashboardState.RoomListState(rooms, true))
             rooms.replaceWith(getRooms())
-            state.set(DashboardState(rooms, false))
+            state.set(DashboardState.RoomListState(rooms, false))
         } catch (e: HttpException) {
-            state.set(DashboardState(rooms, false, e.message()))
+            state.set(DashboardState.RoomListState(rooms, false, e.message()))
         }
 
-    suspend fun bookRoom(room: Room) = withContext(Dispatchers.IO) {
-        try {
-            state.set(DashboardState(rooms, true))
-            loginRepository.googleToken?.let { accessToken ->
-                bookSomeRoom(accessToken, room.calendarId)
-            }
-            loadRooms()
-        } catch (e: HttpException) {
-            state.set(DashboardState(rooms, false, e.message()))
-        }
+    fun showBookingDetails() {
+        state.set(DashboardState.BookingDetailsState)
+//        try {
+//            state.set(DashboardState.RoomListState(rooms, true))
+//            loginRepository.googleToken?.let { accessToken ->
+//                bookSomeRoom(accessToken, room.calendarId)
+//            }
+//            loadRooms()
+//        } catch (e: HttpException) {
+//            state.set(DashboardState.RoomListState(rooms, false, e.message()))
+//        }
     }
 
     fun selectSignOut() {
         coroutineContext.cancelChildren()
         rooms.clear()
-        state.set(DashboardState(rooms, false))
+        state.set(DashboardState.RoomListState(rooms, false))
         callLoginAction(LoginAction.SignOut)
     }
 
@@ -65,7 +66,7 @@ fun CoroutineScope.launchDashboardModel(
     actionS.consumeEach { action ->
         when (action) {
             is DashboardAction.RefreshRooms -> loadRooms()
-            is DashboardAction.BookRoom -> bookRoom(action.room)
+            is DashboardAction.ShowBookingDetails -> showBookingDetails()
             is DashboardAction.SelectSignOut -> selectSignOut()
         }
     }
@@ -76,11 +77,16 @@ sealed class DashboardAction {
     object RefreshRooms : DashboardAction()
     object SelectSignOut : DashboardAction()
 
-    data class BookRoom(val room: Room) : DashboardAction()
+    object ShowBookingDetails : DashboardAction()
 }
 
-data class DashboardState(
+sealed class DashboardState {
+
+    data class RoomListState(
     val rooms: List<Room>,
     val isRefreshing: Boolean,
     val errorMessage: String? = null
-)
+    ) : DashboardState()
+
+    object BookingDetailsState : DashboardState()
+}

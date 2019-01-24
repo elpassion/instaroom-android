@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
@@ -26,12 +27,17 @@ class DashboardFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bottomSheetBehavior =
+                BottomSheetBehavior.from(view.findViewById<View>(R.id.bookingDetailsDialogFragment))
+
         model.dashboardState.observe(this, Observer(::updateView))
         setupMenu()
         setupList()
@@ -78,10 +84,23 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateView(state: DashboardState?) {
-        items.replaceWith(createItems(state?.rooms.orEmpty(), requireContext()))
+        state?:return
+
+        when (state) {
+            is DashboardState.RoomListState -> updateRoomList(state)
+            is DashboardState.BookingDetailsState -> showBookingDetails()
+        }
+    }
+
+    private fun showBookingDetails() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun updateRoomList(state: DashboardState.RoomListState) {
+        items.replaceWith(createItems(state.rooms, requireContext()))
         roomsRecyclerView.adapter?.notifyDataSetChanged()
-        state?.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-        roomsSwipeRefresh.isRefreshing = state?.isRefreshing ?: false
+        state.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+        roomsSwipeRefresh.isRefreshing = state.isRefreshing
     }
 
     private fun onCalendarOpen(link: String) {
@@ -92,7 +111,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun onRoomBook(room: Room) {
-        model.dashboardActionS.accept(DashboardAction.BookRoom(room))
+        model.dashboardActionS.accept(DashboardAction.ShowBookingDetails)
     }
 
     companion object {
