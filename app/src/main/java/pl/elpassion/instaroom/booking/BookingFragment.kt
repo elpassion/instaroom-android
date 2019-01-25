@@ -1,5 +1,6 @@
 package pl.elpassion.instaroom.booking
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 
-class BookingFragment : BottomSheetDialogFragment() {
+class BookingFragment : RoundedBottomSheetDialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
@@ -28,7 +29,19 @@ class BookingFragment : BottomSheetDialogFragment() {
         model.bookingState.observe(this, Observer(::updateView))
     }
 
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+        println("dismiss")
+    }
+
     private fun updateView(bookingState: BookingState?) {
+    }
+
+
+    override fun onCancel(dialog: DialogInterface?) {
+        super.onCancel(dialog)
+        println("cancel")
+
     }
 
 }

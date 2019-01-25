@@ -46,15 +46,15 @@ class DashboardFragment : Fragment() {
         bottomSheetBehavior =
                 BottomSheetBehavior.from(view.findViewById<View>(R.id.bookingDetailsDialogFragment))
 
-//        bottomSheetBehavior.setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
-//            override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                println("bottom sheet new state = $newState")
-//                if (newState == BottomSheetBehavior.STATE_HIDDEN) onBookingCanceled()
-//            }
-//            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//
-//            }
-//        })
+        bottomSheetBehavior.setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                println("bottom sheet new state = $newState")
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) onBookingCanceled()
+            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
     }
 
     private fun setupMenu() {

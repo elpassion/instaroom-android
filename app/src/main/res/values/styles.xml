@@ -277,5 +277,19 @@
         <item name="android:background">@drawable/background_calendar_icon</item>
         <item name="android:elevation">@dimen/item_room_calendar_icon_elevation</item>
         <item name="android:padding">@dimen/item_room_calendar_icon_padding</item>
+
+
     </style>
+
+    <!-- set the rounded drawable as background to your bottom sheet -->
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 </resources>
