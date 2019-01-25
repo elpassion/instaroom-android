@@ -1,14 +1,11 @@
 package pl.elpassion.instaroom.booking
 
-import androidx.arch.core.executor.ArchTaskExecutor
-import androidx.arch.core.executor.TaskExecutor
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.jakewharton.rxrelay2.PublishRelay
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import io.mockk.mockk
-import io.mockk.verify
+import io.reactivex.subjects.AsyncSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +27,9 @@ class BookingModelTest : CoroutineScope {
     private val state = MutableLiveData<BookingState>()
     private val stateObserver = mock<Observer<BookingState>>()
 
+    private fun emptyRoom() = Room("", "", emptyList(), "", "", "", "")
+    private fun customRoom() = Room("custom", "123", emptyList(), "", "", "", "")
+
     @Before
     fun setup() {
         executeTasksInstantly()
@@ -45,11 +45,23 @@ class BookingModelTest : CoroutineScope {
 
     @Test
     fun `show room on book clicked`() {
-        val selectedRoom = createRoom()
-        actionS.accept(BookingAction.BookClicked(selectedRoom))
-        verify(stateObserver).onChanged(BookingState(selectedRoom, true))
+        val selectedRoom = customRoom()
+        actionS.accept((BookingAction.BookingInitialized(selectedRoom)))
+        verify(stateObserver).onChanged(BookingState(selectedRoom, BookingType.QUICK))
     }
+
+    @Test
+    fun `quick booking clicked`() {
+        actionS.accept(BookingAction.QuickBookingSelected)
+        verify(stateObserver).onChanged(BookingState(emptyRoom(), BookingType.QUICK))
+    }
+
+    @Test
+    fun `precise booking clicked`() {
+        actionS.accept(BookingAction.PreciseBookingSelected)
+        verify(stateObserver).onChanged(BookingState(emptyRoom(), BookingType.PRECISE))
+    }
+
 
 }
 
-private fun createRoom() = Room("", "", emptyList(), "", "", "", "")

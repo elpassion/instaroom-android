@@ -71,5 +71,7 @@ dependencies {
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
 
     androidTestImplementation("androidx.test:runner:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1") {
+        exclude(group = "com.google.code.findbugs")
+    }
 }

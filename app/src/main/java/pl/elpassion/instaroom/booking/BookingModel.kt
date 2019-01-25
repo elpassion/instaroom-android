@@ -18,29 +18,44 @@ fun CoroutineScope.launchBookingModel(
     tokenRepository: TokenRepository
     ) = launch {
     val event: Event
-    var room: Room
+    var room: Room = emptyRoom()
+    var bookingType: BookingType = BookingType.QUICK
 
     fun showBookingDetails(selectedRoom: Room) {
         room = selectedRoom
-        state.set(BookingState(room, true))
+        state.set(BookingState(room, bookingType))
     }
+
+    fun updateBookingType(selectedBookingType: BookingType) {
+        bookingType = selectedBookingType
+        state.set(BookingState(room, bookingType))
+    }
+
 
     actionS.consumeEach {action ->
         when (action) {
-            is BookingAction.BookClicked -> showBookingDetails(action.selectedRoom)
+            is BookingAction.BookingInitialized -> showBookingDetails(action.selectedRoom)
+            BookingAction.QuickBookingSelected -> updateBookingType(BookingType.QUICK)
+            BookingAction.PreciseBookingSelected -> updateBookingType(BookingType.PRECISE)
         }
     }
 }
 
-
+fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
 sealed class BookingAction {
-    data class BookClicked (val selectedRoom: Room) : BookingAction()
+    data class BookingInitialized (val selectedRoom: Room) : BookingAction()
+    object QuickBookingSelected : BookingAction()
+    object PreciseBookingSelected : BookingAction()
 }
 
 data class BookingState (
     val room: Room,
-    val isVisible: Boolean
+    val bookingType: BookingType
 )
+
+enum class BookingType {
+    QUICK, PRECISE
+}
 
 
