@@ -11,7 +11,7 @@ import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.DateTimeFormatters
 
-class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :
+class RoomFreeViewHolder(itemView: View, private val onBook: () -> Unit) :
     ViewHolderBinder<DashboardItem>(itemView) {
 
     override fun bind(item: DashboardItem) = with(itemView) {
@@ -19,7 +19,7 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (Room) -> Unit) :
         itemRoomFreeName.setTextColor(Color.parseColor(item.room.titleColor))
         itemRoomFreeName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomFreeName.text = item.room.name
-        itemRoomFreeBookButton.setOnClickListener { onBook(item.room) }
+        itemRoomFreeBookButton.setOnClickListener { onBook() }
         val event = item.room.events.first()
         itemRoomUpcomingBookingTitle.text = event.name
         itemRoomUpcomingBookingTimeBegin.text = event.startTime.format(DateTimeFormatters.time)

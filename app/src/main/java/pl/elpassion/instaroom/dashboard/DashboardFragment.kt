@@ -35,12 +35,26 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        model.dashboardState.observe(this, Observer(::updateView))
+        setupBottomSheetBehavior(view)
+        setupMenu()
+        setupList()
+    }
+
+    private fun setupBottomSheetBehavior(view: View) {
         bottomSheetBehavior =
                 BottomSheetBehavior.from(view.findViewById<View>(R.id.bookingDetailsDialogFragment))
 
-        model.dashboardState.observe(this, Observer(::updateView))
-        setupMenu()
-        setupList()
+//        bottomSheetBehavior.setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+//            override fun onStateChanged(bottomSheet: View, newState: Int) {
+//                println("bottom sheet new state = $newState")
+//                if (newState == BottomSheetBehavior.STATE_HIDDEN) onBookingCanceled()
+//            }
+//            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//
+//            }
+//        })
     }
 
     private fun setupMenu() {
@@ -70,7 +84,7 @@ class DashboardFragment : Fragment() {
                             RoomBookedViewHolder(view, ::onCalendarOpen)
                         }
                         else -> R.layout.item_room_free to { view: View ->
-                            RoomFreeViewHolder(view, ::onRoomBook)
+                            RoomFreeViewHolder(view, ::onBookingClicked)
                         }
                     }
                 }
@@ -110,9 +124,10 @@ class DashboardFragment : Fragment() {
         startActivityForResult(intent, REQ_OPEN_CALENDAR)
     }
 
-    private fun onRoomBook(room: Room) {
-        model.dashboardActionS.accept(DashboardAction.ShowBookingDetails)
-    }
+    private fun onBookingClicked() { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails) }
+
+    private fun onBookingCanceled() = model.dashboardActionS.accept(DashboardAction.HideBookingDetails)
+
 
     companion object {
         private const val REQ_OPEN_CALENDAR = 1

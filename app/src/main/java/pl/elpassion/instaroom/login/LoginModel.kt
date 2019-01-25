@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import pl.elpassion.instaroom.dashboard.DashboardAction
+import pl.elpassion.instaroom.util.TokenRequester
 import pl.elpassion.instaroom.util.set
 
 fun CoroutineScope.launchLoginModel(
@@ -18,13 +19,13 @@ fun CoroutineScope.launchLoginModel(
 
     actionS.consumeEach { action ->
         when (action) {
-            is LoginAction.SaveGoogleToken -> {
-                repository.googleToken = action.googleToken
-                callDashboardAction(DashboardAction.RefreshRooms)
+            is LoginAction.UserSignedIn -> {
                 state.set(LoginState(isSignedIn = true))
+                callDashboardAction(DashboardAction.RefreshRooms)
             }
             is LoginAction.SignOut -> {
                 repository.googleToken = null
+                repository.tokenExpirationTimestamp = null
                 state.set(LoginState(isSignedIn = false))
             }
         }
@@ -33,8 +34,7 @@ fun CoroutineScope.launchLoginModel(
 
 sealed class LoginAction {
     object SignOut : LoginAction()
-
-    data class SaveGoogleToken(val googleToken: String) : LoginAction()
+    object UserSignedIn : LoginAction()
 }
 
 data class LoginState(val isSignedIn: Boolean)

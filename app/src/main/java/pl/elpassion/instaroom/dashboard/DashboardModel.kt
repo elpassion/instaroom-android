@@ -26,10 +26,10 @@ fun CoroutineScope.launchDashboardModel(
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        loginRepository.googleToken?.let { accessToken ->
+        loginRepository.getToken().let { accessToken ->
             println("google token = ${loginRepository.googleToken}")
             getSomeRooms(accessToken)
-        }.orEmpty()
+        }
     }
 
     suspend fun loadRooms() =
@@ -54,6 +54,10 @@ fun CoroutineScope.launchDashboardModel(
 //        }
     }
 
+    fun hideBookingDetails() {
+        state.set(DashboardState.RoomListState(rooms, false))
+    }
+
     fun selectSignOut() {
         coroutineContext.cancelChildren()
         rooms.clear()
@@ -66,8 +70,9 @@ fun CoroutineScope.launchDashboardModel(
     actionS.consumeEach { action ->
         when (action) {
             is DashboardAction.RefreshRooms -> loadRooms()
-            is DashboardAction.ShowBookingDetails -> showBookingDetails()
             is DashboardAction.SelectSignOut -> selectSignOut()
+            is DashboardAction.ShowBookingDetails -> showBookingDetails()
+            is DashboardAction.HideBookingDetails -> hideBookingDetails()
         }
     }
 }
@@ -78,6 +83,7 @@ sealed class DashboardAction {
     object SelectSignOut : DashboardAction()
 
     object ShowBookingDetails : DashboardAction()
+    object HideBookingDetails : DashboardAction()
 }
 
 sealed class DashboardState {

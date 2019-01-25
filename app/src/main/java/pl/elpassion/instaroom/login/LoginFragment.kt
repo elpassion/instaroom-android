@@ -1,5 +1,6 @@
 package pl.elpassion.instaroom.login
 
+import android.accounts.Account
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
@@ -50,27 +52,15 @@ class LoginFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SIGN_IN_REQUEST_CODE) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
+            userSignedIn()
         }
     }
 
-    private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
-        try {
-            val result = task.getResult(ApiException::class.java)
-            GlobalScope.launch(Dispatchers.IO) {
-                val token = GoogleAuthUtil.getToken(
-                    activity!!,
-                    result!!.account,
-                    "oauth2:https://www.googleapis.com/auth/calendar.events"
-                )
-                model.loginActionS.accept(LoginAction.SaveGoogleToken(token))
-                findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    private fun userSignedIn() {
+        model.loginActionS.accept(LoginAction.UserSignedIn)
+        findNavController().navigate(R.id.action_loginFragment_to_dashboardFragment)
     }
+
 
     companion object {
         const val SIGN_IN_REQUEST_CODE = 627
