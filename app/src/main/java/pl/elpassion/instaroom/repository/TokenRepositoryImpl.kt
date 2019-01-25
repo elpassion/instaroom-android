@@ -24,19 +24,20 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     override var tokenData: TokenData? by repository.asProperty(TOKEN_DATA)
 
     override val isTokenValid: Boolean
-        get() = tokenData?.let { (googleToken, tokenExpirationDate) ->
-            googleToken != null && tokenExpirationDate?.isBefore(ZonedDateTime.now()) ?: false
+        get() = tokenData?.let { (_, tokenExpirationDate) ->
+            tokenExpirationDate.isBefore(ZonedDateTime.now())
         } ?: false
 
 
     override suspend fun getToken(): String? = withContext(Dispatchers.IO) {
         if (!isTokenValid) refreshToken()
-        tokenData!!.googleToken
+        tokenData?.googleToken
     }
 
     private fun refreshToken() {
-        val newToken = tokenRequester.refreshToken()
-        tokenData = TokenData(newToken, expirationDate())
+       tokenRequester.refreshToken()?.let { token: String ->
+            tokenData = TokenData(token, expirationDate())
+        }
     }
 
 

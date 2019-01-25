@@ -25,7 +25,9 @@ fun CoroutineScope.launchDashboardModel(
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        tokenRepository.getToken()?.let { getSomeRooms(it) }.orEmpty()
+        tokenRepository.getToken()?.let {
+            getSomeRooms(it)
+        }.orEmpty()
     }
 
     suspend fun loadRooms() =
