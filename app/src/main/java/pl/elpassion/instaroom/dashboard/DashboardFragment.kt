@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
+import pl.elpassion.instaroom.booking.BookingFragment
 import pl.elpassion.instaroom.util.isBooked
 import pl.elpassion.instaroom.util.isOwnBooked
 import pl.elpassion.instaroom.kalendar.Room
@@ -27,8 +28,7 @@ class DashboardFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
-
+    private val bookingFragment by lazy {BookingFragment()}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
@@ -37,25 +37,10 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         model.dashboardState.observe(this, Observer(::updateView))
-        setupBottomSheetBehavior(view)
         setupMenu()
         setupList()
     }
 
-    private fun setupBottomSheetBehavior(view: View) {
-        bottomSheetBehavior =
-                BottomSheetBehavior.from(view.findViewById<View>(R.id.bookingDetailsDialogFragment))
-
-        bottomSheetBehavior.setBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                println("bottom sheet new state = $newState")
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) onBookingCanceled()
-            }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-            }
-        })
-    }
 
     private fun setupMenu() {
         dashboardToolbar.inflateMenu(R.menu.dashboard_menu)
@@ -107,7 +92,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showBookingDetails() {
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        bookingFragment.show(fragmentManager, "booking fragment")
     }
 
     private fun updateRoomList(state: DashboardState.RoomListState) {

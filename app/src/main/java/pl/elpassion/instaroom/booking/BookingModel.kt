@@ -28,7 +28,6 @@ fun CoroutineScope.launchBookingModel(
     actionS.consumeEach {action ->
         when (action) {
             is BookingAction.BookClicked -> showBookingDetails(action.selectedRoom)
-//            is BookingAction.ShowBookingDetails -> selectedRoom
         }
     }
 }

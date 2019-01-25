@@ -30,18 +30,4 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <fragment
-        android:id="@+id/bookingDetailsDialogFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:name="pl.elpassion.instaroom.booking.BookingFragment"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
-        app:behavior_skipCollapsed="true"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        tools:layout="@layout/booking_details_fragment"
-        tools:visibility="gone"
-        />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

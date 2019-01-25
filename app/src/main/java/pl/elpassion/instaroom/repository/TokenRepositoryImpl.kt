@@ -13,7 +13,8 @@ import org.threeten.bp.ZonedDateTime
 class TokenRepositoryImpl(application: Application, private val tokenRequester: TokenRequester) :
     TokenRepository {
 
-    private val sharedPreferencesProvider = { PreferenceManager.getDefaultSharedPreferences(application) }
+    private val sharedPreferencesProvider =
+        { PreferenceManager.getDefaultSharedPreferences(application) }
     private val moshi = Moshi.Builder()
         .add(ZonedDateTimeJsonAdapter)
         .build()
@@ -23,16 +24,13 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     override var tokenData: TokenData? by repository.asProperty(TOKEN_DATA)
 
     override val isTokenValid: Boolean
-            get() {
-                if (tokenData == null) return false
-                return  tokenData!!.googleToken != null &&
-                        tokenData!!.tokenExpirationDate != null &&
-                        (tokenData!!.tokenExpirationDate!!.isBefore(ZonedDateTime.now()))
-            }
+        get() = tokenData?.let { (googleToken, tokenExpirationDate) ->
+            googleToken != null && tokenExpirationDate?.isBefore(ZonedDateTime.now()) ?: false
+        } ?: false
 
 
     override suspend fun getToken(): String? = withContext(Dispatchers.IO) {
-        if (!isTokenValid) { refreshToken() }
+        if (!isTokenValid) refreshToken()
         tokenData!!.googleToken
     }
 
@@ -40,7 +38,6 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
         val newToken = tokenRequester.refreshToken()
         tokenData = TokenData(newToken, expirationDate())
     }
-
 
 
     private fun expirationDate() = ZonedDateTime.now().plusMinutes(59)
