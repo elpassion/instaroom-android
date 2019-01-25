@@ -5,7 +5,6 @@ import androidx.lifecycle.Observer
 import com.jakewharton.rxrelay2.PublishRelay
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import io.reactivex.subjects.AsyncSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +29,10 @@ class BookingModelTest : CoroutineScope {
     private fun emptyRoom() = Room("", "", emptyList(), "", "", "", "")
     private fun customRoom() = Room("custom", "123", emptyList(), "", "", "", "")
 
+    private val defaultRoom = emptyRoom()
+    private val defaultType = BookingType.QUICK
+    private val defaultTitle = ""
+
     @Before
     fun setup() {
         executeTasksInstantly()
@@ -47,21 +50,27 @@ class BookingModelTest : CoroutineScope {
     fun `show room on book clicked`() {
         val selectedRoom = customRoom()
         actionS.accept((BookingAction.BookingInitialized(selectedRoom)))
-        verify(stateObserver).onChanged(BookingState(selectedRoom, BookingType.QUICK))
+        verify(stateObserver).onChanged(BookingState(selectedRoom, defaultType, defaultTitle))
     }
 
     @Test
     fun `quick booking clicked`() {
         actionS.accept(BookingAction.QuickBookingSelected)
-        verify(stateObserver).onChanged(BookingState(emptyRoom(), BookingType.QUICK))
+        verify(stateObserver).onChanged(BookingState(defaultRoom, BookingType.QUICK, defaultTitle))
     }
 
     @Test
     fun `precise booking clicked`() {
         actionS.accept(BookingAction.PreciseBookingSelected)
-        verify(stateObserver).onChanged(BookingState(emptyRoom(), BookingType.PRECISE))
+        verify(stateObserver).onChanged(BookingState(defaultRoom, BookingType.PRECISE, defaultTitle))
     }
 
+    @Test
+    fun `title text changed` () {
+        val newTitle = "title"
+        actionS.accept(BookingAction.TitleChanged(newTitle))
+        verify(stateObserver).onChanged(BookingState(defaultRoom, defaultType, newTitle))
+    }
 
 }
 

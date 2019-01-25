@@ -20,15 +20,21 @@ fun CoroutineScope.launchBookingModel(
     val event: Event
     var room: Room = emptyRoom()
     var bookingType: BookingType = BookingType.QUICK
+    var title: String = ""
 
     fun showBookingDetails(selectedRoom: Room) {
         room = selectedRoom
-        state.set(BookingState(room, bookingType))
+        state.set(BookingState(room, bookingType, title))
     }
 
     fun updateBookingType(selectedBookingType: BookingType) {
         bookingType = selectedBookingType
-        state.set(BookingState(room, bookingType))
+        state.set(BookingState(room, bookingType, title))
+    }
+
+    fun updateBookingTitle(enteredTitle: String) {
+        title = enteredTitle
+        state.set(BookingState(room, bookingType, title))
     }
 
 
@@ -37,6 +43,7 @@ fun CoroutineScope.launchBookingModel(
             is BookingAction.BookingInitialized -> showBookingDetails(action.selectedRoom)
             BookingAction.QuickBookingSelected -> updateBookingType(BookingType.QUICK)
             BookingAction.PreciseBookingSelected -> updateBookingType(BookingType.PRECISE)
+            is BookingAction.TitleChanged -> updateBookingTitle(action.title)
         }
     }
 }
@@ -47,11 +54,13 @@ sealed class BookingAction {
     data class BookingInitialized (val selectedRoom: Room) : BookingAction()
     object QuickBookingSelected : BookingAction()
     object PreciseBookingSelected : BookingAction()
+    data class TitleChanged (val title: String) : BookingAction()
 }
 
 data class BookingState (
     val room: Room,
-    val bookingType: BookingType
+    val bookingType: BookingType,
+    val title: String
 )
 
 enum class BookingType {
