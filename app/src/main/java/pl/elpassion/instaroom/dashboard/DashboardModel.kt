@@ -9,10 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.kalendar.bookSomeRoom
 import pl.elpassion.instaroom.kalendar.getSomeRooms
 import pl.elpassion.instaroom.login.LoginAction
-import pl.elpassion.instaroom.login.LoginRepository
+import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
@@ -21,15 +20,12 @@ fun CoroutineScope.launchDashboardModel(
     actionS: Observable<DashboardAction>,
     callLoginAction: (LoginAction) -> Unit,
     state: MutableLiveData<DashboardState>,
-    loginRepository: LoginRepository
+    tokenRepository: TokenRepository
 ) = launch {
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        loginRepository.getToken().let { accessToken ->
-            println("google token = ${loginRepository.googleToken}")
-            getSomeRooms(accessToken)
-        }
+        tokenRepository.getToken()?.let { getSomeRooms(it) }.orEmpty()
     }
 
     suspend fun loadRooms() =
@@ -45,7 +41,7 @@ fun CoroutineScope.launchDashboardModel(
         state.set(DashboardState.BookingDetailsState)
 //        try {
 //            state.set(DashboardState.RoomListState(rooms, true))
-//            loginRepository.googleToken?.let { accessToken ->
+//            tokenRepository.googleToken?.let { accessToken ->
 //                bookSomeRoom(accessToken, room.calendarId)
 //            }
 //            loadRooms()

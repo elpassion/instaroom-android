@@ -1,21 +1,23 @@
 package pl.elpassion.instaroom.login
 
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.auth.GoogleAuthUtil
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import pl.elpassion.instaroom.dashboard.DashboardAction
-import pl.elpassion.instaroom.util.TokenRequester
+import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.util.set
 
 fun CoroutineScope.launchLoginModel(
     actionS: Observable<LoginAction>,
     callDashboardAction: (DashboardAction) -> Unit,
     state: MutableLiveData<LoginState>,
-    repository: LoginRepository
+    repository: TokenRepository
 ) = launch {
-    state.set(LoginState(isSignedIn = repository.googleToken != null))
+    state.set(LoginState(isSignedIn = repository.tokenData != null))
 
     actionS.consumeEach { action ->
         when (action) {
@@ -24,8 +26,7 @@ fun CoroutineScope.launchLoginModel(
                 callDashboardAction(DashboardAction.RefreshRooms)
             }
             is LoginAction.SignOut -> {
-                repository.googleToken = null
-                repository.tokenExpirationTimestamp = null
+                repository.tokenData = null
                 state.set(LoginState(isSignedIn = false))
             }
         }

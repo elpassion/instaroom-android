@@ -15,13 +15,13 @@ import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.launchDashboardModel
 import pl.elpassion.instaroom.login.LoginAction
-import pl.elpassion.instaroom.login.LoginRepository
+import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.login.LoginState
 import pl.elpassion.instaroom.login.launchLoginModel
 import kotlin.coroutines.CoroutineContext
 
 class AppViewModel(
-    loginRepository: LoginRepository
+    tokenRepository: TokenRepository
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -46,19 +46,19 @@ class AppViewModel(
             loginActionS,
             dashboardActionS::accept,
             _loginState,
-            loginRepository
+            tokenRepository
         )
         launchDashboardModel(
             dashboardActionS,
             loginActionS::accept,
             _dashboardState,
-            loginRepository
+            tokenRepository
         )
         launchBookingModel(
             bookingActionS,
             dashboardActionS::accept,
             _bookingState,
-            loginRepository
+            tokenRepository
         )
     }
 

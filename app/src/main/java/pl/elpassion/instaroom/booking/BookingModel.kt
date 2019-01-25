@@ -8,14 +8,14 @@ import kotlinx.coroutines.rx2.consumeEach
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.login.LoginRepository
+import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.util.set
 
 fun CoroutineScope.launchBookingModel(
     actionS: Observable<BookingAction>,
     callDashboardAction: (DashboardAction) -> Unit,
     state: MutableLiveData<BookingState>,
-    loginRepository: LoginRepository
+    tokenRepository: TokenRepository
     ) = launch {
     val event: Event
     var room: Room

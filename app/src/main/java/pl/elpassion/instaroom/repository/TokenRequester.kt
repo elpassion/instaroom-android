@@ -1,11 +1,9 @@
-package pl.elpassion.instaroom.util
+package pl.elpassion.instaroom.repository
 
 import android.accounts.Account
 import android.content.Context
 import com.google.android.gms.auth.GoogleAuthUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import pl.elpassion.instaroom.login.LoginAction
 
 class TokenRequester(private val context: Context) {
 
