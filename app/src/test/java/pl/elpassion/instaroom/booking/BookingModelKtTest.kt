@@ -51,13 +51,13 @@ class BookingModelTest : CoroutineScope {
     @Test
     fun `quick booking clicked`() {
         actionS.accept(BookingAction.QuickBookingSelected)
-        verify(stateObserver).onChanged(BookingState(bookingType = BookingType.QUICK))
+        verify(stateObserver).onChanged(BookingState(bookingType = QuickBooking(BookingDuration.MIN_15)))
     }
 
     @Test
     fun `precise booking clicked`() {
         actionS.accept(BookingAction.PreciseBookingSelected)
-        verify(stateObserver).onChanged(BookingState(bookingType = BookingType.PRECISE))
+        verify(stateObserver).onChanged(BookingState(bookingType = PreciseBooking()))
     }
 
     @Test
@@ -66,6 +66,14 @@ class BookingModelTest : CoroutineScope {
         actionS.accept(BookingAction.TitleChanged(newTitle))
         verify(stateObserver).onChanged(BookingState(title = newTitle))
     }
+
+    @Test
+    fun `booking duration changed`() {
+        val newDuration = BookingDuration.HOUR_1
+        actionS.accept(BookingAction.BookingDurationSelected(newDuration))
+        verify(stateObserver).onChanged(BookingState(bookingType = QuickBooking(newDuration)))
+    }
+
 
 }
 
