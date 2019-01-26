@@ -26,12 +26,7 @@ class BookingModelTest : CoroutineScope {
     private val state = MutableLiveData<BookingState>()
     private val stateObserver = mock<Observer<BookingState>>()
 
-    private fun emptyRoom() = Room("", "", emptyList(), "", "", "", "")
     private fun customRoom() = Room("custom", "123", emptyList(), "", "", "", "")
-
-    private val defaultRoom = emptyRoom()
-    private val defaultType = BookingType.QUICK
-    private val defaultTitle = ""
 
     @Before
     fun setup() {
@@ -50,26 +45,26 @@ class BookingModelTest : CoroutineScope {
     fun `show room on book clicked`() {
         val selectedRoom = customRoom()
         actionS.accept((BookingAction.BookingInitialized(selectedRoom)))
-        verify(stateObserver).onChanged(BookingState(selectedRoom, defaultType, defaultTitle))
+        verify(stateObserver).onChanged(BookingState(room = selectedRoom))
     }
 
     @Test
     fun `quick booking clicked`() {
         actionS.accept(BookingAction.QuickBookingSelected)
-        verify(stateObserver).onChanged(BookingState(defaultRoom, BookingType.QUICK, defaultTitle))
+        verify(stateObserver).onChanged(BookingState(bookingType = BookingType.QUICK))
     }
 
     @Test
     fun `precise booking clicked`() {
         actionS.accept(BookingAction.PreciseBookingSelected)
-        verify(stateObserver).onChanged(BookingState(defaultRoom, BookingType.PRECISE, defaultTitle))
+        verify(stateObserver).onChanged(BookingState(bookingType = BookingType.PRECISE))
     }
 
     @Test
     fun `title text changed` () {
         val newTitle = "title"
         actionS.accept(BookingAction.TitleChanged(newTitle))
-        verify(stateObserver).onChanged(BookingState(defaultRoom, defaultType, newTitle))
+        verify(stateObserver).onChanged(BookingState(title = newTitle))
     }
 
 }

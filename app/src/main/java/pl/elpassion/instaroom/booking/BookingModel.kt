@@ -1,6 +1,7 @@
 package pl.elpassion.instaroom.booking
 
 import androidx.lifecycle.MutableLiveData
+import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -18,23 +19,21 @@ fun CoroutineScope.launchBookingModel(
     tokenRepository: TokenRepository
     ) = launch {
     val event: Event
-    var room: Room = emptyRoom()
-    var bookingType: BookingType = BookingType.QUICK
-    var title: String = ""
+    var currentState = BookingState()
 
     fun showBookingDetails(selectedRoom: Room) {
-        room = selectedRoom
-        state.set(BookingState(room, bookingType, title))
+        currentState = currentState.copy(room = selectedRoom)
+        state.set(currentState)
     }
 
     fun updateBookingType(selectedBookingType: BookingType) {
-        bookingType = selectedBookingType
-        state.set(BookingState(room, bookingType, title))
+        currentState = currentState.copy(bookingType = selectedBookingType)
+        state.set(currentState)
     }
 
     fun updateBookingTitle(enteredTitle: String) {
-        title = enteredTitle
-        state.set(BookingState(room, bookingType, title))
+        currentState = currentState.copy(title = enteredTitle)
+        state.set(currentState)
     }
 
 
@@ -48,7 +47,6 @@ fun CoroutineScope.launchBookingModel(
     }
 }
 
-fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
 sealed class BookingAction {
     data class BookingInitialized (val selectedRoom: Room) : BookingAction()
@@ -58,10 +56,12 @@ sealed class BookingAction {
 }
 
 data class BookingState (
-    val room: Room,
-    val bookingType: BookingType,
-    val title: String
+    val room: Room = emptyRoom(),
+    val bookingType: BookingType = BookingType.QUICK,
+    val title: String = ""
 )
+
+private fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
 enum class BookingType {
     QUICK, PRECISE
