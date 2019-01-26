@@ -25,7 +25,7 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
 
     override val isTokenValid: Boolean
         get() = tokenData?.let { (_, tokenExpirationDate) ->
-            tokenExpirationDate.isBefore(ZonedDateTime.now())
+            tokenExpirationDate.isAfter(ZonedDateTime.now())
         } ?: false
 
 
@@ -35,7 +35,7 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     }
 
     private fun refreshToken() {
-       tokenRequester.refreshToken()?.let { token: String ->
+       tokenRequester.refreshToken()?.let { token ->
             tokenData = TokenData(token, expirationDate())
         }
     }
