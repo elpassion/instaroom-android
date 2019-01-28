@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayout
+import com.jakewharton.rxbinding3.widget.textChanges
 import kotlinx.android.synthetic.main.booking_details_fragment.*
 import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -16,6 +17,7 @@ import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.util.selections
 import java.lang.IllegalArgumentException
+import java.util.concurrent.TimeUnit
 
 class BookingFragment : BottomSheetDialogFragment() {
 
@@ -35,8 +37,13 @@ class BookingFragment : BottomSheetDialogFragment() {
         setupTitleEditText()
     }
 
+    @SuppressLint("CheckResult")
     private fun setupTitleEditText() {
-
+        bookingTitle.textChanges()
+            .debounce(100, TimeUnit.MILLISECONDS)
+            .filter { text -> text.isNotBlank() }
+            .map { text -> BookingAction.TitleChanged(text.toString()) }
+            .subscribe(model.bookingActionS)
     }
 
     @SuppressLint("CheckResult")
@@ -47,16 +54,18 @@ class BookingFragment : BottomSheetDialogFragment() {
         appointmentBookingTabs.selections().map { tab ->
             println("tab = ${tab.position}")
             when (tab.position) {
-                    0 -> BookingAction.QuickBookingSelected
-                    1 -> BookingAction.PreciseBookingSelected
-                else -> { throw IllegalArgumentException()}
+                0 -> BookingAction.QuickBookingSelected
+                1 -> BookingAction.PreciseBookingSelected
+                else -> {
+                    throw IllegalArgumentException()
+                }
             }
         }.subscribe(model.bookingActionS)
     }
 
 
     private fun updateView(bookingState: BookingState?) {
-        bookingState?: return
+        bookingState ?: return
 
         appointmentBookingTitle.text = bookingState.room.name
         appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
@@ -79,8 +88,6 @@ class BookingFragment : BottomSheetDialogFragment() {
         bookingQuickGroup.visibility = View.GONE
         bookingPreciseGroup.visibility = View.VISIBLE
     }
-
-
 
 
 }
