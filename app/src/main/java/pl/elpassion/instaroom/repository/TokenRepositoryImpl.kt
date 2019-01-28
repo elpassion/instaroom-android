@@ -35,7 +35,7 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     }
 
     private fun refreshToken() {
-       tokenRequester.refreshToken()?.let { token ->
+        tokenRequester.refreshToken()?.let { token ->
             tokenData = TokenData(token, expirationDate())
         }
     }

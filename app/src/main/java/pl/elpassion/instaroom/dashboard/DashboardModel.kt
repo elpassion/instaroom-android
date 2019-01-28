@@ -24,11 +24,12 @@ fun CoroutineScope.launchDashboardModel(
 ) = launch {
     val rooms = mutableListOf<Room>()
 
-    suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        tokenRepository.getToken()?.let {
-            getSomeRooms(it)
-        }.orEmpty()
-    }
+    suspend fun getRooms(): List<Room> =
+        withContext(Dispatchers.IO) {
+            tokenRepository.getToken()?.let {
+                getSomeRooms(it)
+            }.orEmpty()
+        }
 
     suspend fun loadRooms() =
         try {
@@ -59,7 +60,12 @@ fun CoroutineScope.launchDashboardModel(
     fun selectSignOut() {
         coroutineContext.cancelChildren()
         rooms.clear()
-        state.set(DashboardState.RoomListState(rooms, false))
+        state.set(
+            DashboardState.RoomListState(
+                rooms,
+                false
+            )
+        )
         callLoginAction(LoginAction.SignOut)
     }
 
@@ -87,9 +93,9 @@ sealed class DashboardAction {
 sealed class DashboardState {
 
     data class RoomListState(
-    val rooms: List<Room>,
-    val isRefreshing: Boolean,
-    val errorMessage: String? = null
+        val rooms: List<Room>,
+        val isRefreshing: Boolean,
+        val errorMessage: String? = null
     ) : DashboardState()
 
     object BookingDetailsState : DashboardState()

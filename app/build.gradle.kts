@@ -1,3 +1,5 @@
+import groovy.lang.Closure
+
 val kotlinVersion: String by project
 
 plugins {
@@ -29,6 +31,14 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+    }
+
+    testOptions {
+        unitTests.apply {
+            all(closureOf<Test> {
+                useJUnitPlatform()
+            } as Closure<Test>)
         }
     }
 }
@@ -71,9 +81,13 @@ dependencies {
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
     testImplementation("org.threeten:threetenbp:1.3.7")
 
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.2.1")
+    testImplementation("org.slf4j:slf4j-nop:1.7.25")
 
     androidTestImplementation("androidx.test:runner:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1") {
         exclude(group = "com.google.code.findbugs")
     }
 }
+
+

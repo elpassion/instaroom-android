@@ -18,77 +18,129 @@ fun CoroutineScope.launchBookingModel(
     callDashboardAction: (DashboardAction) -> Unit,
     state: MutableLiveData<BookingState>,
     tokenRepository: TokenRepository
-    ) = launch {
+) = launch {
     val event: Event
-    var currentState = BookingState()
-    var quickBookingType = QuickBooking(BookingDuration.MIN_15)
-    val preciseBookingType = PreciseBooking()
+    var room = emptyRoom()
+    var bookingDuration = BookingDuration.MIN_15
+    var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+    var toTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusHours(1)
+    var isPrecise = false
+    var title: String = ""
 
-    fun showBookingDetails(selectedRoom: Room) {
-        currentState = currentState.copy(room = selectedRoom)
-        state.set(currentState)
+    fun updateState() {
+        state.set(
+            if (isPrecise)
+                BookingState.PreciseBooking(fromTime, toTime, room, title)
+            else
+                BookingState.QuickBooking(bookingDuration, room, title)
+        )
     }
 
-    fun updateBookingType(selectedBookingType: BookingType) {
-        currentState = currentState.copy(bookingType = selectedBookingType)
-        state.set(currentState)
+    fun showBookingDetails(selectedRoom: Room) {
+        room = selectedRoom
+        updateState()
     }
 
     fun updateBookingTitle(enteredTitle: String) {
-        currentState = currentState.copy(title = enteredTitle)
-        state.set(currentState)
+        title = enteredTitle
+        updateState()
     }
 
     fun updateBookingDuration(newBookingDuration: BookingDuration) {
-        quickBookingType = quickBookingType.copy(bookingDuration = newBookingDuration)
-        currentState = currentState.copy(bookingType = quickBookingType)
-        state.set(currentState)
+        bookingDuration = newBookingDuration
+        updateState()
     }
 
+    fun updateBookingTimeRange(startTime: ZonedDateTime, endTime: ZonedDateTime) {
+        fromTime = startTime
+        toTime = endTime
+        updateState()
+    }
 
+    fun cancelBooking() {
+        callDashboardAction(DashboardAction.HideBookingDetails)
+    }
 
-    actionS.consumeEach {action ->
+    fun bookRoom() {
+
+    }
+
+    fun disablePreciseBooking() {
+        if(!isPrecise) return
+
+        isPrecise = false
+        updateState()
+    }
+
+    fun enablePreciseBooking() {
+        if (isPrecise) return
+
+        isPrecise = true
+        updateState()
+    }
+
+    state.set(BookingState.QuickBooking(bookingDuration, room, title))
+
+    actionS.consumeEach { action ->
         when (action) {
-            is BookingAction.BookingInitialized -> showBookingDetails(action.selectedRoom)
-            is BookingAction.QuickBookingSelected -> updateBookingType(quickBookingType)
-            is BookingAction.PreciseBookingSelected -> updateBookingType(preciseBookingType)
+            is BookingAction.BookingRoomSelected -> showBookingDetails(action.selectedRoom)
+            is BookingAction.QuickBookingSelected -> disablePreciseBooking()
+            is BookingAction.PreciseBookingSelected -> enablePreciseBooking()
             is BookingAction.TitleChanged -> updateBookingTitle(action.title)
             is BookingAction.BookingDurationSelected -> updateBookingDuration(action.bookingDuration)
-
+            is BookingAction.BookingTimeRangeChanged -> updateBookingTimeRange(
+                action.startTime,
+                action.endTime
+            )
+            BookingAction.CancelClicked -> cancelBooking()
+            BookingAction.ConfirmClicked -> bookRoom()
         }
     }
 }
 
 
-
 sealed class BookingAction {
-    data class BookingInitialized (val selectedRoom: Room) : BookingAction()
+    data class BookingRoomSelected(val selectedRoom: Room) : BookingAction()
+
     object QuickBookingSelected : BookingAction()
     object PreciseBookingSelected : BookingAction()
-    data class TitleChanged (val title: String) : BookingAction()
+
+    data class TitleChanged(val title: String) : BookingAction()
     data class BookingDurationSelected(val bookingDuration: BookingDuration) : BookingAction()
+    data class BookingTimeRangeChanged(val startTime: ZonedDateTime, val endTime: ZonedDateTime) :
+        BookingAction()
+
+    object CancelClicked : BookingAction()
+    object ConfirmClicked : BookingAction()
 }
 
-data class BookingState (
-    val room: Room = emptyRoom(),
-    val bookingType: BookingType = QuickBooking(BookingDuration.MIN_15),
-    val title: String = ""
-)
+sealed class BookingState {
+    abstract val room: Room
+    abstract val title: String
 
-private fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
+    data class QuickBooking(
+        val bookingDuration: BookingDuration,
+        override val room: Room,
+        override val title: String
+    ) : BookingState()
+
+    data class PreciseBooking(
+        var fromTime: ZonedDateTime,
+        var toTime: ZonedDateTime,
+        override val room: Room,
+        override val title: String
+    ) : BookingState()
+
+}
+
+fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
 enum class BookingDuration(val timeInMillis: Long) {
-    MIN_15(15*60*1000),
-    MIN_30(30*60*1000),
-    MIN_45(45*60*1000),
-    HOUR_1(60*60*1000),
-    HOUR_2(2*60*60*1000)
+    MIN_15(15 * 60 * 1000),
+    MIN_30(30 * 60 * 1000),
+    MIN_45(45 * 60 * 1000),
+    HOUR_1(60 * 60 * 1000),
+    HOUR_2(2 * 60 * 60 * 1000)
 }
 
-open class BookingType
-data class QuickBooking(val bookingDuration: BookingDuration) : BookingType()
-data class PreciseBooking(
-    var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-    var toTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusHours(1)
-) : BookingType()
 
