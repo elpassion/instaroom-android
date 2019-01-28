@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.tabs.TabLayout
+import com.jakewharton.rxbinding3.widget.changes
 import com.jakewharton.rxbinding3.widget.textChanges
 import kotlinx.android.synthetic.main.booking_details_fragment.*
 import kotlinx.android.synthetic.main.booking_fragment.*
@@ -33,8 +33,20 @@ class BookingFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.bookingState.observe(this, Observer(::updateView))
-        setupTabs()
+
         setupTitleEditText()
+        setupTabs()
+        setupDurationSeekBar()
+    }
+
+    @SuppressLint("CheckResult")
+    private fun setupDurationSeekBar() {
+        bookingTimeBar.max = BookingDuration.values().size - 1
+
+        bookingTimeBar.changes()
+            .skipInitialValue()
+            .map { value -> BookingAction.BookingDurationSelected(BookingDuration.values()[value]) }
+            .subscribe(model.bookingActionS)
     }
 
     @SuppressLint("CheckResult")
