@@ -1,5 +1,6 @@
 package pl.elpassion.instaroom.booking
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
+import pl.elpassion.instaroom.util.selections
+import java.lang.IllegalArgumentException
 
 class BookingFragment : BottomSheetDialogFragment() {
 
@@ -29,23 +32,26 @@ class BookingFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         model.bookingState.observe(this, Observer(::updateView))
         setupTabs()
+        setupTitleEditText()
     }
 
+    private fun setupTitleEditText() {
+
+    }
+
+    @SuppressLint("CheckResult")
     private fun setupTabs() {
-        appointmentBookingTabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> model.bookingActionS.accept(BookingAction.QuickBookingSelected)
-                    1 -> model.bookingActionS.accept(BookingAction.PreciseBookingSelected)
-                }
-            }
+//      https://github.com/JakeWharton/RxBinding/issues/495
+//      original selections method doesn't work until this issue will be resolved, so i copied that class and fixed it
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
+        appointmentBookingTabs.selections().map { tab ->
+            println("tab = ${tab.position}")
+            when (tab.position) {
+                    0 -> BookingAction.QuickBookingSelected
+                    1 -> BookingAction.PreciseBookingSelected
+                else -> { throw IllegalArgumentException()}
             }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-        })
+        }.subscribe(model.bookingActionS)
     }
 
 

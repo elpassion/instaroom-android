@@ -73,7 +73,10 @@ dependencies {
     implementation("com.jakewharton.rxrelay2:rxrelay:2.1.0")
     implementation("com.jakewharton.threetenabp:threetenabp:1.1.1")
     implementation("com.shopify:livedata-ktx:2.0.1")
-
+    implementation("com.jakewharton.rxbinding3:rxbinding-core:3.0.0-alpha2")
+    implementation("com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2")
+    implementation("com.jakewharton.rxbinding3:rxbinding-material:3.0.0-alpha2")
+    
     implementation("com.github.elpassion:instaroom:1a67784827")
 
     testImplementation("junit:junit:4.12")
@@ -83,6 +86,7 @@ dependencies {
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.2.1")
     testImplementation("org.slf4j:slf4j-nop:1.7.25")
+
 
     androidTestImplementation("androidx.test:runner:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1") {
