@@ -20,7 +20,7 @@ fun CoroutineScope.launchBookingModel(
     tokenRepository: TokenRepository
 ) = launch {
     val event: Event
-    var room = emptyRoom()
+    lateinit var room: Room
     var bookingDuration = BookingDuration.MIN_15
     var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     var toTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusHours(1)
@@ -78,8 +78,6 @@ fun CoroutineScope.launchBookingModel(
         isPrecise = true
         updateState()
     }
-
-    state.set(BookingState.QuickBooking(bookingDuration, room, title))
 
     actionS.consumeEach { action ->
         when (action) {

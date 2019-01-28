@@ -42,6 +42,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingTitle" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bookingQuickGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="bookingTimeFromLabel, bookingTimeBar,
+        bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
+        bookingTimeOptionFourth, bookingTimeOptionFifth"
+        tools:visibility="visible"/>
+    
     <TextView
         android:id="@+id/bookingFromNowFor"
         android:layout_width="wrap_content"
@@ -60,17 +69,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingFromNowFor" />
-
-    <TextView
-        android:id="@+id/bookingTimeFromLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="@dimen/basic_padding"
-        android:text="@string/from"
-        android:textAllCaps="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
 
     <TextView
         android:id="@+id/bookingTimeOptionFirst"
@@ -115,6 +113,25 @@
         app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
         app:layout_constraintEnd_toEndOf="@id/bookingTimeBar" />
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/bookingPreciseGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="bookingTimeFrom, bookingTimeFromLabel, bookingTimeTo,
+        bookingTimeToLabel, bookingTimeSeparator "
+        tools:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/bookingTimeFromLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="@dimen/basic_padding"
+        android:text="@string/from"
+        android:textAllCaps="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
+
     <TextView
         android:id="@+id/bookingTimeToLabel"
         android:layout_width="wrap_content"
@@ -132,6 +149,7 @@
         app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
 
     <View
+        android:id="@+id/bookingTimeSeparator"
         android:layout_width="12dp"
         android:layout_height="2dp"
         android:background="@android:color/black"

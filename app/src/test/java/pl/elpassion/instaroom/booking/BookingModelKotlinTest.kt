@@ -36,21 +36,23 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
     private val state = MutableLiveData<BookingState>()
     private val stateObserver = mock<Observer<BookingState>>()
 
+    val initialBookingState =
+        BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "")
+
+    val preciseBookingState = BookingState.PreciseBooking(
+        ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+        ZonedDateTime.now().truncatedTo(
+            ChronoUnit.MINUTES
+        ).plusHours(1),
+        emptyRoom(), ""
+    )
+
     init {
         executeTasksInstantly()
         launchBookingModel(actionS, callDashboardAction, state, mock())
         state.observeForever(stateObserver)
 
-        val initialBookingState =
-            BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "")
-
-        val preciseBookingState = BookingState.PreciseBooking(
-            ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-            ZonedDateTime.now().truncatedTo(
-                ChronoUnit.MINUTES
-            ).plusHours(1),
-            emptyRoom(), ""
-        )
+        actionS.accept(BookingAction.BookingRoomSelected(emptyRoom()))
 
         "should initialize with expected values" {
             verify(stateObserver).onChanged(initialBookingState)
@@ -116,6 +118,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             actionS.accept(BookingAction.CancelClicked)
             verify(callDashboardAction).invoke(DashboardAction.HideBookingDetails)
         }
+
 
     }
 

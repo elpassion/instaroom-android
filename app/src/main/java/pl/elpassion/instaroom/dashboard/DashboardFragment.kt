@@ -109,7 +109,7 @@ class DashboardFragment : Fragment() {
         startActivityForResult(intent, REQ_OPEN_CALENDAR)
     }
 
-    private fun onBookingClicked() { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails) }
+    private fun onBookingClicked(room: Room) { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room)) }
 
     private fun onBookingCanceled() = model.dashboardActionS.accept(DashboardAction.HideBookingDetails)
 

@@ -8,6 +8,7 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
+import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.kalendar.getSomeRooms
 import pl.elpassion.instaroom.login.LoginAction
@@ -19,6 +20,7 @@ import retrofit2.HttpException
 fun CoroutineScope.launchDashboardModel(
     actionS: Observable<DashboardAction>,
     callLoginAction: (LoginAction) -> Unit,
+    callBookingAction: (BookingAction) -> Unit,
     state: MutableLiveData<DashboardState>,
     tokenRepository: TokenRepository
 ) = launch {
@@ -40,7 +42,8 @@ fun CoroutineScope.launchDashboardModel(
             state.set(DashboardState.RoomListState(rooms, false, e.message()))
         }
 
-    fun showBookingDetails() {
+    fun showBookingDetails(room: Room) {
+        callBookingAction(BookingAction.BookingRoomSelected(room))
         state.set(DashboardState.BookingDetailsState)
 //        try {
 //            state.set(DashboardState.RoomListState(rooms, true))
@@ -75,7 +78,7 @@ fun CoroutineScope.launchDashboardModel(
         when (action) {
             is DashboardAction.RefreshRooms -> loadRooms()
             is DashboardAction.SelectSignOut -> selectSignOut()
-            is DashboardAction.ShowBookingDetails -> showBookingDetails()
+            is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
             is DashboardAction.HideBookingDetails -> hideBookingDetails()
         }
     }
@@ -86,7 +89,7 @@ sealed class DashboardAction {
     object RefreshRooms : DashboardAction()
     object SelectSignOut : DashboardAction()
 
-    object ShowBookingDetails : DashboardAction()
+    data class ShowBookingDetails(val room: Room) : DashboardAction()
     object HideBookingDetails : DashboardAction()
 }
 

@@ -51,6 +51,7 @@ class AppViewModel(
         launchDashboardModel(
             dashboardActionS,
             loginActionS::accept,
+            bookingActionS::accept,
             _dashboardState,
             tokenRepository
         )
