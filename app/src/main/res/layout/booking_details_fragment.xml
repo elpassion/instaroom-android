@@ -141,7 +141,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/appointmentBookingHelper" />
 
-    <EditText
+    <Button
         android:id="@+id/bookingTimeFrom"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
         app:layout_constraintStart_toEndOf="@id/bookingTimeFrom"
         app:layout_constraintTop_toTopOf="@id/bookingTimeFrom" />
 
-    <EditText
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/bookingTimeTo"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
