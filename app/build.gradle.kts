@@ -77,7 +77,7 @@ dependencies {
     implementation("com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2")
     implementation("com.jakewharton.rxbinding3:rxbinding-material:3.0.0-alpha2")
     
-    implementation("com.github.elpassion:instaroom:1a67784827")
+    implementation("com.github.elpassion:instaroom:94e099ce6e")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.mockk:mockk:1.9")

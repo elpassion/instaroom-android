@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.booking.BookingAction
+import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.kalendar.bookSomeRoom
 import pl.elpassion.instaroom.kalendar.getSomeRooms
 import pl.elpassion.instaroom.login.LoginAction
 import pl.elpassion.instaroom.repository.TokenRepository
@@ -42,18 +44,23 @@ fun CoroutineScope.launchDashboardModel(
             state.set(DashboardState.RoomListState(rooms, false, e.message()))
         }
 
+    suspend fun bookRoom(bookingEvent: BookingEvent) {
+        try {
+            withContext(Dispatchers.IO) {
+                state.set(DashboardState.RoomListState(rooms, true))
+                tokenRepository.getToken()?.let { accessToken ->
+                    bookSomeRoom(accessToken, bookingEvent)
+                }
+                loadRooms()
+            }
+        } catch (e: HttpException) {
+            state.set(DashboardState.RoomListState(rooms, false, e.message()))
+        }
+    }
+
     fun showBookingDetails(room: Room) {
         callBookingAction(BookingAction.BookingRoomSelected(room))
         state.set(DashboardState.BookingDetailsState)
-//        try {
-//            state.set(DashboardState.RoomListState(rooms, true))
-//            tokenRepository.googleToken?.let { accessToken ->
-//                bookSomeRoom(accessToken, room.calendarId)
-//            }
-//            loadRooms()
-//        } catch (e: HttpException) {
-//            state.set(DashboardState.RoomListState(rooms, false, e.message()))
-//        }
     }
 
     fun hideBookingDetails() {
@@ -80,6 +87,7 @@ fun CoroutineScope.launchDashboardModel(
             is DashboardAction.SelectSignOut -> selectSignOut()
             is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
             is DashboardAction.HideBookingDetails -> hideBookingDetails()
+            is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
         }
     }
 }
@@ -90,7 +98,9 @@ sealed class DashboardAction {
     object SelectSignOut : DashboardAction()
 
     data class ShowBookingDetails(val room: Room) : DashboardAction()
+    data class BookRoom(val bookingEvent: BookingEvent) : DashboardAction()
     object HideBookingDetails : DashboardAction()
+
 }
 
 sealed class DashboardState {

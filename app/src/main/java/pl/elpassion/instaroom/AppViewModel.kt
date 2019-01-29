@@ -58,8 +58,7 @@ class AppViewModel(
         launchBookingModel(
             bookingActionS,
             dashboardActionS::accept,
-            _bookingState,
-            tokenRepository
+            _bookingState
         )
     }
 

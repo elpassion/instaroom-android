@@ -1,6 +1,7 @@
 package pl.elpassion.instaroom.booking
 
 import androidx.lifecycle.MutableLiveData
+import com.google.api.client.util.DateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -8,6 +9,7 @@ import kotlinx.coroutines.rx2.consumeEach
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.dashboard.DashboardAction
+import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.repository.TokenRepository
@@ -20,8 +22,7 @@ val ZonedDateTime.hourMinuteTime: HourMinuteTime
 fun CoroutineScope.launchBookingModel(
     actionS: Observable<BookingAction>,
     callDashboardAction: (DashboardAction) -> Unit,
-    state: MutableLiveData<ViewState>,
-    tokenRepository: TokenRepository
+    state: MutableLiveData<ViewState>
 ) = launch {
     val event: Event
     lateinit var room: Room
@@ -72,8 +73,25 @@ fun CoroutineScope.launchBookingModel(
         callDashboardAction(DashboardAction.HideBookingDetails)
     }
 
-    fun bookRoom() {
+    fun createBookingEvent() : BookingEvent {
+        val startDate: DateTime
+        val endDate: DateTime
 
+        if(isPrecise) {
+            startDate = DateTime(fromTime.toEpochSecond()*1000)
+            endDate = DateTime(toTime.toEpochSecond()*1000)
+        } else {
+            val now =  ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+            startDate = DateTime(now.toEpochSecond()*1000)
+            endDate = DateTime(now.toEpochSecond()*1000+bookingDuration.timeInMillis)
+        }
+
+        return BookingEvent(room.calendarId, title, room.calendarId, startDate, endDate)
+    }
+
+    fun bookRoom() {
+        println("time = ${fromTime.toEpochSecond()}")
+        callDashboardAction(DashboardAction.BookRoom(createBookingEvent()))
     }
 
     fun disablePreciseBooking() {

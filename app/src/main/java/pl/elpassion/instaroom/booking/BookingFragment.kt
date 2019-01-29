@@ -45,9 +45,19 @@ class BookingFragment : BottomSheetDialogFragment() {
             setupDurationSeekBar(),
             setupAllDaySwitch(),
             setupStartTimeButton(),
-            setupEndTimeButton()
+            setupEndTimeButton(),
+            setupConfirmButton(),
+            setupCancelButton()
         ).subscribe(model.bookingActionS)
     }
+
+    private fun setupCancelButton() = appointmentBookingCancelButton
+        .clicks()
+        .map { BookingAction.CancelClicked }
+
+    private fun setupConfirmButton() = appointmentBookingBookButton
+        .clicks()
+        .map { BookingAction.ConfirmClicked }
 
     private fun setupStartTimeButton() = bookingTimeFrom
         .clicks()
