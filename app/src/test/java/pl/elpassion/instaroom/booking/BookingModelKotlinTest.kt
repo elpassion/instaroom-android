@@ -50,7 +50,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
 
     init {
         executeTasksInstantly()
-        launchBookingModel(actionS, callDashboardAction, state, mock())
+        launchBookingModel(actionS, callDashboardAction, state)
         state.observeForever(stateObserver)
 
         actionS.accept(BookingAction.BookingRoomSelected(emptyRoom()))
