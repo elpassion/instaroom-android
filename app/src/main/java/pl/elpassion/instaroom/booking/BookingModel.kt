@@ -25,14 +25,15 @@ fun CoroutineScope.launchBookingModel(
     var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     var toTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusHours(1)
     var isPrecise = false
+    var isAllDay = false
     var title: String = ""
 
     fun updateState() {
         state.set(
             if (isPrecise)
-                BookingState.PreciseBooking(fromTime, toTime, room, title)
+                BookingState.PreciseBooking(fromTime, toTime, room, title, isAllDay)
             else
-                BookingState.QuickBooking(bookingDuration, room, title)
+                BookingState.QuickBooking(bookingDuration, room, title, isAllDay)
         )
     }
 
@@ -66,7 +67,7 @@ fun CoroutineScope.launchBookingModel(
     }
 
     fun disablePreciseBooking() {
-        if(!isPrecise) return
+        if (!isPrecise) return
 
         isPrecise = false
         updateState()
@@ -76,6 +77,11 @@ fun CoroutineScope.launchBookingModel(
         if (isPrecise) return
 
         isPrecise = true
+        updateState()
+    }
+
+    fun updateAllBooking() {
+        isAllDay = !isAllDay
         updateState()
     }
 
@@ -90,11 +96,14 @@ fun CoroutineScope.launchBookingModel(
                 action.startTime,
                 action.endTime
             )
-            BookingAction.CancelClicked -> cancelBooking()
-            BookingAction.ConfirmClicked -> bookRoom()
+            is BookingAction.AllDayBookingClicked -> updateAllBooking()
+
+            is BookingAction.CancelClicked -> cancelBooking()
+            is BookingAction.ConfirmClicked -> bookRoom()
         }
     }
 }
+
 
 
 sealed class BookingAction {
@@ -102,6 +111,7 @@ sealed class BookingAction {
 
     object QuickBookingSelected : BookingAction()
     object PreciseBookingSelected : BookingAction()
+    object AllDayBookingClicked: BookingAction()
 
     data class TitleChanged(val title: String) : BookingAction()
     data class BookingDurationSelected(val bookingDuration: BookingDuration) : BookingAction()
@@ -115,18 +125,21 @@ sealed class BookingAction {
 sealed class BookingState {
     abstract val room: Room
     abstract val title: String
+    abstract val allDayBooking: Boolean
 
     data class QuickBooking(
         val bookingDuration: BookingDuration,
         override val room: Room,
-        override val title: String
+        override val title: String,
+        override val allDayBooking: Boolean
     ) : BookingState()
 
     data class PreciseBooking(
         var fromTime: ZonedDateTime,
         var toTime: ZonedDateTime,
         override val room: Room,
-        override val title: String
+        override val title: String,
+        override val allDayBooking: Boolean
     ) : BookingState()
 
 }

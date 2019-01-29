@@ -36,15 +36,16 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
     private val state = MutableLiveData<BookingState>()
     private val stateObserver = mock<Observer<BookingState>>()
 
-    val initialBookingState =
-        BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "")
+    private val initialBookingState =
+        BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "", false)
 
-    val preciseBookingState = BookingState.PreciseBooking(
+    private val preciseBookingState = BookingState.PreciseBooking(
         ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
         ZonedDateTime.now().truncatedTo(
             ChronoUnit.MINUTES
         ).plusHours(1),
-        emptyRoom(), ""
+        emptyRoom(), "",
+        false
     )
 
     init {
@@ -88,7 +89,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         }
 
         "set room" {
-            val selectedRoom =  Room("custom", "123", emptyList(), "", "", "", "")
+            val selectedRoom = Room("custom", "123", emptyList(), "", "", "", "")
             actionS.accept((BookingAction.BookingRoomSelected(selectedRoom)))
             verify(stateObserver).onChanged(argThat { room == selectedRoom })
         }
@@ -109,7 +110,8 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             actionS.accept(BookingAction.PreciseBookingSelected)
             val newFromTime = ZonedDateTime.now().plusDays(1)
             val newToTime = newFromTime.plusHours(1)
-            val newPreciseBooking = preciseBookingState.copy(fromTime = newFromTime, toTime = newToTime)
+            val newPreciseBooking =
+                preciseBookingState.copy(fromTime = newFromTime, toTime = newToTime)
             actionS.accept(BookingAction.BookingTimeRangeChanged(newFromTime, newToTime))
             verify(stateObserver).onChanged(newPreciseBooking)
         }
@@ -117,6 +119,13 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         "cancel booking call dashboard hide" {
             actionS.accept(BookingAction.CancelClicked)
             verify(callDashboardAction).invoke(DashboardAction.HideBookingDetails)
+        }
+
+        "set all day booking" {
+            verify(stateObserver).onChanged(argThat { allDayBooking == false })
+
+            actionS.accept(BookingAction.AllDayBookingClicked)
+            verify(stateObserver).onChanged(argThat { allDayBooking == true })
         }
 
 

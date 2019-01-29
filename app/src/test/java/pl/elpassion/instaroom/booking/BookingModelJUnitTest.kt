@@ -31,14 +31,14 @@ class BookingModelJUnitTest : CoroutineScope {
 
     // initial state sa wspolne, jak to ogarnac
     private val initialBookingState =
-        BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "")
+        BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "", false)
 
     private val preciseBookingState = BookingState.PreciseBooking(
         ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
         ZonedDateTime.now().truncatedTo(
             ChronoUnit.MINUTES
         ).plusHours(1),
-        emptyRoom(), ""
+        emptyRoom(), "", false
     )
 
     @Before
