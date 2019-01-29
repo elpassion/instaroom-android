@@ -8,13 +8,10 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.IsolationMode
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.AbstractFreeSpec
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import org.junit.Assert.*
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.dashboard.DashboardAction
@@ -124,7 +121,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         "set all day booking" {
             verify(stateObserver).onChanged(argThat { allDayBooking == false })
 
-            actionS.accept(BookingAction.AllDayBookingClicked)
+            actionS.accept(BookingAction.AllDayBookingSwitched(checked = true))
             verify(stateObserver).onChanged(argThat { allDayBooking == true })
         }
 

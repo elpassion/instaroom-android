@@ -80,8 +80,8 @@ fun CoroutineScope.launchBookingModel(
         updateState()
     }
 
-    fun updateAllBooking() {
-        isAllDay = !isAllDay
+    fun updateAllBooking(checked: Boolean) {
+        isAllDay = checked
         updateState()
     }
 
@@ -96,7 +96,7 @@ fun CoroutineScope.launchBookingModel(
                 action.startTime,
                 action.endTime
             )
-            is BookingAction.AllDayBookingClicked -> updateAllBooking()
+            is BookingAction.AllDayBookingSwitched -> updateAllBooking(action.checked)
 
             is BookingAction.CancelClicked -> cancelBooking()
             is BookingAction.ConfirmClicked -> bookRoom()
@@ -111,7 +111,7 @@ sealed class BookingAction {
 
     object QuickBookingSelected : BookingAction()
     object PreciseBookingSelected : BookingAction()
-    object AllDayBookingClicked: BookingAction()
+    data class AllDayBookingSwitched(val checked: Boolean) : BookingAction()
 
     data class TitleChanged(val title: String) : BookingAction()
     data class BookingDurationSelected(val bookingDuration: BookingDuration) : BookingAction()

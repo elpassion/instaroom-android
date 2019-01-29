@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding3.widget.changes
+import com.jakewharton.rxbinding3.widget.checkedChanges
 import com.jakewharton.rxbinding3.widget.textChanges
 import kotlinx.android.synthetic.main.booking_details_fragment.*
 import kotlinx.android.synthetic.main.booking_fragment.*
@@ -37,6 +38,16 @@ class BookingFragment : BottomSheetDialogFragment() {
         setupTitleEditText()
         setupTabs()
         setupDurationSeekBar()
+        setupAllDaySwitch()
+    }
+
+    @SuppressLint("CheckResult")
+    private fun setupAllDaySwitch() {
+        bookingAllDaySwitch
+            .checkedChanges()
+            .skipInitialValue()
+            .map { checked -> BookingAction.AllDayBookingSwitched(checked) }
+            .subscribe(model.bookingActionS)
     }
 
     @SuppressLint("CheckResult")
