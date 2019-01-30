@@ -1,5 +1,7 @@
 package pl.elpassion.instaroom
 
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -16,6 +18,7 @@ val appModule = module {
             get()
         )
     }
+    single{ NavHostFragment.create(R.navigation.app_navigation) }
 
-    viewModel { AppViewModel(get()) }
+    viewModel { AppViewModel(get(), get()) }
 }

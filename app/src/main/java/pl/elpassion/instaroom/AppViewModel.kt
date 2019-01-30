@@ -4,7 +4,13 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxrelay2.PublishRelay
+import com.shopify.livedataktx.first
+import com.shopify.livedataktx.nonNull
+import com.shopify.livedataktx.observe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -21,7 +27,8 @@ import pl.elpassion.instaroom.repository.TokenRepository
 import kotlin.coroutines.CoroutineContext
 
 class AppViewModel(
-    tokenRepository: TokenRepository
+    tokenRepository: TokenRepository,
+    navHostFragment: NavHostFragment
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -42,11 +49,16 @@ class AppViewModel(
     private val job = Job()
 
     init {
+        fun navigate(fragmentId: Int) {
+            navHostFragment.navController.navigate(fragmentId)
+        }
+
         launchLoginModel(
             loginActionS,
             dashboardActionS::accept,
             _loginState,
-            tokenRepository
+            tokenRepository,
+            ::navigate
         )
         launchDashboardModel(
             dashboardActionS,
@@ -61,6 +73,8 @@ class AppViewModel(
             _bookingState
         )
     }
+
+
 
     override fun onCleared() = job.cancel()
 }
