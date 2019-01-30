@@ -4,9 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.IsolationMode
-import io.kotlintest.matchers.date.before
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,10 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.util.BookingDuration
+import pl.elpassion.instaroom.util.HourMinuteTime
 import pl.elpassion.instaroom.util.executeTasksInstantly
+import pl.elpassion.instaroom.util.toHourMinuteTime
 import kotlin.coroutines.CoroutineContext
 
 fun ZonedDateTime.withHourMinute(hourMinuteTime: HourMinuteTime) =
@@ -121,7 +124,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
                     false,
-                    preciseBookingState.toTime.hourMinuteTime
+                    preciseBookingState.toTime.toHourMinuteTime()
                 )
             )
         }
@@ -132,7 +135,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
                     true,
-                    preciseBookingState.fromTime.hourMinuteTime
+                    preciseBookingState.fromTime.toHourMinuteTime()
                 )
             )
         }

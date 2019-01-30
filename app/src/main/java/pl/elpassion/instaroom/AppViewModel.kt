@@ -15,9 +15,9 @@ import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.launchDashboardModel
 import pl.elpassion.instaroom.login.LoginAction
-import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.login.LoginState
 import pl.elpassion.instaroom.login.launchLoginModel
+import pl.elpassion.instaroom.repository.TokenRepository
 import kotlin.coroutines.CoroutineContext
 
 class AppViewModel(

@@ -3,6 +3,7 @@ package pl.elpassion.instaroom.util
 import org.threeten.bp.ZonedDateTime
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
+import java.io.Serializable
 
 
 val Room.isBooked: Boolean
@@ -17,3 +18,12 @@ val Event.endDateTime: ZonedDateTime
 val Room.isOwnBooked: Boolean
     get() = false
 
+enum class BookingDuration(val timeInMillis: Long) {
+    MIN_15(15 * 60 * 1000),
+    MIN_30(30 * 60 * 1000),
+    MIN_45(45 * 60 * 1000),
+    HOUR_1(60 * 60 * 1000),
+    HOUR_2(2 * 60 * 60 * 1000)
+}
+
+data class HourMinuteTime(val hour: Int, val minute: Int) : Serializable

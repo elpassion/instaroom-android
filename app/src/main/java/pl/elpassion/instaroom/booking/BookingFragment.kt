@@ -18,9 +18,10 @@ import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.util.TimePickerFragmentDialog
+import pl.elpassion.instaroom.util.BookingDuration
+import pl.elpassion.instaroom.util.HourMinuteTime
+import pl.elpassion.instaroom.util.TimePickerDialogFragment
 import pl.elpassion.instaroom.util.selections
-import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 
 class BookingFragment : BottomSheetDialogFragment() {
@@ -72,7 +73,7 @@ class BookingFragment : BottomSheetDialogFragment() {
         fromTime: Boolean,
         hourMinuteTime: HourMinuteTime
     ) {
-        val dialog = TimePickerFragmentDialog.withTime(hourMinuteTime)
+        val dialog = TimePickerDialogFragment.withTime(hourMinuteTime)
 
         val timeChangesS = dialog.timeChanges()
             .map { newHourMinuteTime ->
@@ -87,7 +88,7 @@ class BookingFragment : BottomSheetDialogFragment() {
 
         Observable.merge(timeChangesS, dismissesS).subscribe(model.bookingActionS)
 
-        dialog.show(fragmentManager, TimePickerFragmentDialog.TAG)
+        dialog.show(fragmentManager, TimePickerDialogFragment.TAG)
     }
 
 

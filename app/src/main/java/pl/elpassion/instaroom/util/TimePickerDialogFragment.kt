@@ -9,10 +9,8 @@ import androidx.fragment.app.DialogFragment
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import org.threeten.bp.ZonedDateTime
-import pl.elpassion.instaroom.booking.HourMinuteTime
-import pl.elpassion.instaroom.booking.hourMinuteTime
 
-class TimePickerFragmentDialog : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerDialogFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
     private val hourMinuteTimeRelay = PublishRelay.create<HourMinuteTime>()
     private val dismissRelay = PublishRelay.create<DismissEvent>()
@@ -20,7 +18,7 @@ class TimePickerFragmentDialog : DialogFragment(), TimePickerDialog.OnTimeSetLis
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current time as the default values for the picker
         val initTime = arguments?.getSerializable(TIME_KEY) as HourMinuteTime?
-            ?: ZonedDateTime.now().hourMinuteTime
+            ?: ZonedDateTime.now().toHourMinuteTime()
 
         // Create a new instance of TimePickerDialog and return it
         return TimePickerDialog(activity, this, initTime.hour, initTime.minute, true)
@@ -49,8 +47,8 @@ class TimePickerFragmentDialog : DialogFragment(), TimePickerDialog.OnTimeSetLis
 
         private const val TIME_KEY = "HOUR_MINUTE_TIME_KEY"
 
-        fun withTime(hourMinuteTime: HourMinuteTime): TimePickerFragmentDialog {
-            val fragment = TimePickerFragmentDialog()
+        fun withTime(hourMinuteTime: HourMinuteTime): TimePickerDialogFragment {
+            val fragment = TimePickerDialogFragment()
             fragment.arguments = Bundle().apply {
                 putSerializable(TIME_KEY, hourMinuteTime)
             }
@@ -58,6 +56,7 @@ class TimePickerFragmentDialog : DialogFragment(), TimePickerDialog.OnTimeSetLis
             return fragment
         }
     }
+
+    object DismissEvent
 }
 
-object DismissEvent

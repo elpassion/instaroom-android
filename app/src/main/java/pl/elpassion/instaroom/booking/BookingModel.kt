@@ -10,28 +10,21 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.kalendar.BookingEvent
-import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.repository.TokenRepository
-import pl.elpassion.instaroom.util.set
-import java.io.Serializable
-
-val ZonedDateTime.hourMinuteTime: HourMinuteTime
-    get() = HourMinuteTime(hour, minute)
+import pl.elpassion.instaroom.util.*
 
 fun CoroutineScope.launchBookingModel(
     actionS: Observable<BookingAction>,
     callDashboardAction: (DashboardAction) -> Unit,
     state: MutableLiveData<ViewState>
 ) = launch {
-    val event: Event
     lateinit var room: Room
     var bookingDuration = BookingDuration.MIN_15
     var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-    var toTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusHours(1)
+    var toTime: ZonedDateTime = fromTime.plusHours(1)
     var isPrecise = false
     var isAllDay = false
-    var title: String = ""
+    var title = ""
 
     fun updateBookingState() {
         state.set(
@@ -73,17 +66,17 @@ fun CoroutineScope.launchBookingModel(
         callDashboardAction(DashboardAction.HideBookingDetails)
     }
 
-    fun createBookingEvent() : BookingEvent {
+    fun createBookingEvent(): BookingEvent {
         val startDate: DateTime
         val endDate: DateTime
 
-        if(isPrecise) {
-            startDate = DateTime(fromTime.toEpochSecond()*1000)
-            endDate = DateTime(toTime.toEpochSecond()*1000)
+        if (isPrecise) {
+            startDate = DateTime(fromTime.toEpochMilliSecond())
+            endDate = DateTime(toTime.toEpochMilliSecond())
         } else {
-            val now =  ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-            startDate = DateTime(now.toEpochSecond()*1000)
-            endDate = DateTime(now.toEpochSecond()*1000+bookingDuration.timeInMillis)
+            val now = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+            startDate = DateTime(now.toEpochMilliSecond())
+            endDate = DateTime(now.toEpochMilliSecond() + bookingDuration.timeInMillis)
         }
 
         return BookingEvent(room.calendarId, title, room.calendarId, startDate, endDate)
@@ -115,7 +108,8 @@ fun CoroutineScope.launchBookingModel(
 
     fun showTimePickerDialog(isFromTime: Boolean) {
         println("showTimePickerDialog")
-        val hourMinuteTime = if (isFromTime) fromTime.hourMinuteTime else toTime.hourMinuteTime
+        val hourMinuteTime =
+            if (isFromTime) fromTime.toHourMinuteTime() else toTime.toHourMinuteTime()
         state.set(ViewState.PickTime(isFromTime, hourMinuteTime))
     }
 
@@ -190,14 +184,6 @@ sealed class ViewState {
 
 fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
-enum class BookingDuration(val timeInMillis: Long) {
-    MIN_15(15 * 60 * 1000),
-    MIN_30(30 * 60 * 1000),
-    MIN_45(45 * 60 * 1000),
-    HOUR_1(60 * 60 * 1000),
-    HOUR_2(2 * 60 * 60 * 1000)
-}
 
-data class HourMinuteTime(val hour: Int, val minute: Int) : Serializable
 
 

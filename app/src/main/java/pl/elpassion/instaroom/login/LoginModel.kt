@@ -1,8 +1,6 @@
 package pl.elpassion.instaroom.login
 
 import androidx.lifecycle.MutableLiveData
-import com.google.android.gms.auth.GoogleAuthUtil
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

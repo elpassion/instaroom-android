@@ -13,15 +13,14 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
+import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.isBooked
 import pl.elpassion.instaroom.util.isOwnBooked
-import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.replaceWith
 
 class DashboardFragment : Fragment() {

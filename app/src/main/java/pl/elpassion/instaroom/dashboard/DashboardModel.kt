@@ -2,12 +2,8 @@ package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.consumeEach
-import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
@@ -59,6 +55,8 @@ fun CoroutineScope.launchDashboardModel(
     }
 
     fun showBookingDetails(room: Room) {
+        if (state.value == DashboardState.BookingDetailsState) return
+
         callBookingAction(BookingAction.BookingRoomSelected(room))
         state.set(DashboardState.BookingDetailsState)
     }
