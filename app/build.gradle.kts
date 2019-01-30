@@ -86,6 +86,8 @@ dependencies {
 
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.2.1")
     testImplementation("org.slf4j:slf4j-nop:1.7.25")
+    testImplementation("com.jraska.livedata:testing-ktx:1.0.0")
+
 
 
     androidTestImplementation("androidx.test:runner:1.1.1")

@@ -3,6 +3,7 @@ package pl.elpassion.instaroom.booking
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.jakewharton.rxrelay2.PublishRelay
+import com.jraska.livedata.test
 import com.nhaarman.mockitokotlin2.*
 import io.kotlintest.IsolationMode
 import io.kotlintest.matchers.date.before
@@ -56,68 +57,68 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         actionS.accept(BookingAction.BookingRoomSelected(emptyRoom()))
 
         "should initialize with expected values" {
-            verify(stateObserver).onChanged(initialBookingState)
+            state.test().awaitValue().assertValue(initialBookingState)
         }
+
+        var testObserver = state.test()
 
         "booking type selection when precise selected" - {
             //quick booking is set when launching model
 
             "do not set quick booking if it already is selected" {
-                reset(stateObserver)
                 actionS.accept(BookingAction.QuickBookingSelected)
-                verify(stateObserver, never()).onChanged(initialBookingState)
+                testObserver.assertHistorySize(1)
             }
 
             "set precise booking if quick booking is selected" {
                 actionS.accept(BookingAction.PreciseBookingSelected)
-                verify(stateObserver).onChanged(preciseBookingState)
+                testObserver.awaitValue().assertValue(preciseBookingState)
             }
 
         }
 
         "booking type selection when quick selected" - {
             actionS.accept(BookingAction.PreciseBookingSelected)
+            testObserver = testObserver.awaitValue()
 
             "do not set precise booking if it already is selected" {
-                reset(stateObserver)
                 actionS.accept(BookingAction.PreciseBookingSelected)
-                verify(stateObserver, never()).onChanged(initialBookingState)
+                testObserver.assertHistorySize(2)
             }
 
             "set quick booking after click if precise is selected" {
-                reset(stateObserver)
                 actionS.accept(BookingAction.QuickBookingSelected)
-                verify(stateObserver).onChanged(initialBookingState)
+                testObserver.awaitValue().assertValue(initialBookingState)
             }
         }
 
         "set room" {
             val selectedRoom = Room("custom", "123", emptyList(), "", "", "", "")
             actionS.accept((BookingAction.BookingRoomSelected(selectedRoom)))
-            verify(stateObserver).onChanged(initialBookingState.copy(room = selectedRoom))
+            testObserver.awaitValue().assertValue(initialBookingState.copy(room = selectedRoom))
         }
 
         "set title" {
             val newTitle = "title"
             actionS.accept(BookingAction.TitleChanged(newTitle))
-            verify(stateObserver).onChanged(initialBookingState.copy(title = newTitle))
+            testObserver.awaitValue().assertValue(initialBookingState.copy(title = newTitle))
         }
 
         "set quick booking duration" {
             val newDuration = BookingDuration.HOUR_1
             actionS.accept(BookingAction.BookingDurationSelected(newDuration))
-            verify(stateObserver).onChanged(initialBookingState.copy(bookingDuration = newDuration))
+            testObserver.awaitValue()
+                .assertValue(initialBookingState.copy(bookingDuration = newDuration))
         }
 
         "set dialog dismissed sets booking state" {
-            reset(stateObserver)
             actionS.accept(BookingAction.TimePickerDismissed)
-            verify(stateObserver).onChanged(initialBookingState)
+            testObserver.awaitValue().assertValue(initialBookingState).assertHistorySize(2)
         }
 
         "to time button click shows timePickDialog" {
             actionS.accept(BookingAction.BookingTimeToClicked)
-            verify(stateObserver).onChanged(
+            testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
                     false,
                     preciseBookingState.toTime.hourMinuteTime
@@ -128,7 +129,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         "from time button click shows timePickDialog" {
             actionS.accept(BookingAction.BookingTimeFromClicked)
 
-            verify(stateObserver).onChanged(
+            testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
                     true,
                     preciseBookingState.fromTime.hourMinuteTime
@@ -144,7 +145,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
                 actionS.accept(BookingAction.BookingStartTimeChanged(hourMinuteTime))
                 actionS.accept(BookingAction.TimePickerDismissed)
 
-                verify(stateObserver).onChanged(
+                testObserver.awaitValue().assertValue(
                     preciseBookingState.copy(
                         fromTime = preciseBookingState.fromTime.withHourMinute(hourMinuteTime)
                     )
@@ -155,7 +156,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
                 actionS.accept(BookingAction.BookingEndTimeChanged(hourMinuteTime))
                 actionS.accept(BookingAction.TimePickerDismissed)
 
-                verify(stateObserver).onChanged(
+                testObserver.awaitValue().assertValue(
                     preciseBookingState.copy(
                         toTime = preciseBookingState.toTime.withHourMinute(hourMinuteTime)
                     )
@@ -169,10 +170,11 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         }
 
         "set all day booking" {
-            verify(stateObserver).onChanged(initialBookingState)
+            testObserver.awaitValue()
+                .assertValue { (it as ViewState.BookingState.QuickBooking).allDayBooking == false }
 
             actionS.accept(BookingAction.AllDayBookingSwitched(checked = true))
-            verify(stateObserver).onChanged(initialBookingState.copy(allDayBooking = true))
+            testObserver.awaitValue().assertValue(initialBookingState.copy(allDayBooking = true))
         }
 
 
