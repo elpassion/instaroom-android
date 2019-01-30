@@ -16,6 +16,7 @@ import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstruct
 import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
+import pl.elpassion.instaroom.ProgressDialogFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
 import pl.elpassion.instaroom.kalendar.Room
@@ -28,6 +29,7 @@ class DashboardFragment : Fragment() {
     private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
     private val bookingFragment by lazy {BookingFragment()}
+    private val progressDialog by lazy {ProgressDialogFragment()}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
@@ -85,9 +87,23 @@ class DashboardFragment : Fragment() {
         state?:return
 
         when (state) {
-            is DashboardState.RoomListState -> updateRoomList(state)
+            is DashboardState.RoomListState -> {
+                hideProgressDialogIfShown()
+                updateRoomList(state)
+            }
             is DashboardState.BookingDetailsState -> showBookingDetails()
+            is DashboardState.BookingInProgressState -> showProgressDialog()
         }
+    }
+
+    private fun hideProgressDialogIfShown() {
+        if(progressDialog.isAdded) {
+            progressDialog.dismiss()
+        }
+    }
+
+    private fun showProgressDialog() {
+        progressDialog.show(fragmentManager, ProgressDialogFragment.PROGRESS_DIALOG_TAG)
     }
 
     private fun showBookingDetails() {

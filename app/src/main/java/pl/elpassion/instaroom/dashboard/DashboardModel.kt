@@ -43,7 +43,7 @@ fun CoroutineScope.launchDashboardModel(
     suspend fun bookRoom(bookingEvent: BookingEvent) {
         try {
             withContext(Dispatchers.IO) {
-                state.set(DashboardState.RoomListState(rooms, true))
+                state.set(DashboardState.BookingInProgressState)
                 tokenRepository.getToken()?.let { accessToken ->
                     bookSomeRoom(accessToken, bookingEvent)
                 }
@@ -86,6 +86,7 @@ fun CoroutineScope.launchDashboardModel(
             is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
             is DashboardAction.HideBookingDetails -> hideBookingDetails()
             is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
+
         }
     }
 }
@@ -99,6 +100,8 @@ sealed class DashboardAction {
     data class BookRoom(val bookingEvent: BookingEvent) : DashboardAction()
     object HideBookingDetails : DashboardAction()
 
+    object BookingSuccess : DashboardAction()
+
 }
 
 sealed class DashboardState {
@@ -108,6 +111,9 @@ sealed class DashboardState {
         val isRefreshing: Boolean,
         val errorMessage: String? = null
     ) : DashboardState()
+
+    object BookingInProgressState: DashboardState()
+    object BookingSuccessState: DashboardState()
 
     object BookingDetailsState : DashboardState()
 }

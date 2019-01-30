@@ -28,7 +28,7 @@
     <string name="to">to</string>
     <string name="appointment_duration">Appointment duration</string>
     <string name="all_day_appointment">All-day appointment</string>
-    <string name="making_an_appointment">Making an appointment</string>
+    <string name="making_an_appointment">Making an appointment…</string>
     <string name="free">free</string>
     <string name="book_now">book now</string>
     <string name="edit">edit</string>

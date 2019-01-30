@@ -6,7 +6,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.Primary</item>
         <item name="android:windowBackground">@color/windowBackground</item>
+ź
     </style>
+
+    <style name="FullScreenDialogTheme" parent="AppTheme"/>
 
     <style name="TextWhite">
         <item name="android:textColor">@android:color/white</item>
@@ -292,4 +295,25 @@
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+
+    <style name="BookingProgressInfoText" parent="@style/TextBold.Black.Large">
+        <item name="android:textColor">@color/progressDialogInfoTextColor</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <style name="BookingProgressBar" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateTint">@android:color/black</item>
+        <item name="android:minWidth">@dimen/progress_bar_size</item>
+        <item name="android:minHeight">@dimen/progress_bar_size</item>
+        <item name="android:maxWidth">@dimen/progress_bar_size</item>
+        <item name="android:maxHeight">@dimen/progress_bar_size</item>
+    </style>
+
+    <style name="BookingProgressContainer">
+        <item name="android:layout_marginLeft">@dimen/progress_container_padding</item>
+        <item name="android:layout_marginRight">@dimen/progress_container_padding</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
 </resources>
