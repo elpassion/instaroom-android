@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom.util
+package pl.elpassion.instaroom
 
 import android.app.Dialog
 import android.app.TimePickerDialog
@@ -9,6 +9,8 @@ import androidx.fragment.app.DialogFragment
 import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import org.threeten.bp.ZonedDateTime
+import pl.elpassion.instaroom.util.HourMinuteTime
+import pl.elpassion.instaroom.util.toHourMinuteTime
 
 class TimePickerDialogFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
@@ -44,7 +46,6 @@ class TimePickerDialogFragment : DialogFragment(), TimePickerDialog.OnTimeSetLis
 
     companion object {
         const val TAG = "TIME_PICKER_DIALOG_TAG"
-
         private const val TIME_KEY = "HOUR_MINUTE_TIME_KEY"
 
         fun withTime(hourMinuteTime: HourMinuteTime): TimePickerDialogFragment {

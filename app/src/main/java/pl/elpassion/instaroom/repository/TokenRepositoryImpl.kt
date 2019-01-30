@@ -40,10 +40,10 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
         }
     }
 
-
-    private fun expirationDate() = ZonedDateTime.now().plusMinutes(59)
+    private fun expirationDate() = ZonedDateTime.now().plusMinutes(EXPIRATION_TIME_IN_MINUTES)
 
     companion object {
+        private const val EXPIRATION_TIME_IN_MINUTES = 59L
         private const val TOKEN_DATA = "token data"
     }
 }

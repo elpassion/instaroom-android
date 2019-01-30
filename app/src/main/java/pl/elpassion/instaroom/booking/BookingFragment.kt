@@ -20,7 +20,7 @@ import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.HourMinuteTime
-import pl.elpassion.instaroom.util.TimePickerDialogFragment
+import pl.elpassion.instaroom.TimePickerDialogFragment
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit
 
