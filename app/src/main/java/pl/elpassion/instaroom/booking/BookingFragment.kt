@@ -63,11 +63,11 @@ class BookingFragment : BottomSheetDialogFragment() {
 
     private fun setupStartTimeButton() = bookingTimeFrom
         .clicks()
-        .map { BookingAction.BookingTimeFromClicked }
+        .map { BookingAction.SelectBookingStartTime }
 
     private fun setupEndTimeButton() = bookingTimeTo
         .clicks()
-        .map { BookingAction.BookingTimeToClicked }
+        .map { BookingAction.SelectBookingEndTime }
 
     @SuppressLint("CheckResult")
     private fun showTimePickerDialog(
@@ -79,13 +79,13 @@ class BookingFragment : BottomSheetDialogFragment() {
         val timeChangesS = dialog.timeChanges()
             .map { newHourMinuteTime ->
                 if(fromTime)
-                    BookingAction.BookingStartTimeChanged(newHourMinuteTime)
+                    BookingAction.ChangeBookingStartTime(newHourMinuteTime)
                 else
-                    BookingAction.BookingEndTimeChanged(newHourMinuteTime)
+                    BookingAction.ChangBookingEndTime(newHourMinuteTime)
             }
 
         val dismissesS = dialog.dismisses()
-            .map { BookingAction.TimePickerDismissed }
+            .map { BookingAction.DismissTimePicker }
 
         Observable.merge(timeChangesS, dismissesS).subscribe(model.bookingActionS)
 
@@ -96,21 +96,21 @@ class BookingFragment : BottomSheetDialogFragment() {
     private fun setupAllDaySwitch() = bookingAllDaySwitch
         .checkedChanges()
         .skipInitialValue()
-        .map { checked -> BookingAction.AllDayBookingSwitched(checked) }
+        .map { checked -> BookingAction.SwitchAllDayBooking(checked) }
 
-    private fun setupDurationSeekBar(): Observable<BookingAction.BookingDurationSelected> {
+    private fun setupDurationSeekBar(): Observable<BookingAction.SelectBookingDuration> {
         bookingTimeBar.max = BookingDuration.values().size - 1
 
         return bookingTimeBar.changes()
             .skipInitialValue()
-            .map { value -> BookingAction.BookingDurationSelected(BookingDuration.values()[value]) }
+            .map { value -> BookingAction.SelectBookingDuration(BookingDuration.values()[value]) }
     }
 
     private fun setupTitleEditText() =
         bookingTitle.textChanges()
             .debounce(100, TimeUnit.MILLISECONDS)
             .filter { text -> text.isNotBlank() }
-            .map { text -> BookingAction.TitleChanged(text.toString()) }
+            .map { text -> BookingAction.ChangeTitle(text.toString()) }
 
 
     private fun setupTabs() =
@@ -118,8 +118,8 @@ class BookingFragment : BottomSheetDialogFragment() {
 //      original selections method doesn't work until this issue will be resolved, so i copied that class and fixed it
         appointmentBookingTabs.selections().map { tab ->
             when (tab.position) {
-                0 -> BookingAction.QuickBookingSelected
-                1 -> BookingAction.PreciseBookingSelected
+                0 -> BookingAction.SelectQuickBooking
+                1 -> BookingAction.SelectPreciseBooking
                 else -> throw IllegalArgumentException()
             }
         }
@@ -133,6 +133,7 @@ class BookingFragment : BottomSheetDialogFragment() {
                 viewState.fromTime,
                 viewState.hourMinuteTime
             )
+            ViewState.BookingCanceled -> dismiss()
         }
     }
 
@@ -164,6 +165,7 @@ class BookingFragment : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
+        model.bookingActionS.accept(BookingAction.RestoreDashboard)
     }
 
 }

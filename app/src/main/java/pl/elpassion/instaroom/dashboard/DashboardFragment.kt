@@ -87,20 +87,13 @@ class DashboardFragment : Fragment() {
         state?:return
 
         when (state) {
-            is DashboardState.RoomListState -> {
-                hideProgressDialogIfShown()
-                updateRoomList(state)
-            }
+            is DashboardState.RoomListState -> updateRoomList(state)
             is DashboardState.BookingDetailsState -> showBookingDetails()
             is DashboardState.BookingInProgressState -> showProgressDialog()
         }
     }
 
-    private fun hideProgressDialogIfShown() {
-        if(progressDialog.isAdded) {
-            progressDialog.dismiss()
-        }
-    }
+
 
     private fun showProgressDialog() {
         progressDialog.show(fragmentManager, ProgressDialogFragment.PROGRESS_DIALOG_TAG)
@@ -126,7 +119,7 @@ class DashboardFragment : Fragment() {
 
     private fun onBookingClicked(room: Room) { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room)) }
 
-    private fun onBookingCanceled() = model.dashboardActionS.accept(DashboardAction.HideBookingDetails)
+    private fun onBookingCanceled() = model.dashboardActionS.accept(DashboardAction.CancelBooking)
 
 
     companion object {

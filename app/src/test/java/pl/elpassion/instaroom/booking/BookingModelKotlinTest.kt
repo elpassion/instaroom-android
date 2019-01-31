@@ -69,28 +69,28 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             //quick booking is set when launching model
 
             "do not set quick booking if it already is selected" {
-                actionS.accept(BookingAction.QuickBookingSelected)
+                actionS.accept(BookingAction.SelectQuickBooking)
                 testObserver.assertHistorySize(1)
             }
 
             "set precise booking if quick booking is selected" {
-                actionS.accept(BookingAction.PreciseBookingSelected)
+                actionS.accept(BookingAction.SelectPreciseBooking)
                 testObserver.awaitValue().assertValue(preciseBookingState)
             }
 
         }
 
         "booking type selection when quick selected" - {
-            actionS.accept(BookingAction.PreciseBookingSelected)
+            actionS.accept(BookingAction.SelectPreciseBooking)
             testObserver = testObserver.awaitValue()
 
             "do not set precise booking if it already is selected" {
-                actionS.accept(BookingAction.PreciseBookingSelected)
+                actionS.accept(BookingAction.SelectPreciseBooking)
                 testObserver.assertHistorySize(2)
             }
 
             "set quick booking after click if precise is selected" {
-                actionS.accept(BookingAction.QuickBookingSelected)
+                actionS.accept(BookingAction.SelectQuickBooking)
                 testObserver.awaitValue().assertValue(initialBookingState)
             }
         }
@@ -103,24 +103,24 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
 
         "set title" {
             val newTitle = "title"
-            actionS.accept(BookingAction.TitleChanged(newTitle))
+            actionS.accept(BookingAction.ChangeTitle(newTitle))
             testObserver.awaitValue().assertValue(initialBookingState.copy(title = newTitle))
         }
 
         "set quick booking duration" {
             val newDuration = BookingDuration.HOUR_1
-            actionS.accept(BookingAction.BookingDurationSelected(newDuration))
+            actionS.accept(BookingAction.SelectBookingDuration(newDuration))
             testObserver.awaitValue()
                 .assertValue(initialBookingState.copy(bookingDuration = newDuration))
         }
 
         "set dialog dismissed sets booking state" {
-            actionS.accept(BookingAction.TimePickerDismissed)
+            actionS.accept(BookingAction.DismissTimePicker)
             testObserver.awaitValue().assertValue(initialBookingState).assertHistorySize(2)
         }
 
         "to time button click shows timePickDialog" {
-            actionS.accept(BookingAction.BookingTimeToClicked)
+            actionS.accept(BookingAction.SelectBookingEndTime)
             testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
                     false,
@@ -130,7 +130,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         }
 
         "from time button click shows timePickDialog" {
-            actionS.accept(BookingAction.BookingTimeFromClicked)
+            actionS.accept(BookingAction.SelectBookingStartTime)
 
             testObserver.awaitValue().assertValue(
                 ViewState.PickTime(
@@ -141,12 +141,12 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         }
 
         "set precise booking time range" - {
-            actionS.accept(BookingAction.PreciseBookingSelected)
+            actionS.accept(BookingAction.SelectPreciseBooking)
             val hourMinuteTime = HourMinuteTime(14, 0)
 
             "set start time" {
-                actionS.accept(BookingAction.BookingStartTimeChanged(hourMinuteTime))
-                actionS.accept(BookingAction.TimePickerDismissed)
+                actionS.accept(BookingAction.ChangeBookingStartTime(hourMinuteTime))
+                actionS.accept(BookingAction.DismissTimePicker)
 
                 testObserver.awaitValue().assertValue(
                     preciseBookingState.copy(
@@ -156,8 +156,8 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             }
 
             "set end time" {
-                actionS.accept(BookingAction.BookingEndTimeChanged(hourMinuteTime))
-                actionS.accept(BookingAction.TimePickerDismissed)
+                actionS.accept(BookingAction.ChangBookingEndTime(hourMinuteTime))
+                actionS.accept(BookingAction.DismissTimePicker)
 
                 testObserver.awaitValue().assertValue(
                     preciseBookingState.copy(
@@ -169,14 +169,14 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
 
         "cancel booking call dashboard hide" {
             actionS.accept(BookingAction.CancelClicked)
-            verify(callDashboardAction).invoke(DashboardAction.HideBookingDetails)
+            verify(callDashboardAction).invoke(DashboardAction.CancelBooking)
         }
 
         "set all day booking" {
             testObserver.awaitValue()
                 .assertValue { (it as ViewState.BookingState.QuickBooking).allDayBooking == false }
 
-            actionS.accept(BookingAction.AllDayBookingSwitched(checked = true))
+            actionS.accept(BookingAction.SwitchAllDayBooking(checked = true))
             testObserver.awaitValue().assertValue(initialBookingState.copy(allDayBooking = true))
         }
 

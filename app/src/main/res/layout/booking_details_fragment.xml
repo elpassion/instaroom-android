@@ -152,7 +152,6 @@
         android:id="@+id/bookingTimeSeparator"
         android:layout_width="12dp"
         android:layout_height="2dp"
-        style="@style/BookingTimeSeparator"
         android:background="@android:color/black"
         app:layout_constraintBottom_toBottomOf="@id/bookingTimeFrom"
         app:layout_constraintEnd_toStartOf="@id/bookingTimeTo"

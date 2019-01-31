@@ -61,7 +61,7 @@ fun CoroutineScope.launchDashboardModel(
         state.set(DashboardState.BookingDetailsState)
     }
 
-    fun hideBookingDetails() {
+    fun restoreRoomListState() {
         state.set(DashboardState.RoomListState(rooms, false))
     }
 
@@ -84,7 +84,7 @@ fun CoroutineScope.launchDashboardModel(
             is DashboardAction.RefreshRooms -> loadRooms()
             is DashboardAction.SelectSignOut -> selectSignOut()
             is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
-            is DashboardAction.HideBookingDetails -> hideBookingDetails()
+            is DashboardAction.CancelBooking -> restoreRoomListState()
             is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
 
         }
@@ -98,8 +98,8 @@ sealed class DashboardAction {
 
     data class ShowBookingDetails(val room: Room) : DashboardAction()
     data class BookRoom(val bookingEvent: BookingEvent) : DashboardAction()
-    object HideBookingDetails : DashboardAction()
 
+    object CancelBooking : DashboardAction()
     object BookingSuccess : DashboardAction()
 
 }

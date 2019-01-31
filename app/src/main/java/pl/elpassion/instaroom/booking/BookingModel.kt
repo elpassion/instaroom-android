@@ -25,6 +25,7 @@ fun CoroutineScope.launchBookingModel(
     var isPrecise = false
     var isAllDay = false
     var title = ""
+    var bookingConfirmed = false
 
     fun updateBookingState() {
         state.set(
@@ -62,8 +63,16 @@ fun CoroutineScope.launchBookingModel(
         toTime = toTime.withHour(newHourMinuteTime.hour).withMinute(newHourMinuteTime.minute)
     }
 
-    fun cancelBooking() {
-        callDashboardAction(DashboardAction.HideBookingDetails)
+    fun dismissBooking() {
+        state.set(ViewState.BookingCanceled)
+    }
+
+    fun restoreDashboardState() {
+        if(!bookingConfirmed) {
+            callDashboardAction(DashboardAction.CancelBooking)
+        }
+
+        bookingConfirmed = false
     }
 
     fun createBookingEvent(): BookingEvent {
@@ -83,7 +92,7 @@ fun CoroutineScope.launchBookingModel(
     }
 
     fun bookRoom() {
-        println("time = ${fromTime.toEpochSecond()}")
+        bookingConfirmed = true
         callDashboardAction(DashboardAction.BookRoom(createBookingEvent()))
     }
 
@@ -116,21 +125,27 @@ fun CoroutineScope.launchBookingModel(
     actionS.consumeEach { action ->
         when (action) {
             is BookingAction.BookingRoomSelected -> showBookingDetails(action.selectedRoom)
-            is BookingAction.QuickBookingSelected -> disablePreciseBooking()
-            is BookingAction.PreciseBookingSelected -> enablePreciseBooking()
-            is BookingAction.TitleChanged -> updateBookingTitle(action.title)
-            is BookingAction.BookingDurationSelected -> updateBookingDuration(action.bookingDuration)
-            is BookingAction.AllDayBookingSwitched -> updateAllDayBooking(action.checked)
+            is BookingAction.SelectQuickBooking -> disablePreciseBooking()
+            is BookingAction.SelectPreciseBooking -> enablePreciseBooking()
+            is BookingAction.ChangeTitle -> updateBookingTitle(action.title)
+            is BookingAction.SelectBookingDuration -> updateBookingDuration(action.bookingDuration)
+            is BookingAction.SwitchAllDayBooking -> updateAllDayBooking(action.checked)
 
-            is BookingAction.BookingStartTimeChanged -> updateBookingStartTime(action.newHourMinuteTime)
-            is BookingAction.BookingEndTimeChanged -> updateBookingEndTime(action.newHourMinuteTime)
-            is BookingAction.BookingTimeFromClicked -> showTimePickerDialog(true)
-            is BookingAction.BookingTimeToClicked -> showTimePickerDialog(false)
+            is BookingAction.ChangeBookingStartTime -> updateBookingStartTime(action.newHourMinuteTime)
+            is BookingAction.ChangBookingEndTime -> updateBookingEndTime(action.newHourMinuteTime)
+            is BookingAction.SelectBookingStartTime -> showTimePickerDialog(true)
+            is BookingAction.SelectBookingEndTime -> showTimePickerDialog(false)
 
-            is BookingAction.TimePickerDismissed -> updateBookingState()
+            is BookingAction.DismissTimePicker -> updateBookingState()
 
-            is BookingAction.CancelClicked -> cancelBooking()
-            is BookingAction.ConfirmClicked -> bookRoom()
+            is BookingAction.CancelClicked -> dismissBooking()
+            is BookingAction.ConfirmClicked -> {
+                bookRoom()
+                dismissBooking()
+            }
+
+            is BookingAction.RestoreDashboard -> restoreDashboardState()
+
         }
     }
 }
@@ -138,21 +153,23 @@ fun CoroutineScope.launchBookingModel(
 sealed class BookingAction {
     data class BookingRoomSelected(val selectedRoom: Room) : BookingAction()
 
-    object QuickBookingSelected : BookingAction()
-    object PreciseBookingSelected : BookingAction()
-    data class AllDayBookingSwitched(val checked: Boolean) : BookingAction()
+    object SelectQuickBooking : BookingAction()
+    object SelectPreciseBooking : BookingAction()
+    data class SwitchAllDayBooking(val checked: Boolean) : BookingAction()
 
-    data class TitleChanged(val title: String) : BookingAction()
-    data class BookingDurationSelected(val bookingDuration: BookingDuration) : BookingAction()
-    data class BookingStartTimeChanged(val newHourMinuteTime: HourMinuteTime) : BookingAction()
-    data class BookingEndTimeChanged(val newHourMinuteTime: HourMinuteTime) : BookingAction()
+    data class ChangeTitle(val title: String) : BookingAction()
+    data class SelectBookingDuration(val bookingDuration: BookingDuration) : BookingAction()
+    data class ChangeBookingStartTime(val newHourMinuteTime: HourMinuteTime) : BookingAction()
+    data class ChangBookingEndTime(val newHourMinuteTime: HourMinuteTime) : BookingAction()
 
     object CancelClicked : BookingAction()
     object ConfirmClicked : BookingAction()
 
-    object BookingTimeFromClicked : BookingAction()
-    object BookingTimeToClicked : BookingAction()
-    object TimePickerDismissed : BookingAction()
+    object SelectBookingStartTime : BookingAction()
+    object SelectBookingEndTime : BookingAction()
+    object DismissTimePicker : BookingAction()
+
+    object RestoreDashboard : BookingAction()
 
 }
 
@@ -180,6 +197,8 @@ sealed class ViewState {
     }
 
     data class PickTime(val fromTime: Boolean, val hourMinuteTime: HourMinuteTime) : ViewState()
+
+    object BookingCanceled : ViewState()
 }
 
 fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
