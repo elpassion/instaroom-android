@@ -11,8 +11,12 @@
     <dimen name="xxlarge_padding">24dp</dimen>
 
     <dimen name="text_9">9sp</dimen>
+    <dimen name="text_10">10sp</dimen>
     <dimen name="text_12">12sp</dimen>
     <dimen name="text_14">14sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_20">20sp</dimen>
+
     <dimen name="item_room_corners_radius">6dp</dimen>
     <dimen name="item_room_bottom_stroke">1.5dp</dimen>
     <dimen name="item_room_free_icon_size">28dp</dimen>

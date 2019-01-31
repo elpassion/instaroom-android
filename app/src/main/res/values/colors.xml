@@ -35,5 +35,5 @@
     <color name="divider">#FFE8ECED</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="progressDialogInfoTextColor">#FF252525</color>
+    <color name="bookingSuccessTitleColor">#DE000000</color>
 </resources>

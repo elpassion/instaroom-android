@@ -1,6 +1,7 @@
 package pl.elpassion.instaroom.booking
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -161,5 +162,8 @@ class BookingFragment : BottomSheetDialogFragment() {
         bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
     }
 
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+    }
 
 }

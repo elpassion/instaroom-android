@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/itemHeaderTitle"
-        style="@style/TextBold.Black.xLarge"
+        style="@style/TextBold.Black.CustomLarge"
         android:fontFamily="@font/avenir_black"
         android:textStyle="normal"
         android:layout_width="match_parent"

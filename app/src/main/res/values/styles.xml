@@ -62,7 +62,7 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="ItemRoomStatus.Occuped">
+    <style name="ItemRoomStatus.Occupied">
         <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 
@@ -123,12 +123,12 @@
     </style>
 
     <style name="TextLight" parent="AvenirBook">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_14</item>
     </style>
 
     <style name="TextBold" parent="AvenirBook">
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/text_14</item>
     </style>
 
     <style name="TextLight.Grey">
@@ -140,27 +140,27 @@
     </style>
 
     <style name="TextLight.Grey.Tiny">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">@dimen/text_10</item>
     </style>
 
     <style name="TextLight.Grey.Small">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_12</item>
     </style>
 
     <style name="TextLight.Grey.Large">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_16</item>
     </style>
 
-    <style name="TextLight.Grey.xLarge">
-        <item name="android:textSize">16sp</item>
+    <style name="TextLight.Grey.XLarge">
+        <item name="android:textSize">@dimen/text_20</item>
     </style>
 
     <style name="TextLight.Black.Small">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_12</item>
     </style>
 
     <style name="TextLight.Black.Large">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_16</item>
     </style>
 
     <style name="TextBold.Black">
@@ -168,14 +168,18 @@
     </style>
 
     <style name="TextBold.Black.Small">
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_12</item>
     </style>
 
     <style name="TextBold.Black.Large">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/text_16</item>
     </style>
 
-    <style name="TextBold.Black.xLarge">
+    <style name="TextBold.Black.XLarge">
+        <item name="android:textSize">@dimen/text_20</item>
+    </style>
+
+    <style name="TextBold.Black.CustomLarge">
         <item name="android:textSize">19sp</item>
     </style>
 
@@ -266,7 +270,7 @@
         <item name="android:layout_marginBottom">12dp</item>
     </style>
 
-    <style name="ItemRoomBookedTitle" parent="TextBold.Black.xLarge">
+    <style name="ItemRoomBookedTitle" parent="TextBold.Black.CustomLarge">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">@dimen/xbasic_padding</item>
@@ -297,7 +301,7 @@
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
     <style name="BookingProgressInfoText" parent="@style/TextBold.Black.Large">
-        <item name="android:textColor">@color/progressDialogInfoTextColor</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:letterSpacing">0.02</item>
     </style>
 
@@ -315,5 +319,22 @@
         <item name="android:layout_marginRight">@dimen/progress_container_padding</item>
         <item name="android:background">@android:color/white</item>
     </style>
+
+    <style name="BookingSuccessButton">
+        <item name="android:layout_marginLeft">@dimen/basic_padding</item>
+        <item name="android:layout_marginRight">@dimen/basic_padding</item>
+    </style>
+
+    <style name="BookingSuccessButton.Edit">
+        <item name="android:backgroundTint">@android:color/white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_marginTop">@dimen/medium_padding</item>
+    </style>
+
+    <style name="BookingSuccessButton.Dismiss">
+        <item name="android:backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 
 </resources>
