@@ -7,7 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jakewharton.rxrelay2.PublishRelay
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.booking.ViewState
 import pl.elpassion.instaroom.booking.runBookingFlow
@@ -19,6 +23,7 @@ import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
+import pl.elpassion.instaroom.util.await
 import kotlin.coroutines.CoroutineContext
 
 
@@ -103,11 +108,10 @@ suspend fun processAppFlow(
 }
 
 
-fun signOut(
+suspend fun signOut(
     tokenRepository: TokenRepository,
     signInClient: GoogleSignInClient
 ) {
     tokenRepository.tokenData = null
-    signInClient.signOut()
+    signInClient.signOut().await()
 }
-
