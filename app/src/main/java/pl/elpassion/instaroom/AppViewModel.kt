@@ -7,10 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jakewharton.rxrelay2.PublishRelay
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.booking.ViewState
 import pl.elpassion.instaroom.booking.runBookingFlow
@@ -51,13 +48,20 @@ class AppViewModel(
             navHostFragment.navController.navigate(fragmentId)
         }
 
+        suspend fun signOut() {
+            withContext(Dispatchers.IO) { signOut(tokenRepository, signInClient) }
+        }
+
         launch {
             while (true) {
                 processAppFlow(
-                    ::navigate, tokenRepository, signInClient,
+                    ::navigate,
+                    ::signOut,
+                    tokenRepository,
                     ::initBookingFlow,
                     loginActionS,
-                    dashboardActionS, _dashboardState
+                    dashboardActionS,
+                    _dashboardState
                 )
             }
         }
@@ -72,8 +76,8 @@ class AppViewModel(
 
 suspend fun processAppFlow(
     navigate: (Int) -> Unit,
+    signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
-    signInClient: GoogleSignInClient,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     loginActionS: PublishRelay<SignInAction>,
     dashboardActionS: PublishRelay<DashboardAction>,
@@ -88,8 +92,10 @@ suspend fun processAppFlow(
     }
 
     runDashboardFlow(
-        dashboardActionS, _dashboardState,
-        runBookingFlow, signOut(tokenRepository, signInClient),
+        dashboardActionS,
+        _dashboardState,
+        runBookingFlow,
+        signOut,
         tokenRepository::getToken
     )
 
@@ -97,11 +103,10 @@ suspend fun processAppFlow(
 }
 
 
-
 fun signOut(
     tokenRepository: TokenRepository,
     signInClient: GoogleSignInClient
-): suspend () -> Unit = {
+) {
     tokenRepository.tokenData = null
     signInClient.signOut()
 }
