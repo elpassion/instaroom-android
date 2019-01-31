@@ -3,22 +3,23 @@ package pl.elpassion.instaroom.booking
 import androidx.lifecycle.MutableLiveData
 import com.google.api.client.util.DateTime
 import io.reactivex.Observable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.consumeEach
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.util.*
+import pl.elpassion.instaroom.util.BookingDuration
+import pl.elpassion.instaroom.util.HourMinuteTime
+import pl.elpassion.instaroom.util.set
+import pl.elpassion.instaroom.util.toEpochMilliSecond
+import pl.elpassion.instaroom.util.toHourMinuteTime
 
-fun CoroutineScope.launchBookingModel(
+suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
-    callDashboardAction: (DashboardAction) -> Unit,
-    state: MutableLiveData<ViewState>
-) = launch {
-    lateinit var room: Room
+    state: MutableLiveData<ViewState>,
+    room: Room,
+    book: suspend (Room) -> Unit
+) {
     var bookingDuration = BookingDuration.MIN_15
     var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     var toTime: ZonedDateTime = fromTime.plusHours(1)
@@ -33,11 +34,6 @@ fun CoroutineScope.launchBookingModel(
             else
                 ViewState.BookingState.QuickBooking(bookingDuration, room, title, isAllDay)
         )
-    }
-
-    fun showBookingDetails(selectedRoom: Room) {
-        room = selectedRoom
-        updateBookingState()
     }
 
     fun updateBookingTitle(enteredTitle: String) {
@@ -82,10 +78,6 @@ fun CoroutineScope.launchBookingModel(
         return BookingEvent(room.calendarId, title, room.calendarId, startDate, endDate)
     }
 
-    fun bookRoom() {
-        callDashboardAction(DashboardAction.BookRoom(createBookingEvent()))
-    }
-
     fun disablePreciseBooking() {
         if (!isPrecise) return
 
@@ -112,9 +104,10 @@ fun CoroutineScope.launchBookingModel(
         state.set(ViewState.PickTime(isFromTime, hourMinuteTime))
     }
 
+    updateBookingState()
+
     actionS.consumeEach { action ->
         when (action) {
-            is BookingAction.BookingRoomSelected -> showBookingDetails(action.selectedRoom)
             is BookingAction.SelectQuickBooking -> disablePreciseBooking()
             is BookingAction.SelectPreciseBooking -> enablePreciseBooking()
             is BookingAction.ChangeTitle -> updateBookingTitle(action.title)
@@ -130,7 +123,7 @@ fun CoroutineScope.launchBookingModel(
 
             is BookingAction.CancelClicked -> dismissBooking()
             is BookingAction.ConfirmClicked -> {
-                bookRoom()
+                book(room)
                 dismissBooking()
             }
         }

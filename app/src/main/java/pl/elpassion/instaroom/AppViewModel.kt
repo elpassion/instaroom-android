@@ -4,25 +4,23 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.jakewharton.rxrelay2.PublishRelay
-import com.shopify.livedataktx.first
-import com.shopify.livedataktx.nonNull
-import com.shopify.livedataktx.observe
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.booking.ViewState
-import pl.elpassion.instaroom.booking.launchBookingModel
+import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
-import pl.elpassion.instaroom.dashboard.launchDashboardModel
-import pl.elpassion.instaroom.login.LoginAction
-import pl.elpassion.instaroom.login.LoginState
-import pl.elpassion.instaroom.login.launchLoginModel
+import pl.elpassion.instaroom.dashboard.runDashboardFlow
+import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.kalendar.bookSomeRoom
+import pl.elpassion.instaroom.login.SignInAction
+import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
 import kotlin.coroutines.CoroutineContext
 
@@ -34,15 +32,13 @@ class AppViewModel(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    val loginState: LiveData<LoginState> get() = _loginState
     val dashboardState: LiveData<DashboardState> get() = _dashboardState
     val bookingState: LiveData<ViewState> get() = _bookingState
 
-    val loginActionS: PublishRelay<LoginAction> = PublishRelay.create()
+    val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
 
-    private val _loginState = MutableLiveData<LoginState>()
     private val _dashboardState = MutableLiveData<DashboardState>()
     private val _bookingState = MutableLiveData<ViewState>()
 
@@ -53,27 +49,40 @@ class AppViewModel(
             navHostFragment.navController.navigate(fragmentId)
         }
 
-        launchLoginModel(
+        launch {
+            runAppFlow(::navigate, tokenRepository)
+        }
+    }
+
+    private suspend fun runAppFlow(
+        navigate: (Int) -> Unit,
+        tokenRepository: TokenRepository
+    ) {
+        runLoginFlow(
             loginActionS,
-            dashboardActionS::accept,
-            _loginState,
-            tokenRepository,
-            ::navigate
-        )
-        launchDashboardModel(
-            dashboardActionS,
-            loginActionS::accept,
-            bookingActionS::accept,
-            _dashboardState,
             tokenRepository
         )
-        launchBookingModel(
-            bookingActionS,
-            dashboardActionS::accept,
-            _bookingState
+        navigate(R.id.action_loginFragment_to_dashboardFragment)
+        runDashboardFlow(
+            dashboardActionS,
+            _dashboardState,
+            ::runBookingFlow,
+            bookRoom(),
+            signOut(),
+            tokenRepository::getToken
         )
     }
 
+    private suspend fun runBookingFlow(room: Room) =
+        runBookingFlow(
+            bookingActionS,
+            _bookingState,
+            room,
+            bookRoom()
+        )
+
+    private fun bookRoom(): suspend (Room) -> Unit =
+        { withContext(Dispatchers.IO) { bookSomeRoom("", "") } }
 
 
     override fun onCleared() = job.cancel()

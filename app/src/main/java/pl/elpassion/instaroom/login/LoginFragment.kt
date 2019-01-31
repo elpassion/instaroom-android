@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
@@ -51,7 +49,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun userSignedIn() {
-        model.loginActionS.accept(LoginAction.UserSignedIn)
+        model.loginActionS.accept(LoginAction.SignIn)
     }
 
 

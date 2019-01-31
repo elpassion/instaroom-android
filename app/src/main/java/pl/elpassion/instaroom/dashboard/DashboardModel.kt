@@ -2,31 +2,31 @@ package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.rx2.consumeEach
-import pl.elpassion.instaroom.booking.BookingAction
+import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.kalendar.bookSomeRoom
 import pl.elpassion.instaroom.kalendar.getSomeRooms
-import pl.elpassion.instaroom.login.LoginAction
-import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
 
-fun CoroutineScope.launchDashboardModel(
+suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
-    callLoginAction: (LoginAction) -> Unit,
-    callBookingAction: (BookingAction) -> Unit,
     state: MutableLiveData<DashboardState>,
-    tokenRepository: TokenRepository
-) = launch {
+    runBookingFlow: suspend (Room) -> Unit,
+    book: suspend (Room) -> Unit,
+    signOut: suspend () -> Unit,
+    getToken: suspend () -> String?
+) {
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> =
         withContext(Dispatchers.IO) {
-            tokenRepository.getToken()?.let {
+            getToken()?.let {
                 getSomeRooms(it)
             }.orEmpty()
         }
@@ -44,7 +44,7 @@ fun CoroutineScope.launchDashboardModel(
         try {
             withContext(Dispatchers.IO) {
                 state.set(DashboardState.BookingInProgressState)
-                tokenRepository.getToken()?.let { accessToken ->
+                getToken()?.let { accessToken ->
                     bookSomeRoom(accessToken, bookingEvent)
                 }
                 loadRooms()
@@ -54,8 +54,8 @@ fun CoroutineScope.launchDashboardModel(
         }
     }
 
-    fun showBookingDetails(room: Room) {
-        callBookingAction(BookingAction.BookingRoomSelected(room))
+    suspend fun showBookingDetails(room: Room) {
+        runBookingFlow(room)
         state.set(DashboardState.BookingDetailsState)
     }
 
@@ -63,8 +63,7 @@ fun CoroutineScope.launchDashboardModel(
         state.set(DashboardState.RoomListState(rooms, false))
     }
 
-    fun selectSignOut() {
-        coroutineContext.cancelChildren()
+    suspend fun selectSignOut() {
         rooms.clear()
         state.set(
             DashboardState.RoomListState(
@@ -72,7 +71,7 @@ fun CoroutineScope.launchDashboardModel(
                 false
             )
         )
-        callLoginAction(LoginAction.SignOut)
+        signOut()
     }
 
     loadRooms()
@@ -85,6 +84,22 @@ fun CoroutineScope.launchDashboardModel(
             is DashboardAction.CancelBooking -> restoreRoomListState()
             is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
 
+        }
+    }
+
+
+
+
+    loadRooms()
+
+    while (true) {
+        val action = actionS.awaitFirst()
+        when (action) {
+            is DashboardAction.RefreshRooms -> loadRooms()
+            is DashboardAction.SelectSignOut -> selectSignOut()
+            is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
+            is DashboardAction.CancelBooking -> restoreRoomListState()
+            is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
         }
     }
 }
@@ -110,8 +125,8 @@ sealed class DashboardState {
         val errorMessage: String? = null
     ) : DashboardState()
 
-    object BookingInProgressState: DashboardState()
-    object BookingSuccessState: DashboardState()
+    object BookingInProgressState : DashboardState()
+    object BookingSuccessState : DashboardState()
 
     object BookingDetailsState : DashboardState()
 }

@@ -8,7 +8,6 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.IsolationMode
-import io.kotlintest.shouldNot
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +55,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
 
     init {
         executeTasksInstantly()
-        launchBookingModel(actionS, callDashboardAction, state)
+        runBookingFlow(actionS, callDashboardAction, state)
         state.observeForever(stateObserver)
 
         actionS.accept(BookingAction.BookingRoomSelected(emptyRoom()))
