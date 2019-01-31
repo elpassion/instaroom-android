@@ -3,6 +3,7 @@ package pl.elpassion.instaroom.booking
 import androidx.lifecycle.MutableLiveData
 import com.google.api.client.util.DateTime
 import io.reactivex.Observable
+import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.rx2.consumeEach
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
@@ -17,9 +18,10 @@ import pl.elpassion.instaroom.util.toHourMinuteTime
 suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
     state: MutableLiveData<ViewState>,
-    room: Room,
-    book: suspend (Room) -> Unit
-) {
+    room: Room
+) : BookingEvent? {
+    var bookingEvent: BookingEvent? = null
+
     var bookingDuration = BookingDuration.MIN_15
     var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     var toTime: ZonedDateTime = fromTime.plusHours(1)
@@ -106,7 +108,9 @@ suspend fun runBookingFlow(
 
     updateBookingState()
 
-    actionS.consumeEach { action ->
+    while (true) {
+        val action = actionS.awaitFirst()
+
         when (action) {
             is BookingAction.SelectQuickBooking -> disablePreciseBooking()
             is BookingAction.SelectPreciseBooking -> enablePreciseBooking()
@@ -121,9 +125,14 @@ suspend fun runBookingFlow(
 
             is BookingAction.DismissTimePicker -> updateBookingState()
 
-            is BookingAction.CancelClicked -> dismissBooking()
+            is BookingAction.Dismiss -> return bookingEvent
+
+            is BookingAction.CancelClicked -> {
+                dismissBooking()
+            }
+
             is BookingAction.ConfirmClicked -> {
-                book(room)
+                bookingEvent = createBookingEvent()
                 dismissBooking()
             }
         }
@@ -148,6 +157,8 @@ sealed class BookingAction {
     object SelectBookingStartTime : BookingAction()
     object SelectBookingEndTime : BookingAction()
     object DismissTimePicker : BookingAction()
+
+    object Dismiss : BookingAction()
 }
 
 sealed class ViewState {

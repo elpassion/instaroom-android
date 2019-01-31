@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
-import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
@@ -17,8 +16,7 @@ import retrofit2.HttpException
 suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
     state: MutableLiveData<DashboardState>,
-    runBookingFlow: suspend (Room) -> Unit,
-    book: suspend (Room) -> Unit,
+    runBookingFlow: suspend (Room) -> BookingEvent?,
     signOut: suspend () -> Unit,
     getToken: suspend () -> String?
 ) {
@@ -54,11 +52,6 @@ suspend fun runDashboardFlow(
         }
     }
 
-    suspend fun showBookingDetails(room: Room) {
-        runBookingFlow(room)
-        state.set(DashboardState.BookingDetailsState)
-    }
-
     fun restoreRoomListState() {
         state.set(DashboardState.RoomListState(rooms, false))
     }
@@ -74,35 +67,29 @@ suspend fun runDashboardFlow(
         signOut()
     }
 
-    loadRooms()
-
-    actionS.consumeEach { action ->
-        when (action) {
-            is DashboardAction.RefreshRooms -> loadRooms()
-            is DashboardAction.SelectSignOut -> selectSignOut()
-            is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
-            is DashboardAction.CancelBooking -> restoreRoomListState()
-            is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
-
+    suspend fun processBooking(room: Room) {
+        state.set(DashboardState.BookingDetailsState)
+        val bookingEvent: BookingEvent? = runBookingFlow(room)
+        if(bookingEvent != null) {
+            bookRoom(bookingEvent)
         }
     }
-
-
-
 
     loadRooms()
 
     while (true) {
-        val action = actionS.awaitFirst()
-        when (action) {
+
+        when (val action = actionS.awaitFirst()) {
             is DashboardAction.RefreshRooms -> loadRooms()
             is DashboardAction.SelectSignOut -> selectSignOut()
-            is DashboardAction.ShowBookingDetails -> showBookingDetails(action.room)
+            is DashboardAction.ShowBookingDetails -> processBooking(action.room)
             is DashboardAction.CancelBooking -> restoreRoomListState()
             is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
         }
     }
 }
+
+
 
 sealed class DashboardAction {
 

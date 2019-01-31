@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun userSignedIn() {
-        model.loginActionS.accept(LoginAction.SignIn)
+        model.loginActionS.accept(SignInAction)
     }
 
 

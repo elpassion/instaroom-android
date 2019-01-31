@@ -17,6 +17,7 @@ import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.runDashboardFlow
+import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.kalendar.bookSomeRoom
 import pl.elpassion.instaroom.login.SignInAction
@@ -58,27 +59,35 @@ class AppViewModel(
         navigate: (Int) -> Unit,
         tokenRepository: TokenRepository
     ) {
-        runLoginFlow(
-            loginActionS,
-            tokenRepository
-        )
-        navigate(R.id.action_loginFragment_to_dashboardFragment)
+        if(tokenRepository.tokenData == null) {
+            navigate(R.id.action_startFragment_to_loginFragment)
+            runLoginFlow(
+                loginActionS,
+                tokenRepository
+            )
+            navigate(R.id.action_loginFragment_to_dashboardFragment)
+        }else {
+            navigate(R.id.action_startFragment_to_dashboardFragment)
+        }
+
         runDashboardFlow(
             dashboardActionS,
             _dashboardState,
             ::runBookingFlow,
-            bookRoom(),
             signOut(),
             tokenRepository::getToken
         )
     }
 
-    private suspend fun runBookingFlow(room: Room) =
+    private fun signOut(): suspend () -> Unit = {
+
+    }
+
+    private suspend fun runBookingFlow(room: Room): BookingEvent? =
         runBookingFlow(
             bookingActionS,
             _bookingState,
-            room,
-            bookRoom()
+            room
         )
 
     private fun bookRoom(): suspend (Room) -> Unit =

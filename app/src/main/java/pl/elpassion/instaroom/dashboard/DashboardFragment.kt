@@ -68,7 +68,7 @@ class DashboardFragment : Fragment() {
                             RoomOwnBookedViewHolder(view, ::onCalendarOpen)
                         }
                         room.isBooked -> R.layout.item_room_booked to { view: View ->
-                            RoomBookedViewHolder(view, ::onCalendarOpen)
+                            RoomBookedViewHolder(view, ::onCalendarOpen, ::onBookingClicked)
                         }
                         else -> R.layout.item_room_free to { view: View ->
                             RoomFreeViewHolder(view, ::onBookingClicked)

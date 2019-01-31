@@ -163,6 +163,10 @@ class BookingFragment : BottomSheetDialogFragment() {
         bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
     }
 
+    override fun onDismiss(dialog: DialogInterface?) {
+        super.onDismiss(dialog)
+        model.bookingActionS.accept(BookingAction.Dismiss)
+    }
     companion object {
         const val TAG = "BOOKING_FRAGMENT_TAG"
     }

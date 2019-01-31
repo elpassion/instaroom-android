@@ -16,14 +16,6 @@ class StartFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        model.loginState.nonNull().first().observe { state ->
-            findNavController().navigate(
-                if (state.isSignedIn) {
-                    R.id.action_startFragment_to_dashboardFragment
-                } else {
-                    R.id.action_startFragment_to_loginFragment
-                }
-            )
-        }
+        model.toString() // TODO: do anything to create model -> what to do?
     }
 }

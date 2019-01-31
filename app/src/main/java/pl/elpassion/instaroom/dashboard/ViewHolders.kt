@@ -27,7 +27,11 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (room: Room) -> Uni
     }
 }
 
-class RoomBookedViewHolder(itemView: View, private val onOpenCalendar: (String) -> Unit) :
+class RoomBookedViewHolder(
+    itemView: View,
+    private val onOpenCalendar: (String) -> Unit,
+    private val onBook: (room: Room) -> Unit
+) :
     ViewHolderBinder<DashboardItem>(itemView) {
 
     override fun bind(item: DashboardItem) = with(itemView) {
@@ -36,6 +40,7 @@ class RoomBookedViewHolder(itemView: View, private val onOpenCalendar: (String) 
         itemRoomBookedName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomBookedName.text = item.room.name
         val event = item.room.events.first()
+        itemRoomBookButton.setOnClickListener { onBook(item.room) }
         itemRoomBookedIcon.setOnClickListener { event.htmlLink?.let { link -> onOpenCalendar(link) } }
         itemRoomBookedTitle.text = event.name
         itemRoomBookedTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
@@ -58,7 +63,13 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
         val event = item.room.events.first()
-        itemRoomOwnBookedRoomEventIcon.setOnClickListener { event.htmlLink?.let { link -> onOpenCalendar(link) } }
+        itemRoomOwnBookedRoomEventIcon.setOnClickListener {
+            event.htmlLink?.let { link ->
+                onOpenCalendar(
+                    link
+                )
+            }
+        }
         itemRoomOwnBookedRoomEventTitle.text = event.name
         itemRoomOwnBookedRoomEventTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
         itemRoomOwnBookedRoomEventTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
