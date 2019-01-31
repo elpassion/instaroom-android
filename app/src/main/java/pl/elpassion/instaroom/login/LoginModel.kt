@@ -10,6 +10,7 @@ suspend fun runLoginFlow(
 ) {
     while (repository.tokenData == null) {
         signInActionS.awaitFirst()
+        repository.getToken()
     }
 }
 

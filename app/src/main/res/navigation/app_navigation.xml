@@ -36,8 +36,8 @@
         android:label="@string/dashboard"
         tools:layout="@layout/dashboard_fragment">
         <action
-            android:id="@+id/action_dashboardFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
+            android:id="@+id/action_dashboardFragment_to_startFragment"
+            app:destination="@id/startFragment"
             app:popUpTo="@id/app_navigation" />
     </fragment>
 

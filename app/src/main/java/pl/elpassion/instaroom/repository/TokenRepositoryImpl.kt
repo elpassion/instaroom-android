@@ -18,10 +18,14 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     private val moshi = Moshi.Builder()
         .add(ZonedDateTimeJsonAdapter)
         .build()
+
     private val jsonAdapter = moshiConverterAdapter<TokenData>(moshi)
     private val repository = createSharedPrefs(sharedPreferencesProvider, jsonAdapter)
 
     override var tokenData: TokenData? by repository.asProperty(TOKEN_DATA)
+
+    override val isUserSignedIn: Boolean
+        get() = tokenData != null
 
     override val isTokenValid: Boolean
         get() = tokenData?.let { (_, tokenExpirationDate) ->

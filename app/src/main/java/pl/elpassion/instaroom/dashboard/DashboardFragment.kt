@@ -49,7 +49,6 @@ class DashboardFragment : Fragment() {
         dashboardToolbar.setOnMenuItemClickListener { menuItem ->
             if (menuItem.itemId == R.id.sign_out_action) {
                 model.dashboardActionS.accept(DashboardAction.SelectSignOut)
-                findNavController().navigate(R.id.action_dashboardFragment_to_loginFragment)
             }
             true
         }
@@ -121,8 +120,6 @@ class DashboardFragment : Fragment() {
     }
 
     private fun onBookingClicked(room: Room) { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room)) }
-
-    private fun onBookingCanceled() = model.dashboardActionS.accept(DashboardAction.CancelBooking)
 
 
     companion object {

@@ -2,6 +2,10 @@ package pl.elpassion.instaroom
 
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
@@ -20,5 +24,15 @@ val appModule = module {
     }
     single{ NavHostFragment.create(R.navigation.app_navigation) }
 
-    viewModel { AppViewModel(get(), get()) }
+    single<GoogleSignInClient> {
+        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(androidApplication().resources.getString(R.string.server_client_id))
+            .requestEmail()
+            .requestScopes(Scope("profile"), Scope("https://www.googleapis.com/auth/calendar.events"))
+            .build()
+
+        GoogleSignIn.getClient(androidApplication(), googleSignInOptions)
+    }
+
+    viewModel { AppViewModel(get(), get(), get()) }
 }

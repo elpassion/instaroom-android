@@ -22,8 +22,7 @@ suspend fun runDashboardFlow(
 ) {
     val rooms = mutableListOf<Room>()
 
-    suspend fun getRooms(): List<Room> =
-        withContext(Dispatchers.IO) {
+    suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
             getToken()?.let {
                 getSomeRooms(it)
             }.orEmpty()
@@ -39,16 +38,16 @@ suspend fun runDashboardFlow(
         }
 
     suspend fun bookRoom(bookingEvent: BookingEvent) {
-        try {
-            withContext(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            try {
                 state.set(DashboardState.BookingInProgressState)
                 getToken()?.let { accessToken ->
                     bookSomeRoom(accessToken, bookingEvent)
                 }
                 loadRooms()
+            } catch (e: HttpException) {
+                state.set(DashboardState.RoomListState(rooms, false, e.message()))
             }
-        } catch (e: HttpException) {
-            state.set(DashboardState.RoomListState(rooms, false, e.message()))
         }
     }
 
@@ -81,9 +80,11 @@ suspend fun runDashboardFlow(
 
         when (val action = actionS.awaitFirst()) {
             is DashboardAction.RefreshRooms -> loadRooms()
-            is DashboardAction.SelectSignOut -> selectSignOut()
+            is DashboardAction.SelectSignOut -> {
+                selectSignOut()
+                return
+            }
             is DashboardAction.ShowBookingDetails -> processBooking(action.room)
-            is DashboardAction.CancelBooking -> restoreRoomListState()
             is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
         }
     }
