@@ -55,8 +55,6 @@ fun CoroutineScope.launchDashboardModel(
     }
 
     fun showBookingDetails(room: Room) {
-        if (state.value == DashboardState.BookingDetailsState) return
-
         callBookingAction(BookingAction.BookingRoomSelected(room))
         state.set(DashboardState.BookingDetailsState)
     }

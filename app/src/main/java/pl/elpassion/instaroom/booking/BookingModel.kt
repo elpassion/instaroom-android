@@ -25,7 +25,6 @@ fun CoroutineScope.launchBookingModel(
     var isPrecise = false
     var isAllDay = false
     var title = ""
-    var bookingConfirmed = false
 
     fun updateBookingState() {
         state.set(
@@ -64,15 +63,7 @@ fun CoroutineScope.launchBookingModel(
     }
 
     fun dismissBooking() {
-        state.set(ViewState.BookingCanceled)
-    }
-
-    fun restoreDashboardState() {
-        if(!bookingConfirmed) {
-            callDashboardAction(DashboardAction.CancelBooking)
-        }
-
-        bookingConfirmed = false
+        state.set(ViewState.BookingDismissing)
     }
 
     fun createBookingEvent(): BookingEvent {
@@ -92,7 +83,6 @@ fun CoroutineScope.launchBookingModel(
     }
 
     fun bookRoom() {
-        bookingConfirmed = true
         callDashboardAction(DashboardAction.BookRoom(createBookingEvent()))
     }
 
@@ -143,9 +133,6 @@ fun CoroutineScope.launchBookingModel(
                 bookRoom()
                 dismissBooking()
             }
-
-            is BookingAction.RestoreDashboard -> restoreDashboardState()
-
         }
     }
 }
@@ -168,9 +155,6 @@ sealed class BookingAction {
     object SelectBookingStartTime : BookingAction()
     object SelectBookingEndTime : BookingAction()
     object DismissTimePicker : BookingAction()
-
-    object RestoreDashboard : BookingAction()
-
 }
 
 sealed class ViewState {
@@ -198,7 +182,7 @@ sealed class ViewState {
 
     data class PickTime(val fromTime: Boolean, val hourMinuteTime: HourMinuteTime) : ViewState()
 
-    object BookingCanceled : ViewState()
+    object BookingDismissing : ViewState()
 }
 
 fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")

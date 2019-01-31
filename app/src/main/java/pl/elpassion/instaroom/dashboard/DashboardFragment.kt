@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -100,7 +101,9 @@ class DashboardFragment : Fragment() {
     }
 
     private fun showBookingDetails() {
-        bookingFragment.show(fragmentManager, "booking fragment")
+        if(!bookingFragment.isAdded){
+            bookingFragment.show(fragmentManager, BookingFragment.TAG)
+        }
     }
 
     private fun updateRoomList(state: DashboardState.RoomListState) {

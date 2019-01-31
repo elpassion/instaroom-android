@@ -133,7 +133,7 @@ class BookingFragment : BottomSheetDialogFragment() {
                 viewState.fromTime,
                 viewState.hourMinuteTime
             )
-            ViewState.BookingCanceled -> dismiss()
+            ViewState.BookingDismissing -> dismiss()
         }
     }
 
@@ -163,9 +163,7 @@ class BookingFragment : BottomSheetDialogFragment() {
         bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
-        super.onDismiss(dialog)
-        model.bookingActionS.accept(BookingAction.RestoreDashboard)
+    companion object {
+        const val TAG = "BOOKING_FRAGMENT_TAG"
     }
-
 }

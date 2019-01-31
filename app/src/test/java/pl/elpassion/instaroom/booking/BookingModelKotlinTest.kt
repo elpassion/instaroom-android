@@ -4,9 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.IsolationMode
+import io.kotlintest.shouldNot
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -167,9 +169,21 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             }
         }
 
-        "cancel booking call dashboard hide" {
+        "cancel booking sets state to dismiss" {
             actionS.accept(BookingAction.CancelClicked)
-            verify(callDashboardAction).invoke(DashboardAction.CancelBooking)
+            testObserver.awaitValue().assertValue(ViewState.BookingDismissing)
+        }
+
+        "confirm booking" - {
+            actionS.accept(BookingAction.ConfirmClicked)
+
+            "dismisses booking dialog" {
+                testObserver.awaitValue().assertValue(ViewState.BookingDismissing)
+            }
+
+            "sends book action to dashboard" {
+                verify(callDashboardAction).invoke(DashboardAction.BookRoom(any()))
+            }
         }
 
         "set all day booking" {
