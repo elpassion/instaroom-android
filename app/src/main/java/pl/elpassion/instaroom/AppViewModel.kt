@@ -15,10 +15,14 @@ import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.runDashboardFlow
 import pl.elpassion.instaroom.kalendar.BookingEvent
+import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
+import pl.elpassion.instaroom.summary.SummaryAction
+import pl.elpassion.instaroom.summary.SummaryState
+import pl.elpassion.instaroom.summary.runSummaryFlow
 import kotlin.coroutines.CoroutineContext
 
 
@@ -33,13 +37,16 @@ class AppViewModel(
 
     val dashboardState: LiveData<DashboardState> get() = _dashboardState
     val bookingState: LiveData<BookingState> get() = _bookingState
+    val summaryState: LiveData<SummaryState> get() = _summaryState
 
     val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
+    val summaryActionS: PublishRelay<SummaryAction> = PublishRelay.create()
 
     private val _dashboardState = MutableLiveData<DashboardState>()
     private val _bookingState = MutableLiveData<BookingState>()
+    private val _summaryState = MutableLiveData<SummaryState>()
 
     private val job = Job()
 
@@ -59,6 +66,7 @@ class AppViewModel(
                     ::signOut,
                     tokenRepository,
                     ::initBookingFlow,
+                    ::initSummaryFlow,
                     loginActionS,
                     dashboardActionS,
                     _dashboardState
@@ -67,9 +75,12 @@ class AppViewModel(
         }
     }
 
-    private suspend fun initBookingFlow(room: Room): BookingEvent? {
-        return runBookingFlow(bookingActionS, _bookingState, room)
-    }
+    private suspend fun initBookingFlow(room: Room): BookingEvent? =
+        runBookingFlow(bookingActionS, _bookingState, room)
+
+    private suspend fun initSummaryFlow(event: Event) =
+        runSummaryFlow(summaryActionS, _summaryState, event)
+
 
     override fun onCleared() = job.cancel()
 }
@@ -79,6 +90,7 @@ suspend fun processAppFlow(
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
     runBookingFlow: suspend (Room) -> BookingEvent?,
+    runSummaryFlow: suspend (Event) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
     dashboardActionS: PublishRelay<DashboardAction>,
     _dashboardState: MutableLiveData<DashboardState>
@@ -95,6 +107,7 @@ suspend fun processAppFlow(
         dashboardActionS,
         _dashboardState,
         runBookingFlow,
+        runSummaryFlow,
         signOut,
         tokenRepository::getToken
     )

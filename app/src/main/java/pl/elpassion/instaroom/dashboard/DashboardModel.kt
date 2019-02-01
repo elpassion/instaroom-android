@@ -5,10 +5,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
-import pl.elpassion.instaroom.kalendar.BookingEvent
-import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.kalendar.bookSomeRoom
-import pl.elpassion.instaroom.kalendar.getSomeRooms
+import pl.elpassion.instaroom.kalendar.*
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
@@ -17,6 +14,7 @@ suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
     state: MutableLiveData<DashboardState>,
     runBookingFlow: suspend (Room) -> BookingEvent?,
+    runSummaryFlow: suspend (Event) -> Unit,
     signOut: suspend () -> Unit,
     getToken: suspend () -> String?
 ) {
