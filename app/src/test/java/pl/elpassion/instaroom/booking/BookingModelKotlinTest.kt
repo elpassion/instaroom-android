@@ -2,25 +2,19 @@ package pl.elpassion.instaroom.booking
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.api.client.util.DateTime
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
 import io.kotlintest.IsolationMode
 import io.kotlintest.specs.FreeSpec
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.dashboard.DashboardAction
+import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.util.BookingDuration
-import pl.elpassion.instaroom.util.HourMinuteTime
-import pl.elpassion.instaroom.util.executeTasksInstantly
-import pl.elpassion.instaroom.util.toHourMinuteTime
+import pl.elpassion.instaroom.util.*
 import kotlin.coroutines.CoroutineContext
 
 fun ZonedDateTime.withHourMinute(hourMinuteTime: HourMinuteTime) =
@@ -38,27 +32,31 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
     private val job = Job()
     private val actionS = PublishRelay.create<BookingAction>()
     private val callDashboardAction = mock<(DashboardAction) -> Unit>()
-    private val state = MutableLiveData<ViewState>()
-    private val stateObserver = mock<Observer<ViewState>>()
+    private val state = MutableLiveData<BookingState>()
+    private val stateObserver = mock<Observer<BookingState>>()
+
+    private val now = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+    private val calendarId = "calendar_id"
+    private val testRoom = Room("", calendarId, emptyList(), "", "", "", "")
+    private val basicExpectedBookingEvent = BookingEvent(calendarId, "", calendarId, DateTime(now.toEpochMilliSecond()), DateTime(now.toEpochMilliSecond()))
 
     private val initialBookingState =
-        ViewState.BookingState.QuickBooking(BookingDuration.MIN_15, emptyRoom(), "", false)
+        BookingState.Configuring.QuickBooking(BookingDuration.MIN_15, testRoom, "", false)
 
-    private val preciseBookingState = ViewState.BookingState.PreciseBooking(
-        ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-        ZonedDateTime.now().truncatedTo(
-            ChronoUnit.MINUTES
-        ).plusHours(1),
-        emptyRoom(), "",
+    private val preciseBookingState = BookingState.Configuring.PreciseBooking(
+        now,
+        now.plusHours(1),
+        testRoom,
+        "",
         false
     )
 
     init {
         executeTasksInstantly()
-        runBookingFlow(actionS, callDashboardAction, state)
-        state.observeForever(stateObserver)
+        var result: BookingEvent? = null
+        launch { result = runBookingFlow(actionS, state, testRoom) }
 
-        actionS.accept(BookingAction.BookingRoomSelected(emptyRoom()))
+        state.observeForever(stateObserver)
 
         "should initialize with expected values" {
             state.test().awaitValue().assertValue(initialBookingState)
@@ -96,12 +94,6 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             }
         }
 
-        "set room" {
-            val selectedRoom = Room("custom", "123", emptyList(), "", "", "", "")
-            actionS.accept((BookingAction.BookingRoomSelected(selectedRoom)))
-            testObserver.awaitValue().assertValue(initialBookingState.copy(room = selectedRoom))
-        }
-
         "set title" {
             val newTitle = "title"
             actionS.accept(BookingAction.ChangeTitle(newTitle))
@@ -123,7 +115,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         "to time button click shows timePickDialog" {
             actionS.accept(BookingAction.SelectBookingEndTime)
             testObserver.awaitValue().assertValue(
-                ViewState.PickTime(
+                BookingState.TimePicking(
                     false,
                     preciseBookingState.toTime.toHourMinuteTime()
                 )
@@ -134,7 +126,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             actionS.accept(BookingAction.SelectBookingStartTime)
 
             testObserver.awaitValue().assertValue(
-                ViewState.PickTime(
+                BookingState.TimePicking(
                     true,
                     preciseBookingState.fromTime.toHourMinuteTime()
                 )
@@ -168,26 +160,46 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
             }
         }
 
-        "cancel booking sets state to dismiss" {
+        "cancel booking sets state to dismissing" {
             actionS.accept(BookingAction.CancelClicked)
-            testObserver.awaitValue().assertValue(ViewState.BookingDismissing)
+            testObserver.awaitValue().assertValue(BookingState.Dismissing)
         }
 
         "confirm booking" - {
-            actionS.accept(BookingAction.ConfirmClicked)
 
             "dismisses booking dialog" {
-                testObserver.awaitValue().assertValue(ViewState.BookingDismissing)
+                actionS.accept(BookingAction.ConfirmClicked)
+                testObserver.awaitValue().assertValue(BookingState.Dismissing)
             }
 
-            "sends book action to dashboard" {
-                verify(callDashboardAction).invoke(DashboardAction.BookRoom(any()))
+            "as precise booking returns event" {
+                actionS.accept(BookingAction.SelectPreciseBooking)
+                actionS.accept(BookingAction.ConfirmClicked)
+                actionS.accept(BookingAction.Dismiss)
+
+                val event = basicExpectedBookingEvent.copy(
+                    startDate = DateTime(preciseBookingState.fromTime.toEpochMilliSecond()),
+                    endDate = DateTime(preciseBookingState.toTime.toEpochMilliSecond()))
+                assert(result == event)
             }
+
+            "as quick booking returns event" {
+                actionS.accept(BookingAction.ConfirmClicked)
+                actionS.accept(BookingAction.Dismiss)
+
+                val event = basicExpectedBookingEvent.copy(endDate = DateTime(now.toEpochMilliSecond() + BookingDuration.MIN_15.timeInMillis))
+                assert(result == event)
+            }
+        }
+
+        "dialog dismiss finishes with null" {
+            actionS.accept(BookingAction.Dismiss)
+            assert(result == null)
         }
 
         "set all day booking" {
             testObserver.awaitValue()
-                .assertValue { (it as ViewState.BookingState.QuickBooking).allDayBooking == false }
+                .assertValue { (it as BookingState.Configuring.QuickBooking).allDayBooking == false }
 
             actionS.accept(BookingAction.SwitchAllDayBooking(checked = true))
             testObserver.awaitValue().assertValue(initialBookingState.copy(allDayBooking = true))

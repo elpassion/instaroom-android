@@ -187,7 +187,6 @@ sealed class BookingState {
     object Dismissing : BookingState()
 }
 
-fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")
 
 
 
