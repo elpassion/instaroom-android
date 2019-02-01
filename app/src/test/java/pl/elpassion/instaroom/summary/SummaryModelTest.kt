@@ -40,7 +40,11 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
     init {
         executeTasksInstantly()
-        launch { runSummaryFlow(actionS, state, event) }
+        var taskFinished = false
+        launch {
+            runSummaryFlow(actionS, state, event)
+            taskFinished = true
+        }
         state.observeForever(mock())
 
         val testObserver = state.test().awaitValue()
@@ -58,6 +62,13 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
             actionS.accept(SummaryAction.EditEvent)
             testObserver.awaitValue().assertValue(SummaryState.ViewEvent(event.htmlLink!!))
         }
+
+        "dismissing dialog ends task" {
+            assert(!taskFinished)
+            actionS.accept(SummaryAction.Dismiss)
+            assert(taskFinished)
+        }
+
     }
 
 }

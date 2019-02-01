@@ -25,6 +25,7 @@ suspend fun runSummaryFlow(
 sealed class SummaryAction {
     object SelectDismiss : SummaryAction()
     object EditEvent : SummaryAction()
+    object Dismiss : SummaryAction()
 }
 
 sealed class SummaryState {
