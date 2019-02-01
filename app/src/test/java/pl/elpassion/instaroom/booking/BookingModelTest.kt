@@ -202,6 +202,8 @@ class BookingModelTest : FreeSpec(), CoroutineScope {
         }
 
 
+        job.cancel()
+        clearTaskExecutorDelegate()
     }
 
 }
