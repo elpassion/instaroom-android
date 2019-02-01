@@ -36,7 +36,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
         ZonedDateTime.now().plusHours(1).toString()
     )
 
-    private val initialState = SummaryState
+    private val initialState = SummaryState(event)
 
     init {
         executeTasksInstantly()
@@ -44,8 +44,8 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
         val testObserver = state.test()
 
-        "should initialize with expected values" {
-            testObserver.awaitValue(10, TimeUnit.MILLISECONDS).assertValue(initialState)
+        "should initialize with expected state (event)" {
+            testObserver.awaitValue().assertValue(initialState)
         }
 
         job.cancel()
