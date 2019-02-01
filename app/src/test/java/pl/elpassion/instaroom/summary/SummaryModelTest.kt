@@ -36,7 +36,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
         ZonedDateTime.now().plusHours(1).toString()
     )
 
-    private val initialState = SummaryState(event)
+    private val initialState = SummaryState.Initialized(event)
 
     init {
         executeTasksInstantly()
@@ -46,6 +46,11 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
         "should initialize with expected state (event)" {
             testObserver.awaitValue().assertValue(initialState)
+        }
+
+        "dismiss click should dismiss dialog" {
+            actionS.accept(SummaryAction.SelectDismiss)
+            testObserver.awaitValue().assertValue(SummaryState.Dismiss)
         }
 
         job.cancel()

@@ -11,9 +11,15 @@ suspend fun runSummaryFlow(
     event: Event
 ) {
 
-    state.set(SummaryState(event))
+    state.set(SummaryState.Initialized(event))
 }
 
-sealed class SummaryAction
+sealed class SummaryAction {
+    object SelectDismiss : SummaryAction()
+}
 
-data class SummaryState(val event: Event)
+sealed class SummaryState {
+    data class Initialized(val event: Event) : SummaryState()
+
+    object Dismiss : SummaryState()
+}
