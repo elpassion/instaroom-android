@@ -3,11 +3,11 @@ package pl.elpassion.instaroom.summary
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
+import com.nhaarman.mockitokotlin2.mock
 import io.kotlintest.IsolationMode
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.*
 import org.junit.Assert.*
-import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.util.clearTaskExecutorDelegate
 import pl.elpassion.instaroom.util.executeTasksInstantly
@@ -41,8 +41,9 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
     init {
         executeTasksInstantly()
         launch { runSummaryFlow(actionS, state, event) }
+        state.observeForever(mock())
 
-        val testObserver = state.test()
+        val testObserver = state.test().awaitValue()
 
         "should initialize with expected state (event)" {
             testObserver.awaitValue().assertValue(initialState)
@@ -52,9 +53,6 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
             actionS.accept(SummaryAction.SelectDismiss)
             testObserver.awaitValue().assertValue(SummaryState.Dismiss)
         }
-
-        job.cancel()
-        clearTaskExecutorDelegate()
     }
 
 }

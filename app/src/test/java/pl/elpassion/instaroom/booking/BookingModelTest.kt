@@ -54,6 +54,8 @@ class BookingModelTest : FreeSpec(), CoroutineScope {
         var result: BookingEvent? = null
         launch { result = runBookingFlow(actionS, state, testRoom) }
 
+        state.observeForever(mock())
+
         "should initialize with expected values" {
             state.test().awaitValue().assertValue(initialBookingState)
         }
@@ -201,9 +203,6 @@ class BookingModelTest : FreeSpec(), CoroutineScope {
             testObserver.awaitValue().assertValue(initialBookingState.copy(allDayBooking = true))
         }
 
-
-        job.cancel()
-        clearTaskExecutorDelegate()
     }
 
 }
