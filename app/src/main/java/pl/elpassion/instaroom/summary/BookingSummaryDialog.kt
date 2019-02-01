@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom.dashboard
+package pl.elpassion.instaroom.summary
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.TimePickerDialogFragment
 import pl.elpassion.instaroom.kalendar.Event
 
-class BookingSuccessDialog : DialogFragment() {
+class BookingSummaryDialog : DialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
