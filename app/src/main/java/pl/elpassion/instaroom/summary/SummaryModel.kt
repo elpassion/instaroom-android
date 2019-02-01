@@ -18,6 +18,7 @@ suspend fun runSummaryFlow(
         when (actionS.awaitFirst()) {
             is SummaryAction.SelectDismiss -> state.set(SummaryState.Dismiss)
             is SummaryAction.EditEvent -> state.set(SummaryState.ViewEvent(event.htmlLink!!))
+            is SummaryAction.Dismiss -> return
         }
     }
 }
