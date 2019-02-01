@@ -29,10 +29,12 @@ suspend fun runSummaryFlow(
 
 sealed class SummaryAction {
     object SelectDismiss : SummaryAction()
+    object EditEvent : SummaryAction()
 }
 
 sealed class SummaryState {
     data class Initialized(val event: Event) : SummaryState()
 
     object Dismiss : SummaryState()
+    object ViewEvent: SummaryState()
 }
