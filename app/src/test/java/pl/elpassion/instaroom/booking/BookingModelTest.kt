@@ -20,7 +20,7 @@ import kotlin.coroutines.CoroutineContext
 fun ZonedDateTime.withHourMinute(hourMinuteTime: HourMinuteTime) =
     this.withHour(hourMinuteTime.hour).withMinute(hourMinuteTime.minute)
 
-class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
+class BookingModelTest : FreeSpec(), CoroutineScope {
     @ExperimentalCoroutinesApi
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Unconfined + job
@@ -31,9 +31,7 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
 
     private val job = Job()
     private val actionS = PublishRelay.create<BookingAction>()
-    private val callDashboardAction = mock<(DashboardAction) -> Unit>()
     private val state = MutableLiveData<BookingState>()
-    private val stateObserver = mock<Observer<BookingState>>()
 
     private val now = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     private val calendarId = "calendar_id"
@@ -55,8 +53,6 @@ class BookingModelKotlinTest : FreeSpec(), CoroutineScope {
         executeTasksInstantly()
         var result: BookingEvent? = null
         launch { result = runBookingFlow(actionS, state, testRoom) }
-
-        state.observeForever(stateObserver)
 
         "should initialize with expected values" {
             state.test().awaitValue().assertValue(initialBookingState)
