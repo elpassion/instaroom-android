@@ -12,17 +12,12 @@ suspend fun runSummaryFlow(
     event: Event
 ) {
 
-    fun dismissDialog() {
-        state.set(SummaryState.Dismiss)
-    }
-
     state.set(SummaryState.Initialized(event))
 
     while(true) {
-        val action = actionS.awaitFirst()
-        println("action = $action")
-        when (action) {
-            is SummaryAction.SelectDismiss -> dismissDialog()
+        when (actionS.awaitFirst()) {
+            is SummaryAction.SelectDismiss -> state.set(SummaryState.Dismiss)
+            is SummaryAction.EditEvent -> state.set(SummaryState.ViewEvent(event.htmlLink!!))
         }
     }
 }
@@ -36,5 +31,5 @@ sealed class SummaryState {
     data class Initialized(val event: Event) : SummaryState()
 
     object Dismiss : SummaryState()
-    object ViewEvent: SummaryState()
+    data class ViewEvent(val link: String): SummaryState()
 }

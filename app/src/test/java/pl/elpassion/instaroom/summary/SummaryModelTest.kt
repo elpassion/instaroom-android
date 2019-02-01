@@ -56,7 +56,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
         "edit in calendar click shows event" {
             actionS.accept(SummaryAction.EditEvent)
-            testObserver.awaitValue().assertValue(SummaryState.ViewEvent)
+            testObserver.awaitValue().assertValue(SummaryState.ViewEvent(event.htmlLink!!))
         }
     }
 
