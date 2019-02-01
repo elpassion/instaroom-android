@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.api.client.util.DateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.rx2.awaitFirst
-import kotlinx.coroutines.rx2.consumeEach
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.kalendar.BookingEvent
@@ -17,7 +16,7 @@ import pl.elpassion.instaroom.util.toHourMinuteTime
 
 suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
-    state: MutableLiveData<ViewState>,
+    state: MutableLiveData<BookingState>,
     room: Room
 ) : BookingEvent? {
     var bookingEvent: BookingEvent? = null
@@ -32,9 +31,9 @@ suspend fun runBookingFlow(
     fun updateBookingState() {
         state.set(
             if (isPrecise)
-                ViewState.BookingState.PreciseBooking(fromTime, toTime, room, title, isAllDay)
+                BookingState.Configuring.PreciseBooking(fromTime, toTime, room, title, isAllDay)
             else
-                ViewState.BookingState.QuickBooking(bookingDuration, room, title, isAllDay)
+                BookingState.Configuring.QuickBooking(bookingDuration, room, title, isAllDay)
         )
     }
 
@@ -61,7 +60,7 @@ suspend fun runBookingFlow(
     }
 
     fun dismissBooking() {
-        state.set(ViewState.BookingDismissing)
+        state.set(BookingState.Dismissing)
     }
 
     fun createBookingEvent(): BookingEvent {
@@ -103,7 +102,7 @@ suspend fun runBookingFlow(
         println("showTimePickerDialog")
         val hourMinuteTime =
             if (isFromTime) fromTime.toHourMinuteTime() else toTime.toHourMinuteTime()
-        state.set(ViewState.PickTime(isFromTime, hourMinuteTime))
+        state.set(BookingState.TimePicking(isFromTime, hourMinuteTime))
     }
 
     updateBookingState()
@@ -140,7 +139,6 @@ suspend fun runBookingFlow(
 }
 
 sealed class BookingAction {
-    data class BookingRoomSelected(val selectedRoom: Room) : BookingAction()
 
     object SelectQuickBooking : BookingAction()
     object SelectPreciseBooking : BookingAction()
@@ -161,9 +159,9 @@ sealed class BookingAction {
     object Dismiss : BookingAction()
 }
 
-sealed class ViewState {
+sealed class BookingState {
 
-    sealed class BookingState : ViewState() {
+    sealed class Configuring : BookingState() {
         abstract val room: Room
         abstract val title: String
         abstract val allDayBooking: Boolean
@@ -173,7 +171,7 @@ sealed class ViewState {
             override val room: Room,
             override val title: String,
             override val allDayBooking: Boolean
-        ) : BookingState()
+        ) : Configuring()
 
         data class PreciseBooking(
             var fromTime: ZonedDateTime,
@@ -181,12 +179,12 @@ sealed class ViewState {
             override val room: Room,
             override val title: String,
             override val allDayBooking: Boolean
-        ) : BookingState()
+        ) : Configuring()
     }
 
-    data class PickTime(val fromTime: Boolean, val hourMinuteTime: HourMinuteTime) : ViewState()
+    data class TimePicking(val fromTime: Boolean, val hourMinuteTime: HourMinuteTime) : BookingState()
 
-    object BookingDismissing : ViewState()
+    object Dismissing : BookingState()
 }
 
 fun emptyRoom(): Room = Room("", "", emptyList(), "", "", "", "")

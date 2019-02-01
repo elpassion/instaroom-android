@@ -7,15 +7,15 @@ import kotlinx.coroutines.GlobalScope
 
 class DashboardModelTest : FreeSpec() {
 
-    init {
-        val getToken = mock<suspend () -> String?>()
-        GlobalScope.runDashboardFlow(
-            mock(),
-            mock(),
-            mock(),
-            mock(),
-            getToken
-        )
-        verifyBlocking(getToken) { invoke() }
-    }
+//    init {
+//        val getToken = mock<suspend () -> String?>()
+//        GlobalScope.runDashboardFlow(
+//            mock(),
+//            mock(),
+//            mock(),
+//            mock(),
+//            getToken
+//        )
+//        verifyBlocking(getToken) { invoke() }
+//    }
 }

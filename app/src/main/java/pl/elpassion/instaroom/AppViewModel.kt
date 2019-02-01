@@ -9,7 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.*
 import pl.elpassion.instaroom.booking.BookingAction
-import pl.elpassion.instaroom.booking.ViewState
+import pl.elpassion.instaroom.booking.BookingState
 import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
@@ -32,14 +32,14 @@ class AppViewModel(
         get() = Dispatchers.Main + job
 
     val dashboardState: LiveData<DashboardState> get() = _dashboardState
-    val bookingState: LiveData<ViewState> get() = _bookingState
+    val bookingState: LiveData<BookingState> get() = _bookingState
 
     val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
 
     private val _dashboardState = MutableLiveData<DashboardState>()
-    private val _bookingState = MutableLiveData<ViewState>()
+    private val _bookingState = MutableLiveData<BookingState>()
 
     private val job = Job()
 

@@ -124,38 +124,38 @@ class BookingFragment : BottomSheetDialogFragment() {
             }
         }
 
-    private fun updateView(viewState: ViewState?) {
-        viewState ?: return
+    private fun updateView(bookingState: BookingState?) {
+        bookingState ?: return
 
-        when (viewState) {
-            is ViewState.BookingState -> updateBookingState(viewState)
-            is ViewState.PickTime -> showTimePickerDialog(
-                viewState.fromTime,
-                viewState.hourMinuteTime
+        when (bookingState) {
+            is BookingState.Configuring -> updateBookingState(bookingState)
+            is BookingState.TimePicking -> showTimePickerDialog(
+                bookingState.fromTime,
+                bookingState.hourMinuteTime
             )
-            ViewState.BookingDismissing -> dismiss()
+            BookingState.Dismissing -> dismiss()
         }
     }
 
-    private fun updateBookingState(bookingState: ViewState.BookingState) {
+    private fun updateBookingState(bookingState: BookingState.Configuring) {
         appointmentBookingTitle.text = bookingState.room.name
         appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
         appointmentBookingBackground.setBackgroundColor(Color.parseColor(bookingState.room.backgroundColor))
 
         when (bookingState) {
-            is ViewState.BookingState.QuickBooking -> showQuickBookingGroup(bookingState)
-            is ViewState.BookingState.PreciseBooking -> showPreciseBookingGroup(bookingState)
+            is BookingState.Configuring.QuickBooking -> showQuickBookingGroup(bookingState)
+            is BookingState.Configuring.PreciseBooking -> showPreciseBookingGroup(bookingState)
         }
     }
 
 
-    private fun showQuickBookingGroup(bookingState: ViewState.BookingState.QuickBooking) {
+    private fun showQuickBookingGroup(bookingState: BookingState.Configuring.QuickBooking) {
         bookingQuickGroup.visibility = View.VISIBLE
         bookingPreciseGroup.visibility = View.GONE
 
     }
 
-    private fun showPreciseBookingGroup(bookingState: ViewState.BookingState.PreciseBooking) {
+    private fun showPreciseBookingGroup(bookingState: BookingState.Configuring.PreciseBooking) {
         bookingQuickGroup.visibility = View.GONE
         bookingPreciseGroup.visibility = View.VISIBLE
 
