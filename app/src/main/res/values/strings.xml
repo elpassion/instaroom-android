@@ -24,8 +24,8 @@
     <string name="occupied">Occupied</string>
     <string name="from_now_for">From now for</string>
     <string name="appointment_name">Appointment name</string>
-    <string name="from">from</string>
-    <string name="to">to</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
     <string name="appointment_duration">Appointment duration</string>
     <string name="all_day_appointment">All-day appointment</string>
     <string name="making_an_appointment">Making an appointment…</string>

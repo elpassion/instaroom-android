@@ -5,51 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/appointmentBookingHelper"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/bookingTitleLabel"
-        style="@style/TextBold.Primary.Small"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="@dimen/basic_padding"
-        android:text="@string/appointment_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/bookingTitle"
-        style="@style/TextBold.Black.Large"
-        android:layout_width="0dp"
-        android:theme="@style/EditTextDefaults"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginEnd="@dimen/basic_padding"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTitleLabel"
-        tools:text="John Doe's booking" />
-
-    <TextView
-        android:id="@+id/bookingDurationLabel"
-        style="@style/TextBold.Primary.Small"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="@dimen/large_padding"
-        android:text="@string/appointment_duration"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTitle" />
-
     <androidx.constraintlayout.widget.Group
         android:id="@+id/bookingQuickGroup"
         android:layout_width="wrap_content"
@@ -61,23 +16,27 @@
     
     <TextView
         android:id="@+id/bookingFromNowFor"
-        style="@style/TextBold.Primary.Small"
-        android:textStyle="bold"
+        style="@style/TextLight.Black.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="12dp"
         android:text="@string/from_now_for"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingDurationLabel" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/bookingTimeBar"
+        android:theme="@style/BookingSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:layout_marginTop="10dp"
+        android:progressTint="@color/colorPrimary"
+        android:progressBackgroundTint="@color/editTextDefaultHighlight"
+        android:backgroundTintMode="src_over"
+        android:thumbTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +46,7 @@
         android:id="@+id/bookingTimeOptionFirst"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="15 min"
         android:layout_marginLeft="@dimen/basic_padding"
         app:layout_constraintStart_toStartOf="parent"
@@ -151,7 +111,6 @@
         android:layout_marginStart="@dimen/basic_padding"
         android:layout_marginTop="@dimen/basic_padding"
         android:text="@string/from"
-        android:textAllCaps="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
 
@@ -162,9 +121,9 @@
         android:text="@string/to"
         app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeFromLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/appointmentBookingHelper" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/bookingTimeFrom"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
@@ -187,24 +146,5 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/bookingTimeToLabel"
         app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
-
-    <TextView
-        android:id="@+id/bookingTimeAllDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="@dimen/basic_padding"
-        android:text="@string/all_day_appointment"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTypeGroup" />
-
-    <Switch
-        android:id="@+id/bookingAllDaySwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        app:layout_constraintBottom_toBottomOf="@id/bookingTimeAllDay"
-        app:layout_constraintStart_toEndOf="@id/bookingTimeAllDay"
-        app:layout_constraintTop_toTopOf="@id/bookingTimeAllDay" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

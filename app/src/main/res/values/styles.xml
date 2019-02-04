@@ -159,8 +159,20 @@
         <item name="android:textSize">@dimen/text_12</item>
     </style>
 
+    <style name="TextLight.Black.Medium">
+        <item name="android:textSize">@dimen/text_14</item>
+    </style>
+
     <style name="TextLight.Black.Large">
         <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
+    <style name="TextLight.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="TextLight.Primary.Small">
+        <item name="android:textSize">@dimen/text_12</item>
     </style>
 
     <style name="TextBold.Primary">
@@ -358,6 +370,10 @@
         <item name="colorControlNormal">@color/editTextDefaultHighlight</item>
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
+    </style>
+
+    <style name="BookingSeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="colorAccent">@color/editTextDefaultHighlight</item>
     </style>
 
 
