@@ -163,6 +163,14 @@
         <item name="android:textSize">@dimen/text_16</item>
     </style>
 
+    <style name="TextBold.Primary">
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="TextBold.Primary.Small">
+        <item name="android:textSize">@dimen/text_12</item>
+    </style>
+
     <style name="TextBold.Black">
         <item name="android:textColor">@color/textBlack</item>
     </style>
@@ -339,9 +347,17 @@
     <style name="BookingTabLayout" parent="Base.Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/colorPrimary</item>
         <item name="tabIndicatorHeight">2dp</item>
+        <item name="tabIndicator">@drawable/booking_tab_indicator</item>
         <item name="tabBackground">@drawable/booking_tab_layout_background</item>
         <item name="tabTextAppearance">@style/TextAppearance.Design.Tab</item>
-        <item name="tabSelectedTextColor">?android:textColorPrimary</item>
+        <item name="tabSelectedTextColor">@color/colorPrimary</item>
+        <item name="tabTextColor">@color/defaultTabTextColor</item>
+    </style>
+
+    <style name="EditTextDefaults" parent="AppTheme">
+        <item name="colorControlNormal">@color/editTextDefaultHighlight</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>
 
 

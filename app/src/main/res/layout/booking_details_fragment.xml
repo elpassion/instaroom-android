@@ -15,6 +15,8 @@
 
     <TextView
         android:id="@+id/bookingTitleLabel"
+        style="@style/TextBold.Primary.Small"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
@@ -25,15 +27,21 @@
 
     <EditText
         android:id="@+id/bookingTitle"
+        style="@style/TextBold.Black.Large"
         android:layout_width="0dp"
+        android:theme="@style/EditTextDefaults"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="@dimen/basic_padding"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingTitleLabel"
         tools:text="John Doe's booking" />
 
     <TextView
         android:id="@+id/bookingDurationLabel"
+        style="@style/TextBold.Primary.Small"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
@@ -48,14 +56,17 @@
         android:layout_height="wrap_content"
         app:constraint_referenced_ids="bookingTimeFromLabel, bookingTimeBar,
         bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
-        bookingTimeOptionFourth, bookingTimeOptionFifth"
+        bookingTimeOptionFourth, bookingTimeOptionFifth, bookingFromNowFor"
         tools:visibility="visible"/>
     
     <TextView
         android:id="@+id/bookingFromNowFor"
+        style="@style/TextBold.Primary.Small"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginTop="14dp"
         android:text="@string/from_now_for"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingDurationLabel" />
@@ -64,9 +75,11 @@
         android:id="@+id/bookingTimeBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginEnd="@dimen/basic_padding"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingFromNowFor" />
 
@@ -75,7 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="15 min"
-        app:layout_constraintStart_toStartOf="@id/bookingTimeBar"
+        android:layout_marginLeft="@dimen/basic_padding"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
 
     <TextView
@@ -98,6 +112,7 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFourth"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="60 min"
@@ -110,8 +125,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2 hr"
+        android:layout_marginEnd="@dimen/basic_padding"
         app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
-        app:layout_constraintEnd_toEndOf="@id/bookingTimeBar" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/bookingPreciseGroup"
@@ -120,6 +136,13 @@
         app:constraint_referenced_ids="bookingTimeFrom, bookingTimeFromLabel, bookingTimeTo,
         bookingTimeToLabel, bookingTimeSeparator "
         tools:visibility="gone"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/bookingTypeGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="bookingTimeFrom, bookingTimeOptionFirst"/>
 
     <TextView
         android:id="@+id/bookingTimeFromLabel"
@@ -173,7 +196,7 @@
         android:layout_marginTop="@dimen/basic_padding"
         android:text="@string/all_day_appointment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTimeFrom" />
+        app:layout_constraintTop_toBottomOf="@id/bookingTypeGroup" />
 
     <Switch
         android:id="@+id/bookingAllDaySwitch"
