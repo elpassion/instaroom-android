@@ -10,6 +10,9 @@ import kotlinx.android.synthetic.main.item_room_own_booked.view.*
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.DateTimeFormatters
+import pl.elpassion.instaroom.util.endDateTime
+import pl.elpassion.instaroom.util.startDateTime
+import pl.elpassion.instaroom.util.timeLeft
 
 class RoomFreeViewHolder(itemView: View, private val onBook: (room: Room) -> Unit) :
     ViewHolderBinder<DashboardItem>(itemView) {
@@ -22,8 +25,9 @@ class RoomFreeViewHolder(itemView: View, private val onBook: (room: Room) -> Uni
         itemRoomFreeBookButton.setOnClickListener { onBook(item.room) }
         val event = item.room.events.first()
         itemRoomUpcomingBookingTitle.text = event.name
-        itemRoomUpcomingBookingTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
-        itemRoomUpcomingBookingTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
+        itemRoomUpcomingBookingTimeBegin.text = event.startDateTime.format(DateTimeFormatters.time)
+        itemRoomUpcomingBookingTimeEnd.text = event.endDateTime.format(DateTimeFormatters.time)
+        itemRoomStatusInfo.text = event.startDateTime.timeLeft()
     }
 }
 
@@ -43,12 +47,13 @@ class RoomBookedViewHolder(
         itemRoomBookButton.setOnClickListener { onBook(item.room) }
         itemRoomBookedIcon.setOnClickListener { event.htmlLink?.let { link -> onOpenCalendar(link) } }
         itemRoomBookedTitle.text = event.name
-        itemRoomBookedTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
-        itemRoomBookedTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
+        itemRoomBookedTimeBegin.text = event.startDateTime.format(DateTimeFormatters.time)
+        itemRoomBookedTimeEnd.text = event.endDateTime.format(DateTimeFormatters.time)
+        itemRoomBookStatusInfo.text = event.endDateTime.timeLeft()
         item.room.events.getOrNull(1)?.let { nextEvent ->
             itemRoomNextBookingTitle.text = nextEvent.name
-            itemRoomNextBookingTimeBegin.text = nextEvent.startTime.format(DateTimeFormatters.time)
-            itemRoomNextBookingTimeEnd.text = nextEvent.endTime.format(DateTimeFormatters.time)
+            itemRoomNextBookingTimeBegin.text = nextEvent.startDateTime.format(DateTimeFormatters.time)
+            itemRoomNextBookingTimeEnd.text = nextEvent.endDateTime.format(DateTimeFormatters.time)
         }
         Unit
     }
@@ -65,14 +70,13 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         val event = item.room.events.first()
         itemRoomOwnBookedRoomEventIcon.setOnClickListener {
             event.htmlLink?.let { link ->
-                onOpenCalendar(
-                    link
-                )
+                onOpenCalendar(link)
             }
         }
+
         itemRoomOwnBookedRoomEventTitle.text = event.name
-        itemRoomOwnBookedRoomEventTimeBegin.text = event.startTime.format(DateTimeFormatters.time)
-        itemRoomOwnBookedRoomEventTimeEnd.text = event.endTime.format(DateTimeFormatters.time)
+        itemRoomOwnBookedRoomEventTimeBegin.text = event.startDateTime.format(DateTimeFormatters.time)
+        itemRoomOwnBookedRoomEventTimeEnd.text = event.endDateTime.format(DateTimeFormatters.time)
     }
 }
 

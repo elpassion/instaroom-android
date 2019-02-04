@@ -148,7 +148,7 @@
         app:layout_constraintTop_toBottomOf="@id/itemRoomNextBookingTimeHelperBottom" />
 
     <TextView
-        android:id="@+id/itemRoomStatusInfo"
+        android:id="@+id/itemRoomBookStatusInfo"
         style="@style/ItemRoomStatusInfo"
         app:layout_constraintBaseline_toBaselineOf="@id/itemRoomStatusLabel"
         app:layout_constraintStart_toEndOf="@id/itemRoomStatusLabel"
