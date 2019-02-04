@@ -290,7 +290,7 @@
 
     <!-- set the rounded drawable as background to your bottom sheet -->
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@drawable/booking_fragment_background</item>
     </style>
 
     <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
@@ -339,7 +339,7 @@
     <style name="BookingTabLayout" parent="Base.Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/colorPrimary</item>
         <item name="tabIndicatorHeight">2dp</item>
-        <item name="tabBackground">@drawable/booking_tablayout_background</item>
+        <item name="tabBackground">@drawable/booking_tab_layout_background</item>
         <item name="tabTextAppearance">@style/TextAppearance.Design.Tab</item>
         <item name="tabSelectedTextColor">?android:textColorPrimary</item>
     </style>

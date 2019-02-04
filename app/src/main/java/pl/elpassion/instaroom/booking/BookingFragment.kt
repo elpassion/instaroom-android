@@ -26,7 +26,7 @@ import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit
 
-class BookingFragment : BottomSheetDialogFragment() {
+class BookingFragment : RoundedBottomSheetDialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
