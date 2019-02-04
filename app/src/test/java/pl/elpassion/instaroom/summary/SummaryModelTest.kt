@@ -7,12 +7,9 @@ import com.nhaarman.mockitokotlin2.mock
 import io.kotlintest.IsolationMode
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.*
-import org.junit.Assert.*
 import pl.elpassion.instaroom.kalendar.Event
-import pl.elpassion.instaroom.util.clearTaskExecutorDelegate
 import pl.elpassion.instaroom.util.executeTasksInstantly
 import java.time.ZonedDateTime
-import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 
 class SummaryModelTest : FreeSpec(), CoroutineScope {
@@ -55,7 +52,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
         "dismiss click should dismiss dialog" {
             actionS.accept(SummaryAction.SelectDismiss)
-            testObserver.awaitValue().assertValue(SummaryState.Dismiss)
+            testObserver.awaitValue().assertValue(SummaryState.Dismissing)
         }
 
         "edit in calendar click shows event" {

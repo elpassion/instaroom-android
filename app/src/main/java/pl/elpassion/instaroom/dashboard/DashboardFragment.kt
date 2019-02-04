@@ -21,9 +21,11 @@ import pl.elpassion.instaroom.ProgressDialogFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.summary.BookingSummaryDialog
 import pl.elpassion.instaroom.util.isBooked
 import pl.elpassion.instaroom.util.isOwnBooked
 import pl.elpassion.instaroom.util.replaceWith
+import pl.elpassion.instaroom.util.viewEventInCalendar
 
 class DashboardFragment : Fragment() {
 
@@ -31,6 +33,7 @@ class DashboardFragment : Fragment() {
     private val items = mutableListOf<DashboardItem>()
     private val bookingFragment by lazy {BookingFragment()}
     private val progressDialog by lazy {ProgressDialogFragment()}
+    private val summaryDialog by lazy {BookingSummaryDialog()}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
@@ -90,9 +93,14 @@ class DashboardFragment : Fragment() {
             is DashboardState.RoomListState -> updateRoomList(state)
             is DashboardState.BookingDetailsState -> showBookingDetails()
             is DashboardState.BookingInProgressState -> showProgressDialog()
+            is DashboardState.BookingSuccessState -> showSummaryDialog()
         }
     }
 
+    private fun showSummaryDialog() {
+        progressDialog.dismiss()
+        summaryDialog.show(fragmentManager, BookingSummaryDialog.TAG)
+    }
 
 
     private fun showProgressDialog() {
@@ -113,10 +121,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun onCalendarOpen(link: String) {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(link)
-        }
-        startActivityForResult(intent, REQ_OPEN_CALENDAR)
+        viewEventInCalendar(link, REQ_OPEN_CALENDAR)
     }
 
     private fun onBookingClicked(room: Room) { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room)) }

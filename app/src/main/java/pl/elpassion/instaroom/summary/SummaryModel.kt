@@ -16,7 +16,7 @@ suspend fun runSummaryFlow(
 
     while(true) {
         when (actionS.awaitFirst()) {
-            is SummaryAction.SelectDismiss -> state.set(SummaryState.Dismiss)
+            is SummaryAction.SelectDismiss -> state.set(SummaryState.Dismissing)
             is SummaryAction.EditEvent -> state.set(SummaryState.ViewEvent(event.htmlLink!!))
             is SummaryAction.Dismiss -> return
         }
@@ -32,6 +32,6 @@ sealed class SummaryAction {
 sealed class SummaryState {
     data class Initialized(val event: Event) : SummaryState()
 
-    object Dismiss : SummaryState()
+    object Dismissing : SummaryState()
     data class ViewEvent(val link: String): SummaryState()
 }

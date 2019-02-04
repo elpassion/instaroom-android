@@ -1,6 +1,10 @@
 package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
+import com.google.api.client.util.DateTime
+import com.google.api.services.calendar.Calendar
+import com.google.api.services.calendar.model.EventAttendee
+import com.google.api.services.calendar.model.EventDateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
@@ -40,7 +44,12 @@ suspend fun runDashboardFlow(
             try {
                 state.set(DashboardState.BookingInProgressState)
                 getToken()?.let { accessToken ->
-                    bookSomeRoom(accessToken, bookingEvent)
+                    val newEvent = bookSomeRoom(accessToken, bookingEvent)
+                    println("newEvent = $newEvent")
+                    newEvent?.let {event ->
+                        state.set(DashboardState.BookingSuccessState)
+                        runSummaryFlow(event)
+                    }
                 }
                 loadRooms()
             } catch (e: HttpException) {

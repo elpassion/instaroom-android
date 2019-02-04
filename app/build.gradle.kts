@@ -77,7 +77,7 @@ dependencies {
     implementation("com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2")
     implementation("com.jakewharton.rxbinding3:rxbinding-material:3.0.0-alpha2")
     
-    implementation("com.github.elpassion:instaroom:94e099ce6e")
+    implementation("com.github.elpassion:instaroom:4f1d9fd048")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.mockk:mockk:1.9")
@@ -87,8 +87,6 @@ dependencies {
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.2.1")
     testImplementation("org.slf4j:slf4j-nop:1.7.25")
     testImplementation("com.jraska.livedata:testing-ktx:1.0.0")
-
-
 
     androidTestImplementation("androidx.test:runner:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1") {
