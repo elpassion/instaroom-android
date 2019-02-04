@@ -39,17 +39,12 @@
         app:layout_constraintBottom_toBottomOf="@id/appointmentBookingBackground"
         tools:text="booking green room" />
 
-    <View
-        android:id="@+id/appointment_settings_first_separator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        app:layout_constraintTop_toBottomOf="@id/appointmentBookingBackground" />
-
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/appointmentBookingTabs"
+        style="@style/BookingTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/appointment_settings_first_separator">
+        app:layout_constraintTop_toBottomOf="@id/appointmentBookingBackground">
 
         <com.google.android.material.tabs.TabItem
             android:id="@+id/appointmentBookingQuickTab"

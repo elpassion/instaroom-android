@@ -22,6 +22,7 @@ import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.HourMinuteTime
 import pl.elpassion.instaroom.TimePickerDialogFragment
+import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit
 
@@ -140,7 +141,7 @@ class BookingFragment : BottomSheetDialogFragment() {
     private fun updateBookingState(bookingState: BookingState.Configuring) {
         appointmentBookingTitle.text = bookingState.room.name
         appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
-        appointmentBookingBackground.setBackgroundColor(Color.parseColor(bookingState.room.backgroundColor))
+        appointmentBookingBackground.setBackgroundResource(getRoomBackground(bookingState.room))
 
         when (bookingState) {
             is BookingState.Configuring.QuickBooking -> showQuickBookingGroup(bookingState)

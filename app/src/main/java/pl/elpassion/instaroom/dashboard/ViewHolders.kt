@@ -88,7 +88,7 @@ class HeaderViewHolder(itemView: View) : ViewHolderBinder<DashboardItem>(itemVie
     }
 }
 
-private fun getRoomBackground(room: Room): Int = when (room.backgroundColor) {
+fun getRoomBackground(room: Room): Int = when (room.backgroundColor) {
     "#FFE9F9F0" -> R.drawable.background_green_room
     "#FFFFF1DF" -> R.drawable.background_yellow_room
     "#FFE6DEDA" -> R.drawable.background_people_room
