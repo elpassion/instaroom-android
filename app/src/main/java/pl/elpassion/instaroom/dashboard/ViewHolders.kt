@@ -52,7 +52,8 @@ class RoomBookedViewHolder(
         itemRoomBookStatusInfo.text = event.endDateTime.timeLeft()
         item.room.events.getOrNull(1)?.let { nextEvent ->
             itemRoomNextBookingTitle.text = nextEvent.name
-            itemRoomNextBookingTimeBegin.text = nextEvent.startDateTime.format(DateTimeFormatters.time)
+            itemRoomNextBookingTimeBegin.text =
+                nextEvent.startDateTime.format(DateTimeFormatters.time)
             itemRoomNextBookingTimeEnd.text = nextEvent.endDateTime.format(DateTimeFormatters.time)
         }
         Unit
@@ -68,6 +69,11 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
         val event = item.room.events.first()
+        itemRoomOwnBookedRoomBookButton.setOnClickListener {
+            event.htmlLink?.let { link ->
+                onOpenCalendar(link)
+            }
+        }
         itemRoomOwnBookedRoomEventIcon.setOnClickListener {
             event.htmlLink?.let { link ->
                 onOpenCalendar(link)
@@ -75,7 +81,8 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         }
 
         itemRoomOwnBookedRoomEventTitle.text = event.name
-        itemRoomOwnBookedRoomEventTimeBegin.text = event.startDateTime.format(DateTimeFormatters.time)
+        itemRoomOwnBookedRoomEventTimeBegin.text =
+            event.startDateTime.format(DateTimeFormatters.time)
         itemRoomOwnBookedRoomEventTimeEnd.text = event.endDateTime.format(DateTimeFormatters.time)
     }
 }
