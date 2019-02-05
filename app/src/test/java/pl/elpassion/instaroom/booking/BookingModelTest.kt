@@ -1,7 +1,6 @@
 package pl.elpassion.instaroom.booking
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.google.api.client.util.DateTime
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
@@ -11,7 +10,6 @@ import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.*
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.*
@@ -113,7 +111,7 @@ class BookingModelTest : FreeSpec(), CoroutineScope {
         "to time button click shows timePickDialog" {
             actionS.accept(BookingAction.SelectBookingEndTime)
             testObserver.awaitValue().assertValue(
-                BookingState.TimePicking(
+                BookingState.PickingTime(
                     false,
                     preciseBookingState.toTime.toHourMinuteTime()
                 )
@@ -124,7 +122,7 @@ class BookingModelTest : FreeSpec(), CoroutineScope {
             actionS.accept(BookingAction.SelectBookingStartTime)
 
             testObserver.awaitValue().assertValue(
-                BookingState.TimePicking(
+                BookingState.PickingTime(
                     true,
                     preciseBookingState.fromTime.toHourMinuteTime()
                 )

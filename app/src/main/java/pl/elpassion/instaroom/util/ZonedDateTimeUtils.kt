@@ -29,9 +29,7 @@ fun ZonedDateTime.timeLeft(): String {
         }
     }
 
-    if(minutesLeft != 0L) {
-        stringBuilder.append(" $minutesLeft minute")
-    }
+    stringBuilder.append(" $minutesLeft minute")
 
     if(minutesLeft != 1L) {
         stringBuilder.append("s")

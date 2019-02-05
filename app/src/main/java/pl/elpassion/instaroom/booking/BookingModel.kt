@@ -5,58 +5,81 @@ import com.google.api.client.util.DateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.rx2.awaitFirst
 import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.kalendar.BookingEvent
+import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.util.BookingDuration
-import pl.elpassion.instaroom.util.HourMinuteTime
-import pl.elpassion.instaroom.util.set
-import pl.elpassion.instaroom.util.toEpochMilliSecond
-import pl.elpassion.instaroom.util.toHourMinuteTime
+import pl.elpassion.instaroom.util.*
+import java.lang.Exception
 
 suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
     state: MutableLiveData<BookingState>,
     room: Room
-) : BookingEvent? {
+): BookingEvent? {
     var bookingEvent: BookingEvent? = null
+    val events = room.events
 
+    val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
     var bookingDuration = BookingDuration.MIN_15
-    var fromTime: ZonedDateTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-    var toTime: ZonedDateTime = fromTime.plusHours(1)
-    var isPrecise = false
+
+    var quickAvailable = true
+    var preciseAvailable = true
+    var limit = 0
+
+    var quickFromTime = currentTime
+
+    try {
+        val pair = findFirstFreeQuickBookingTime(events, currentTime)
+        quickFromTime = pair.first
+        limit = calculateQuickBookingLimit(pair.first, pair.second)
+    } catch (e: BookingUnavailableException) {
+        quickAvailable = false
+    }
+
+    var preciseFromTime = currentTime
+    var preciseToTime = currentTime
+
+    try {
+        val pair = findFirstFreePreciseBookingTime(events, currentTime)
+        preciseFromTime = pair.first
+        preciseToTime = pair.second
+
+    } catch (e: BookingUnavailableException) {
+        preciseAvailable = false
+    }
+
+    var isPrecise = !quickAvailable
     var isAllDay = false
     var title = ""
 
-    fun updateBookingState() {
-        state.set(
-            if (isPrecise)
-                BookingState.Configuring.PreciseBooking(fromTime, toTime, room, title, isAllDay)
-            else
-                BookingState.Configuring.QuickBooking(bookingDuration, room, title, isAllDay)
-        )
-    }
-
     fun updateBookingTitle(enteredTitle: String) {
         title = enteredTitle
-        updateBookingState()
     }
 
     fun updateBookingDuration(newBookingDuration: BookingDuration) {
         bookingDuration = newBookingDuration
-        updateBookingState()
+    }
+
+    fun updateBookingPreciseTime() {
+        state.set(BookingState.ConfiguringPreciseBooking(preciseFromTime, preciseToTime))
     }
 
     fun updateBookingStartTime(
         newHourMinuteTime: HourMinuteTime
     ) {
-        fromTime = fromTime.withHour(newHourMinuteTime.hour).withMinute(newHourMinuteTime.minute)
+        preciseFromTime =
+            preciseFromTime.withHour(newHourMinuteTime.hour).withMinute(newHourMinuteTime.minute)
+        updateBookingPreciseTime()
     }
 
     fun updateBookingEndTime(
         newHourMinuteTime: HourMinuteTime
     ) {
-        toTime = toTime.withHour(newHourMinuteTime.hour).withMinute(newHourMinuteTime.minute)
+        preciseToTime =
+            preciseToTime.withHour(newHourMinuteTime.hour).withMinute(newHourMinuteTime.minute)
+        updateBookingPreciseTime()
     }
 
     fun dismissBooking() {
@@ -68,44 +91,76 @@ suspend fun runBookingFlow(
         val endDate: DateTime
 
         if (isPrecise) {
-            startDate = DateTime(fromTime.toEpochMilliSecond())
-            endDate = DateTime(toTime.toEpochMilliSecond())
+            startDate = DateTime(preciseFromTime.toEpochMilliSecond())
+            endDate = DateTime(preciseToTime.toEpochMilliSecond())
         } else {
-            val now = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-            startDate = DateTime(now.toEpochMilliSecond())
-            endDate = DateTime(now.toEpochMilliSecond() + bookingDuration.timeInMillis)
+            startDate = DateTime(quickFromTime.toEpochMilliSecond())
+            endDate = DateTime(quickFromTime.toEpochMilliSecond() + bookingDuration.timeInMillis)
         }
 
         return BookingEvent(room.calendarId, title, room.calendarId, startDate, endDate)
     }
 
+    fun updateBookingType() {
+        state.set(
+            if (isPrecise)
+                BookingState.ChangingType.PreciseBooking
+            else
+                BookingState.ChangingType.QuickBooking
+        )
+    }
+
     fun disablePreciseBooking() {
-        if (!isPrecise) return
+        if (!quickAvailable || !isPrecise) return
 
         isPrecise = false
-        updateBookingState()
+        updateBookingType()
     }
 
     fun enablePreciseBooking() {
-        if (isPrecise) return
+        if (!preciseAvailable || isPrecise) return
 
         isPrecise = true
-        updateBookingState()
+        updateBookingType()
     }
 
     fun updateAllDayBooking(checked: Boolean) {
         isAllDay = checked
-        updateBookingState()
     }
 
     fun showTimePickerDialog(isFromTime: Boolean) {
-        println("showTimePickerDialog")
         val hourMinuteTime =
-            if (isFromTime) fromTime.toHourMinuteTime() else toTime.toHourMinuteTime()
-        state.set(BookingState.TimePicking(isFromTime, hourMinuteTime))
+            if (isFromTime) preciseFromTime.toHourMinuteTime() else preciseToTime.toHourMinuteTime()
+        state.set(BookingState.PickingTime(isFromTime, hourMinuteTime))
     }
 
-    updateBookingState()
+    fun getQuickBookingFromText(): String {
+        return if (quickFromTime == currentTime)
+            "From now for"
+        else {
+            val time = quickFromTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
+            "From $time for"
+        }
+    }
+
+    if (quickAvailable || preciseAvailable) {
+        state.set(
+            BookingState.Initializing(
+                quickAvailable,
+                preciseAvailable,
+                isPrecise,
+                room,
+                title,
+                isAllDay,
+                getQuickBookingFromText(),
+                limit,
+                preciseFromTime,
+                preciseToTime
+            )
+        )
+    } else {
+        state.set(BookingState.Dismissing)
+    }
 
     while (true) {
         val action = actionS.awaitFirst()
@@ -122,8 +177,6 @@ suspend fun runBookingFlow(
             is BookingAction.SelectBookingStartTime -> showTimePickerDialog(true)
             is BookingAction.SelectBookingEndTime -> showTimePickerDialog(false)
 
-            is BookingAction.DismissTimePicker -> updateBookingState()
-
             is BookingAction.Dismiss -> return bookingEvent
 
             is BookingAction.CancelClicked -> {
@@ -137,6 +190,70 @@ suspend fun runBookingFlow(
         }
     }
 }
+
+@Throws(BookingUnavailableException::class)
+fun findFirstFreeQuickBookingTime(
+    events: List<Event>,
+    currentTime: ZonedDateTime
+): Pair<ZonedDateTime, ZonedDateTime> {
+    return findFirstFreeBookingTime(events, currentTime, BookingDuration.MIN_15.timeInMillis)
+        ?: throw BookingUnavailableException()
+}
+
+@Throws(BookingUnavailableException::class)
+fun findFirstFreePreciseBookingTime(
+    events: List<Event>,
+    currentTime: ZonedDateTime
+): Pair<ZonedDateTime?, ZonedDateTime?> {
+    return findFirstFreeBookingTime(events, currentTime, 60*1000)
+        ?: throw BookingUnavailableException()
+}
+
+private fun findFirstFreeBookingTime(
+    events: List<Event>,
+    currentTime: ZonedDateTime,
+    minFreeTime: Long
+): Pair<ZonedDateTime, ZonedDateTime>? {
+    events.firstOrNull()?.let { event ->
+        if (event.startDateTime.isAfter(currentTime) &&
+            currentTime.until(event.startDateTime, ChronoUnit.MILLIS) > minFreeTime
+        ) {
+            return Pair(currentTime, event.startDateTime)
+        }
+    }
+
+    events.zipWithNext { firstEvent, secondEvent ->
+        if (firstEvent.endDateTime.until(
+                secondEvent.startDateTime,
+                ChronoUnit.MILLIS
+            ) > minFreeTime
+        ) {
+            return Pair(firstEvent.endDateTime, secondEvent.startDateTime)
+        }
+    }
+
+    return null
+}
+
+
+fun calculateQuickBookingLimit(
+    quickFromTime: ZonedDateTime,
+    quickToTime: ZonedDateTime
+): Int {
+    val limits = BookingDuration.values()
+    val maxIndex = limits.size - 1
+
+    val timeLeft = quickFromTime.until(quickToTime, ChronoUnit.MILLIS)
+
+    limits.reversed().forEachIndexed { index, time ->
+        if (time.timeInMillis < timeLeft)
+            return maxIndex - index
+    }
+
+    return 0
+}
+
+class BookingUnavailableException : Exception()
 
 sealed class BookingAction {
 
@@ -154,35 +271,40 @@ sealed class BookingAction {
 
     object SelectBookingStartTime : BookingAction()
     object SelectBookingEndTime : BookingAction()
-    object DismissTimePicker : BookingAction()
 
     object Dismiss : BookingAction()
 }
 
 sealed class BookingState {
 
-    sealed class Configuring : BookingState() {
-        abstract val room: Room
-        abstract val title: String
-        abstract val allDayBooking: Boolean
+    data class Initializing(
+        val quickAvailable: Boolean,
+        val preciseAvailable: Boolean,
+        val isPrecise: Boolean,
+        val room: Room,
+        val title: String,
+        val allDayBooking: Boolean,
+        val fromText: String?,
+        val limit: Int?,
+        val fromTime: ZonedDateTime?,
+        val toTime: ZonedDateTime?
+        ) : BookingState()
 
-        data class QuickBooking(
-            val bookingDuration: BookingDuration,
-            override val room: Room,
-            override val title: String,
-            override val allDayBooking: Boolean
-        ) : Configuring()
+    data class ConfiguringPreciseBooking(
+        val fromTime: ZonedDateTime,
+        val toTime: ZonedDateTime
+    ) : BookingState()
 
-        data class PreciseBooking(
-            var fromTime: ZonedDateTime,
-            var toTime: ZonedDateTime,
-            override val room: Room,
-            override val title: String,
-            override val allDayBooking: Boolean
-        ) : Configuring()
+    sealed class ChangingType : BookingState() {
+
+        object QuickBooking : ChangingType()
+        object PreciseBooking: ChangingType()
     }
 
-    data class TimePicking(val fromTime: Boolean, val hourMinuteTime: HourMinuteTime) : BookingState()
+    data class PickingTime(
+        val fromTime: Boolean,
+        val hourMinuteTime: HourMinuteTime
+    ) : BookingState()
 
     object Dismissing : BookingState()
 }

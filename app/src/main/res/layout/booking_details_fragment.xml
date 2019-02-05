@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
+    <pl.elpassion.instaroom.booking.LimitedSeekbar
         android:id="@+id/bookingTimeBar"
         android:theme="@style/BookingSeekBar"
         android:layout_width="match_parent"

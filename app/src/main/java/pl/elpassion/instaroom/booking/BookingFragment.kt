@@ -8,15 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.jakewharton.rxbinding3.view.clicks
-import com.jakewharton.rxbinding3.widget.changes
 import com.jakewharton.rxbinding3.widget.checkedChanges
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.booking_details_fragment.*
 import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.util.BookingDuration
@@ -85,10 +84,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
                     BookingAction.ChangBookingEndTime(newHourMinuteTime)
             }
 
-        val dismissesS = dialog.dismisses()
-            .map { BookingAction.DismissTimePicker }
-
-        Observable.merge(timeChangesS, dismissesS).subscribe(model.bookingActionS)
+        timeChangesS.subscribe(model.bookingActionS)
 
         dialog.show(fragmentManager, TimePickerDialogFragment.TAG)
     }
@@ -102,8 +98,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     private fun setupDurationSeekBar(): Observable<BookingAction.SelectBookingDuration> {
         bookingTimeBar.max = BookingDuration.values().size - 1
 
-        return bookingTimeBar.changes()
-            .skipInitialValue()
+        return bookingTimeBar.limitedChanges()
             .map { value -> BookingAction.SelectBookingDuration(BookingDuration.values()[value]) }
     }
 
@@ -129,39 +124,54 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         bookingState ?: return
 
         when (bookingState) {
-            is BookingState.Configuring -> updateBookingState(bookingState)
-            is BookingState.TimePicking -> showTimePickerDialog(
-                bookingState.fromTime,
-                bookingState.hourMinuteTime
-            )
+            is BookingState.Initializing ->
+                initializeBookingView(bookingState)
+            is BookingState.PickingTime ->
+                showTimePickerDialog(
+                    bookingState.fromTime,
+                    bookingState.hourMinuteTime
+                )
             BookingState.Dismissing -> dismiss()
+            is BookingState.ConfiguringPreciseBooking ->
+                configurePreciseBooking(bookingState)
+            is BookingState.ChangingType.QuickBooking ->
+                showBookingGroup(true)
+            is BookingState.ChangingType.PreciseBooking -> showBookingGroup(false)
         }
     }
 
-    private fun updateBookingState(bookingState: BookingState.Configuring) {
+    private fun configurePreciseBooking(bookingState: BookingState.ConfiguringPreciseBooking) {
+        bookingTimeFrom.text = "${bookingState.fromTime.hour}:${bookingState.fromTime.minute}"
+        bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
+    }
+
+    private fun initializeBookingView(bookingState: BookingState.Initializing) {
+        if (!bookingState.quickAvailable) disableTabAt(0)
+        if (!bookingState.preciseAvailable) disableTabAt(1)
+
         appointmentBookingTitle.text = bookingState.room.name
         appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
         appointmentBookingBackground.setBackgroundResource(getRoomBackground(bookingState.room))
 
-        when (bookingState) {
-            is BookingState.Configuring.QuickBooking -> showQuickBookingGroup(bookingState)
-            is BookingState.Configuring.PreciseBooking -> showPreciseBookingGroup(bookingState)
-        }
+        bookingTitle.setText(bookingState.title)
+        bookingAllDaySwitch.isChecked = bookingState.allDayBooking
+
+        bookingFromNowFor.text = bookingState.fromText
+        bookingTimeBar.limit = bookingState.limit
+
+        bookingTimeFrom.text = bookingState.fromTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))
+        bookingTimeTo.text = bookingState.toTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))
+
+        showBookingGroup(!bookingState.isPrecise)
     }
 
-
-    private fun showQuickBookingGroup(bookingState: BookingState.Configuring.QuickBooking) {
-        bookingQuickGroup.visibility = View.VISIBLE
-        bookingPreciseGroup.visibility = View.GONE
-
+    private fun disableTabAt(pos: Int) {
+        appointmentBookingTabs.getChildAt(pos).setOnTouchListener { _, _ -> true }
     }
 
-    private fun showPreciseBookingGroup(bookingState: BookingState.Configuring.PreciseBooking) {
-        bookingQuickGroup.visibility = View.GONE
-        bookingPreciseGroup.visibility = View.VISIBLE
-
-        bookingTimeFrom.text = "${bookingState.fromTime.hour}:${bookingState.fromTime.minute}"
-        bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
+    private fun showBookingGroup(quick: Boolean) {
+        bookingQuickGroup.visibility = if(quick) View.VISIBLE else View.GONE
+        bookingPreciseGroup.visibility = if(quick) View.GONE else View.VISIBLE
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
