@@ -20,7 +20,9 @@ import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.ProgressDialogFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
+import pl.elpassion.instaroom.dashboard.RoomItem.*
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.repository.GoogleApi
 import pl.elpassion.instaroom.summary.BookingSummaryDialog
 import pl.elpassion.instaroom.util.isBooked
 import pl.elpassion.instaroom.util.isOwnBooked
@@ -64,21 +66,20 @@ class DashboardFragment : Fragment() {
             when (item) {
                 is HeaderItem -> R.layout.item_header to ::HeaderViewHolder
                 is RoomItem -> {
-                    val room = item.room
-                    when {
-                        room.isOwnBooked -> R.layout.item_room_own_booked to { view: View ->
+                    when (item) {
+
+                        is OwnBookedRoomItem -> R.layout.item_room_own_booked to { view: View ->
                             RoomOwnBookedViewHolder(view, ::onCalendarOpen)
                         }
-                        room.isBooked -> R.layout.item_room_booked to { view: View ->
+                        is BookedRoomItem -> R.layout.item_room_booked to { view: View ->
                             RoomBookedViewHolder(view, ::onCalendarOpen, ::onBookingClicked)
                         }
-                        else -> R.layout.item_room_free to { view: View ->
+                        is FreeRoomItem -> R.layout.item_room_free to { view: View ->
                             RoomFreeViewHolder(view, ::onBookingClicked)
                         }
                     }
                 }
             }
-
         }
         roomsRecyclerView.layoutManager = LinearLayoutManager(context)
         roomsSwipeRefresh.setOnRefreshListener {
@@ -134,13 +135,21 @@ class DashboardFragment : Fragment() {
 
 sealed class DashboardItem
 
-data class RoomItem(val room: Room) : DashboardItem()
+sealed class RoomItem : DashboardItem(){
+    abstract val room: Room
+    data class OwnBookedRoomItem(override val room: Room) : RoomItem()
+    data class BookedRoomItem(override val room: Room) : RoomItem()
+    data class FreeRoomItem(override val room: Room) : RoomItem()
+
+}
 data class HeaderItem(val name: String) : DashboardItem()
 
 private fun createItems(rooms: List<Room>, context: Context): List<DashboardItem> {
-    val yourBookings = rooms.filter { it.isBooked && it.isOwnBooked }.map(::RoomItem)
-    val freeRooms = rooms.filter { !it.isBooked }.map(::RoomItem)
-    val occupiedRooms = rooms.filter { it.isBooked }.map(::RoomItem)
+    val yourBookings = rooms.filter { it.isOwnBooked }.map(::OwnBookedRoomItem)
+    val freeRooms = rooms
+        .filter { !it.isBooked }
+        .map(::FreeRoomItem)
+    val occupiedRooms = rooms.filter { it.isBooked }.map(::BookedRoomItem)
 
     return mutableListOf<DashboardItem>().apply {
         if (yourBookings.isNotEmpty()) add(HeaderItem(context.getString(R.string.your_bookings)))

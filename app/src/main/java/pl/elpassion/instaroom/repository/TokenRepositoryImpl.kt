@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
 
-class TokenRepositoryImpl(application: Application, private val tokenRequester: TokenRequester) :
+class TokenRepositoryImpl(application: Application, private val tokenRequester: GoogleApi) :
     TokenRepository {
 
     private val sharedPreferencesProvider =

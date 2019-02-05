@@ -16,7 +16,7 @@ val Event.endDateTime: ZonedDateTime
     get() = endTime.let(ZonedDateTime::parse)
 
 val Room.isOwnBooked: Boolean
-    get() = false
+    get() = events.find { event -> event.isOwnBooked } != null
 
 enum class BookingDuration(val timeInMillis: Long) {
     MIN_15(15 * 60 * 1000),

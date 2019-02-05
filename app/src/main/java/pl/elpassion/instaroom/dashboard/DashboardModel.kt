@@ -1,10 +1,6 @@
 package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
-import com.google.api.client.util.DateTime
-import com.google.api.services.calendar.Calendar
-import com.google.api.services.calendar.model.EventAttendee
-import com.google.api.services.calendar.model.EventDateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
@@ -17,6 +13,7 @@ import retrofit2.HttpException
 suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
     state: MutableLiveData<DashboardState>,
+    userEmail: String?,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event) -> Unit,
     signOut: suspend () -> Unit,
@@ -26,7 +23,7 @@ suspend fun runDashboardFlow(
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
             getToken()?.let {
-                getSomeRooms(it)
+                getSomeRooms(it, userEmail?:"")
             }.orEmpty()
         }
 

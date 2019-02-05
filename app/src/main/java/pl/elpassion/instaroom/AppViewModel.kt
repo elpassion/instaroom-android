@@ -24,6 +24,7 @@ import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
+import pl.elpassion.instaroom.repository.GoogleApi
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.util.await
 import pl.elpassion.instaroom.summary.SummaryAction
@@ -35,7 +36,7 @@ import kotlin.coroutines.CoroutineContext
 class AppViewModel(
     tokenRepository: TokenRepository,
     navHostFragment: NavHostFragment,
-    signInClient: GoogleSignInClient,
+    googleApi: GoogleApi,
     private val hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
@@ -63,7 +64,7 @@ class AppViewModel(
         }
 
         suspend fun signOut() {
-            withContext(Dispatchers.IO) { signOut(tokenRepository, signInClient) }
+            withContext(Dispatchers.IO) { signOut(tokenRepository, googleApi.googleSignInClient) }
         }
 
         launch {
@@ -72,6 +73,7 @@ class AppViewModel(
                     ::navigate,
                     ::signOut,
                     tokenRepository,
+                    googleApi,
                     ::initBookingFlow,
                     ::initSummaryFlow,
                     loginActionS,
@@ -96,6 +98,7 @@ suspend fun processAppFlow(
     navigate: (Int) -> Unit,
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
+    googleApi: GoogleApi,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
@@ -113,6 +116,7 @@ suspend fun processAppFlow(
     runDashboardFlow(
         dashboardActionS,
         _dashboardState,
+        googleApi.getEmail(),
         runBookingFlow,
         runSummaryFlow,
         signOut,

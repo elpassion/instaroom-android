@@ -1,6 +1,5 @@
 package pl.elpassion.instaroom
 
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -12,11 +11,11 @@ import org.koin.dsl.module.module
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.TokenRepositoryImpl
-import pl.elpassion.instaroom.repository.TokenRequester
+import pl.elpassion.instaroom.repository.GoogleApi
 
 val appModule = module {
 
-    single { TokenRequester(androidApplication()) }
+    single { GoogleApi(androidApplication()) }
     single<TokenRepository> {
         TokenRepositoryImpl(
             androidApplication(),
@@ -25,16 +24,6 @@ val appModule = module {
     }
     single { NavHostFragment.create(R.navigation.app_navigation) }
     single { DateTimeFormatter.ofPattern("hh:mm a")}
-
-    single<GoogleSignInClient> {
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(androidApplication().resources.getString(R.string.server_client_id))
-            .requestEmail()
-            .requestScopes(Scope("profile"), Scope("https://www.googleapis.com/auth/calendar.events"))
-            .build()
-
-        GoogleSignIn.getClient(androidApplication(), googleSignInOptions)
-    }
 
     viewModel { AppViewModel(get(), get(), get(), get()) }
 }
