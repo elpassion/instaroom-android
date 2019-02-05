@@ -16,19 +16,27 @@ import java.lang.Exception
 suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
     state: MutableLiveData<BookingState>,
-    room: Room
+    room: Room,
+    hourMinuteTimeFormatter: DateTimeFormatter
 ): BookingEvent? {
     var bookingEvent: BookingEvent? = null
-    val events = room.events
-
-    val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-    var bookingDuration = BookingDuration.MIN_15
-
     var quickAvailable = true
     var preciseAvailable = true
-    var limit = 0
+
+    val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
+
+    var title = ""
+    var isPrecise = !quickAvailable
+    var isAllDay = false
 
     var quickFromTime = currentTime
+    var bookingDuration = BookingDuration.MIN_15
+    var limit = 0
+
+    var preciseFromTime = currentTime
+    var preciseToTime = currentTime
+
+    val events = room.events
 
     try {
         val pair = findFirstFreeQuickBookingTime(events, currentTime)
@@ -37,9 +45,6 @@ suspend fun runBookingFlow(
     } catch (e: BookingUnavailableException) {
         quickAvailable = false
     }
-
-    var preciseFromTime = currentTime
-    var preciseToTime = currentTime
 
     try {
         val pair = findFirstFreePreciseBookingTime(events, currentTime)
@@ -50,10 +55,6 @@ suspend fun runBookingFlow(
         preciseAvailable = false
     }
 
-    var isPrecise = !quickAvailable
-    var isAllDay = false
-    var title = ""
-
     fun updateBookingTitle(enteredTitle: String) {
         title = enteredTitle
     }
@@ -63,7 +64,7 @@ suspend fun runBookingFlow(
     }
 
     fun updateBookingPreciseTime() {
-        state.set(BookingState.ConfiguringPreciseBooking(preciseFromTime, preciseToTime))
+        state.set(BookingState.ConfiguringPreciseBooking(preciseFromTime.format(hourMinuteTimeFormatter), preciseToTime.format(hourMinuteTimeFormatter)))
     }
 
     fun updateBookingStartTime(
@@ -138,7 +139,7 @@ suspend fun runBookingFlow(
         return if (quickFromTime == currentTime)
             "From now for"
         else {
-            val time = quickFromTime.format(DateTimeFormatter.ofPattern("hh:mm a"))
+            val time = quickFromTime.format(hourMinuteTimeFormatter)
             "From $time for"
         }
     }
@@ -154,8 +155,8 @@ suspend fun runBookingFlow(
                 isAllDay,
                 getQuickBookingFromText(),
                 limit,
-                preciseFromTime,
-                preciseToTime
+                preciseFromTime.format(hourMinuteTimeFormatter),
+                preciseToTime.format(hourMinuteTimeFormatter)
             )
         )
     } else {
@@ -286,13 +287,13 @@ sealed class BookingState {
         val allDayBooking: Boolean,
         val fromText: String?,
         val limit: Int?,
-        val fromTime: ZonedDateTime?,
-        val toTime: ZonedDateTime?
+        val fromTime: String?,
+        val toTime: String?
         ) : BookingState()
 
     data class ConfiguringPreciseBooking(
-        val fromTime: ZonedDateTime,
-        val toTime: ZonedDateTime
+        val fromTime: String,
+        val toTime: String
     ) : BookingState()
 
     sealed class ChangingType : BookingState() {

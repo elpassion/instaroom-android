@@ -9,6 +9,7 @@ import com.google.android.gms.common.api.Scope
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
+import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.TokenRepositoryImpl
 import pl.elpassion.instaroom.repository.TokenRequester
@@ -22,7 +23,8 @@ val appModule = module {
             get()
         )
     }
-    single{ NavHostFragment.create(R.navigation.app_navigation) }
+    single { NavHostFragment.create(R.navigation.app_navigation) }
+    single { DateTimeFormatter.ofPattern("hh:mm a")}
 
     single<GoogleSignInClient> {
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -34,5 +36,5 @@ val appModule = module {
         GoogleSignIn.getClient(androidApplication(), googleSignInOptions)
     }
 
-    viewModel { AppViewModel(get(), get(), get()) }
+    viewModel { AppViewModel(get(), get(), get(), get()) }
 }

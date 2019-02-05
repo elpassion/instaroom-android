@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.booking.BookingAction
 import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.booking.BookingState
@@ -34,7 +35,8 @@ import kotlin.coroutines.CoroutineContext
 class AppViewModel(
     tokenRepository: TokenRepository,
     navHostFragment: NavHostFragment,
-    signInClient: GoogleSignInClient
+    signInClient: GoogleSignInClient,
+    private val hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -81,7 +83,7 @@ class AppViewModel(
     }
 
     private suspend fun initBookingFlow(room: Room): BookingEvent? =
-        runBookingFlow(bookingActionS, _bookingState, room)
+        runBookingFlow(bookingActionS, _bookingState, room, hourMinuteTimeFormatter)
 
     private suspend fun initSummaryFlow(event: Event) =
         runSummaryFlow(summaryActionS, _summaryState, event)

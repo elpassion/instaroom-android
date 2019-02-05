@@ -11,7 +11,7 @@ fun ZonedDateTime.timeLeft(): String {
     val now = ZonedDateTime.now()
 
     val hoursLeft = now.until(this, ChronoUnit.HOURS)
-    val minutesLeft = now.plusHours(hoursLeft).until(this, ChronoUnit.MINUTES)
+    var minutesLeft = now.plusHours(hoursLeft).until(this, ChronoUnit.MINUTES)
 
     val stringBuilder = StringBuilder("for the next")
 
@@ -25,8 +25,13 @@ fun ZonedDateTime.timeLeft(): String {
         if(minutesLeft != 0L) {
             stringBuilder.append(" and")
         } else {
-          stringBuilder.append(".")
+
+          return stringBuilder.append(".").toString()
         }
+    }
+
+    if(minutesLeft == 0L) {
+        minutesLeft = 1L
     }
 
     stringBuilder.append(" $minutesLeft minute")

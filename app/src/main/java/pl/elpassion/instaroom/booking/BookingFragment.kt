@@ -141,8 +141,8 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     }
 
     private fun configurePreciseBooking(bookingState: BookingState.ConfiguringPreciseBooking) {
-        bookingTimeFrom.text = "${bookingState.fromTime.hour}:${bookingState.fromTime.minute}"
-        bookingTimeTo.text = "${bookingState.toTime.hour}:${bookingState.toTime.minute}"
+        bookingTimeFrom.text = bookingState.fromTime
+        bookingTimeTo.text = bookingState.toTime
     }
 
     private fun initializeBookingView(bookingState: BookingState.Initializing) {
@@ -159,8 +159,8 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         bookingFromNowFor.text = bookingState.fromText
         bookingTimeBar.limit = bookingState.limit
 
-        bookingTimeFrom.text = bookingState.fromTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))
-        bookingTimeTo.text = bookingState.toTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))
+        bookingTimeFrom.text = bookingState.fromTime
+        bookingTimeTo.text = bookingState.toTime
 
         showBookingGroup(!bookingState.isPrecise)
     }
