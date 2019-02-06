@@ -15,7 +15,7 @@ suspend fun runDashboardFlow(
     state: MutableLiveData<DashboardState>,
     userEmail: String?,
     runBookingFlow: suspend (Room) -> BookingEvent?,
-    runSummaryFlow: suspend (Event) -> Unit,
+    runSummaryFlow: suspend (Event, Room) -> Unit,
     signOut: suspend () -> Unit,
     getToken: suspend () -> String
 ) {
@@ -34,14 +34,14 @@ suspend fun runDashboardFlow(
             state.set(DashboardState.RoomList(rooms, false, e.message()))
         }
 
-    suspend fun bookRoom(bookingEvent: BookingEvent) {
+    suspend fun bookRoom(bookingEvent: BookingEvent, room: Room) {
         withContext(Dispatchers.IO) {
             try {
                 state.set(DashboardState.BookingInProgressState)
                 val newEvent = bookSomeRoom(getToken(), bookingEvent)
                 if(newEvent != null) {
                     state.set(DashboardState.BookingSuccessState)
-                    runSummaryFlow(newEvent)
+                    runSummaryFlow(newEvent, room)
                 } else {
                     state.set(DashboardState.RoomList(rooms, false, "Booking error"))
                 }
@@ -71,7 +71,7 @@ suspend fun runDashboardFlow(
         state.set(DashboardState.BookingDetailsState)
         val bookingEvent: BookingEvent? = runBookingFlow(room)
         if(bookingEvent != null) {
-            bookRoom(bookingEvent)
+            bookRoom(bookingEvent, room)
         }
     }
 
@@ -86,7 +86,6 @@ suspend fun runDashboardFlow(
                 return
             }
             is DashboardAction.ShowBookingDetails -> processBooking(action.room)
-            is DashboardAction.BookRoom -> bookRoom(action.bookingEvent)
         }
     }
 }
@@ -99,7 +98,6 @@ sealed class DashboardAction {
     object SelectSignOut : DashboardAction()
 
     data class ShowBookingDetails(val room: Room) : DashboardAction()
-    data class BookRoom(val bookingEvent: BookingEvent) : DashboardAction()
 
 
 

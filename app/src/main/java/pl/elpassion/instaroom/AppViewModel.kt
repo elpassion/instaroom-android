@@ -88,8 +88,8 @@ class AppViewModel(
     private suspend fun initBookingFlow(room: Room): BookingEvent? =
         runBookingFlow(bookingActionS, _bookingState, room, googleApiWrapper.getUserName(), hourMinuteTimeFormatter)
 
-    private suspend fun initSummaryFlow(event: Event) =
-        runSummaryFlow(summaryActionS, _summaryState, event)
+    private suspend fun initSummaryFlow(event: Event, room: Room) =
+        runSummaryFlow(summaryActionS, _summaryState, event, room)
 
 
     override fun onCleared() = job.cancel()
@@ -101,7 +101,7 @@ suspend fun processAppFlow(
     tokenRepository: TokenRepository,
     googleApiWrapper: GoogleApiWrapper,
     runBookingFlow: suspend (Room) -> BookingEvent?,
-    runSummaryFlow: suspend (Event) -> Unit,
+    runSummaryFlow: suspend (Event, Room) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
     dashboardActionS: PublishRelay<DashboardAction>,
     _dashboardState: MutableLiveData<DashboardState>

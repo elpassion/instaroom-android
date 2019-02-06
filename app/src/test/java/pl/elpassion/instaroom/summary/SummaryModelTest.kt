@@ -33,7 +33,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
         ZonedDateTime.now().plusHours(1).toString()
     )
 
-    private val initialState = SummaryState.Initialized(event)
+    private val initialState = SummaryState.Initialized(event, room)
 
     init {
         executeTasksInstantly()

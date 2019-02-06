@@ -4,15 +4,17 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.rx2.awaitFirst
 import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.set
 
 suspend fun runSummaryFlow(
     actionS: Observable<SummaryAction>,
     state: MutableLiveData<SummaryState>,
-    event: Event
+    event: Event,
+    room: Room
 ) {
 
-    state.set(SummaryState.Initialized(event))
+    state.set(SummaryState.Initialized(event, room))
 
     while(true) {
         when (actionS.awaitFirst()) {
@@ -30,7 +32,10 @@ sealed class SummaryAction {
 }
 
 sealed class SummaryState {
-    data class Initialized(val event: Event) : SummaryState()
+    data class Initialized(
+        val event: Event,
+        val room: Room
+    ) : SummaryState()
 
     object Dismissing : SummaryState()
     data class ViewEvent(val link: String): SummaryState()

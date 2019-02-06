@@ -2,10 +2,13 @@ package pl.elpassion.instaroom.summary
 
 import android.annotation.SuppressLint
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.jakewharton.rxbinding3.view.clicks
@@ -17,7 +20,9 @@ import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.dashboard.DashboardFragment
+import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.endDateTime
 import pl.elpassion.instaroom.util.startDateTime
 import pl.elpassion.instaroom.util.viewEventInCalendar
@@ -36,9 +41,14 @@ class BookingSummaryDialog : DialogFragment() {
         return inflater.inflate(R.layout.booking_success_dialog, container, false)
     }
 
+    override fun getTheme(): Int {
+        return R.style.WideDialog
+    }
+
     @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         model.summaryState.observe(this, Observer(::updateView))
 
         Observable.mergeArray(
@@ -46,6 +56,7 @@ class BookingSummaryDialog : DialogFragment() {
             setupEditEventButton()
         ).subscribe(model.summaryActionS)
     }
+
 
     private fun setupDismissButton() = dismissButton
             .clicks()
@@ -58,7 +69,7 @@ class BookingSummaryDialog : DialogFragment() {
 
     private fun updateView(summaryState: SummaryState) {
         when (summaryState) {
-            is SummaryState.Initialized -> configView(summaryState.event)
+            is SummaryState.Initialized -> configView(summaryState.event, summaryState.room)
             is SummaryState.Dismissing -> dismiss()
             is SummaryState.ViewEvent -> showEventInCalendar(summaryState.link)
         }
@@ -68,11 +79,13 @@ class BookingSummaryDialog : DialogFragment() {
         viewEventInCalendar(link, REQ_OPEN_CALENDAR)
     }
 
-    private fun configView(event: Event) {
+    private fun configView(event: Event, room: Room) {
         bookingTitle.text = event.name
-        bookingFromTime.text = event.startDateTime.format(hourMinuteTimeFormatter)
-        bookingToTime.text = event.endDateTime.format(hourMinuteTimeFormatter)
-        bookingRoomInfo.text = "require some changes"
+        bookingFromTime.setTime(event.startDateTime.format(hourMinuteTimeFormatter))
+        bookingToTime.setTime(event.endDateTime.format(hourMinuteTimeFormatter))
+
+        bookingRoomInfo.setTextColor(Color.parseColor(room.titleColor))
+        bookingRoomInfo.text = "in ${room.name}"
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
