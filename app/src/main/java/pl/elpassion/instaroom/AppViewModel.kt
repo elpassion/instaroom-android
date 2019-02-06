@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.booking.BookingAction
@@ -26,7 +27,6 @@ import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.GoogleApi
 import pl.elpassion.instaroom.repository.TokenRepository
-import pl.elpassion.instaroom.util.await
 import pl.elpassion.instaroom.summary.SummaryAction
 import pl.elpassion.instaroom.summary.SummaryState
 import pl.elpassion.instaroom.summary.runSummaryFlow

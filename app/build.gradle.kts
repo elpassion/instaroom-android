@@ -52,6 +52,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutinesVersion")
     implementation("androidx.core:core-ktx:1.0.0-alpha1")
     implementation("androidx.appcompat:appcompat:1.0.0")
     implementation("android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha09")
