@@ -13,14 +13,14 @@
         bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
         bookingTimeOptionFourth, bookingTimeOptionFifth, bookingFromNowFor"
         tools:visibility="visible"/>
-    
+
     <TextView
         android:id="@+id/bookingFromNowFor"
         style="@style/TextLight.Black.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/basic_padding"
         android:text="@string/from_now_for"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -47,7 +47,7 @@
         style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="15 min"
         android:layout_marginLeft="@dimen/basic_padding"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,22 +101,16 @@
         bookingTimeToLabel, bookingTimeSeparator "
         tools:visibility="gone"/>
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/bookingTypeGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="bookingTimeFrom, bookingTimeOptionFirst"/>
-
     <TextView
         android:id="@+id/bookingTimeFromLabel"
+        style="@style/TextLight.Black.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/basic_padding"
         android:layout_marginTop="@dimen/basic_padding"
         android:text="@string/from"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bookingTimeBar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/bookingTimeToLabel"

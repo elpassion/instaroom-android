@@ -16,12 +16,13 @@ import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
+import pl.elpassion.instaroom.repository.GoogleApi
 
 class LoginFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
-    private val signInClient: GoogleSignInClient by inject()
+    private val googleApi: GoogleApi by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.login_fragment, container, false)
@@ -31,7 +32,7 @@ class LoginFragment : Fragment() {
 
         signInButton.setOnClickListener {
             startActivityForResult(
-                signInClient.signInIntent,
+                googleApi.googleSignInClient.signInIntent,
                 SIGN_IN_REQUEST_CODE
             )
         }
