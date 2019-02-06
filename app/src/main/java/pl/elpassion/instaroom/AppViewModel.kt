@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
-import pl.elpassion.instaroom.repository.GoogleApi
+import pl.elpassion.instaroom.repository.GoogleApiWrapper
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.summary.SummaryAction
 import pl.elpassion.instaroom.summary.SummaryState
@@ -36,7 +37,7 @@ import kotlin.coroutines.CoroutineContext
 class AppViewModel(
     tokenRepository: TokenRepository,
     navHostFragment: NavHostFragment,
-    googleApi: GoogleApi,
+    private val googleApiWrapper: GoogleApiWrapper,
     private val hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
@@ -64,7 +65,7 @@ class AppViewModel(
         }
 
         suspend fun signOut() {
-            withContext(Dispatchers.IO) { signOut(tokenRepository, googleApi.googleSignInClient) }
+            withContext(Dispatchers.IO) { signOut(tokenRepository, googleApiWrapper.googleSignInClient) }
         }
 
         launch {
@@ -73,7 +74,7 @@ class AppViewModel(
                     ::navigate,
                     ::signOut,
                     tokenRepository,
-                    googleApi,
+                    googleApiWrapper,
                     ::initBookingFlow,
                     ::initSummaryFlow,
                     loginActionS,
@@ -85,7 +86,7 @@ class AppViewModel(
     }
 
     private suspend fun initBookingFlow(room: Room): BookingEvent? =
-        runBookingFlow(bookingActionS, _bookingState, room, hourMinuteTimeFormatter)
+        runBookingFlow(bookingActionS, _bookingState, room, googleApiWrapper.getUserName(), hourMinuteTimeFormatter)
 
     private suspend fun initSummaryFlow(event: Event) =
         runSummaryFlow(summaryActionS, _summaryState, event)
@@ -98,7 +99,7 @@ suspend fun processAppFlow(
     navigate: (Int) -> Unit,
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
-    googleApi: GoogleApi,
+    googleApiWrapper: GoogleApiWrapper,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
@@ -113,16 +114,20 @@ suspend fun processAppFlow(
         navigate(R.id.action_loginFragment_to_dashboardFragment)
     }
 
-    runDashboardFlow(
-        dashboardActionS,
-        _dashboardState,
-        googleApi.getEmail(),
-        runBookingFlow,
-        runSummaryFlow,
-        signOut,
-        tokenRepository::getToken
-    )
-
+    try {
+        runDashboardFlow(
+            dashboardActionS,
+            _dashboardState,
+            googleApiWrapper.getEmail(),
+            runBookingFlow,
+            runSummaryFlow,
+            signOut,
+            tokenRepository::getToken
+        )
+    } catch (e: GoogleJsonResponseException) {
+        println("new exception = $e")
+        signOut()
+    }
     navigate(R.id.action_dashboardFragment_to_startFragment)
 }
 

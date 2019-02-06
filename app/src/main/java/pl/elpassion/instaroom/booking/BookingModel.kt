@@ -17,6 +17,7 @@ suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
     state: MutableLiveData<BookingState>,
     room: Room,
+    userName: String,
     hourMinuteTimeFormatter: DateTimeFormatter
 ): BookingEvent? {
     var bookingEvent: BookingEvent? = null
@@ -26,6 +27,7 @@ suspend fun runBookingFlow(
     val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
 
     var title = ""
+    val hint = "$userName's booking"
     var isPrecise = !quickAvailable
     var isAllDay = false
 
@@ -100,7 +102,9 @@ suspend fun runBookingFlow(
             endDate = DateTime(quickFromTime.toEpochMilliSecond() + bookingDuration.timeInMillis)
         }
 
-        return BookingEvent(room.calendarId, title, room.calendarId, startDate, endDate)
+        val finalTitle = if (title.isNotBlank()) title else hint
+
+        return BookingEvent(room.calendarId, finalTitle, room.calendarId, startDate, endDate)
     }
 
     fun updateBookingType() {
@@ -153,6 +157,7 @@ suspend fun runBookingFlow(
                 isPrecise,
                 room,
                 title,
+                hint,
                 isAllDay,
                 getQuickBookingFromText(),
                 bookingDuration.ordinal,
@@ -286,6 +291,7 @@ sealed class BookingState {
         val isPrecise: Boolean,
         val room: Room,
         val title: String,
+        val hint: String,
         val allDayBooking: Boolean,
         val fromText: String?,
         val selectedDuration: Int,

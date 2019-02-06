@@ -17,52 +17,49 @@ suspend fun runDashboardFlow(
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event) -> Unit,
     signOut: suspend () -> Unit,
-    getToken: suspend () -> String?
+    getToken: suspend () -> String
 ) {
     val rooms = mutableListOf<Room>()
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-            getToken()?.let {
-                getSomeRooms(it, userEmail?:"")
-            }.orEmpty()
-        }
+        getSomeRooms(getToken(), userEmail?:"")
+    }
 
     suspend fun loadRooms() =
         try {
-            state.set(DashboardState.RoomListState(rooms, true))
+            state.set(DashboardState.RoomList(rooms, true))
             rooms.replaceWith(getRooms())
-            state.set(DashboardState.RoomListState(rooms, false))
+            state.set(DashboardState.RoomList(rooms, false))
         } catch (e: HttpException) {
-            state.set(DashboardState.RoomListState(rooms, false, e.message()))
+            state.set(DashboardState.RoomList(rooms, false, e.message()))
         }
 
     suspend fun bookRoom(bookingEvent: BookingEvent) {
         withContext(Dispatchers.IO) {
             try {
                 state.set(DashboardState.BookingInProgressState)
-                getToken()?.let { accessToken ->
-                    val newEvent = bookSomeRoom(accessToken, bookingEvent)
-                    println("newEvent = $newEvent")
-                    newEvent?.let {event ->
-                        state.set(DashboardState.BookingSuccessState)
-                        runSummaryFlow(event)
-                    }
+                val newEvent = bookSomeRoom(getToken(), bookingEvent)
+                if(newEvent != null) {
+                    state.set(DashboardState.BookingSuccessState)
+                    runSummaryFlow(newEvent)
+                } else {
+                    state.set(DashboardState.RoomList(rooms, false, "Booking error"))
                 }
                 loadRooms()
             } catch (e: HttpException) {
-                state.set(DashboardState.RoomListState(rooms, false, e.message()))
+                state.set(DashboardState.RoomList(rooms, false, e.message()))
             }
         }
     }
 
     fun restoreRoomListState() {
-        state.set(DashboardState.RoomListState(rooms, false))
+        state.set(DashboardState.RoomList(rooms, false))
     }
 
     suspend fun selectSignOut() {
         rooms.clear()
         state.set(
-            DashboardState.RoomListState(
+            DashboardState.RoomList(
                 rooms,
                 false
             )
@@ -104,14 +101,13 @@ sealed class DashboardAction {
     data class ShowBookingDetails(val room: Room) : DashboardAction()
     data class BookRoom(val bookingEvent: BookingEvent) : DashboardAction()
 
-    object CancelBooking : DashboardAction()
-    object BookingSuccess : DashboardAction()
+
 
 }
 
 sealed class DashboardState {
 
-    data class RoomListState(
+    data class RoomList(
         val rooms: List<Room>,
         val isRefreshing: Boolean,
         val errorMessage: String? = null

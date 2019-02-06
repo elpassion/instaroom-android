@@ -5,7 +5,7 @@ interface TokenRepository {
     var tokenData: TokenData?
     val isUserSignedIn: Boolean
     val isTokenValid: Boolean
-    suspend fun getToken(): String?
+    suspend fun getToken(): String
 
 
 }

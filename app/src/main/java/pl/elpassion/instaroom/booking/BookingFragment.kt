@@ -183,6 +183,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         appointmentBookingBackground.setBackgroundResource(getRoomBackground(bookingState.room))
 
         bookingTitle.setText(bookingState.title)
+        bookingTitle.hint = bookingState.hint
         bookingAllDaySwitch.isChecked = bookingState.allDayBooking
 
         bookingFromNowFor.text = bookingState.fromText

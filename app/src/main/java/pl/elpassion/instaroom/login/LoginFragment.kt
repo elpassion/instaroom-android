@@ -7,22 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.Scope
 import kotlinx.android.synthetic.main.login_fragment.*
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.repository.GoogleApi
+import pl.elpassion.instaroom.repository.GoogleApiWrapper
 
 class LoginFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
-    private val googleApi: GoogleApi by inject()
+    private val googleApiWrapper: GoogleApiWrapper by inject()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.login_fragment, container, false)
@@ -32,7 +28,7 @@ class LoginFragment : Fragment() {
 
         signInButton.setOnClickListener {
             startActivityForResult(
-                googleApi.googleSignInClient.signInIntent,
+                googleApiWrapper.googleSignInClient.signInIntent,
                 SIGN_IN_REQUEST_CODE
             )
         }

@@ -11,16 +11,22 @@ import androidx.lifecycle.Observer
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.booking_success_dialog.*
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.dashboard.DashboardFragment
 import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.util.endDateTime
+import pl.elpassion.instaroom.util.startDateTime
 import pl.elpassion.instaroom.util.viewEventInCalendar
 
 class BookingSummaryDialog : DialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
+
+    private val hourMinuteTimeFormatter: DateTimeFormatter by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,8 +70,8 @@ class BookingSummaryDialog : DialogFragment() {
 
     private fun configView(event: Event) {
         bookingTitle.text = event.name
-        bookingFromTime.text = event.startTime
-        bookingToTime.text = event.endTime
+        bookingFromTime.text = event.startDateTime.format(hourMinuteTimeFormatter)
+        bookingToTime.text = event.endDateTime.format(hourMinuteTimeFormatter)
         bookingRoomInfo.text = "require some changes"
     }
 

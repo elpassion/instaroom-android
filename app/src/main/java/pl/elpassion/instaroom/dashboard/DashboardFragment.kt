@@ -1,17 +1,13 @@
 package pl.elpassion.instaroom.dashboard
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
 import kotlinx.android.synthetic.main.dashboard_fragment.*
@@ -22,7 +18,6 @@ import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
 import pl.elpassion.instaroom.dashboard.RoomItem.*
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.repository.GoogleApi
 import pl.elpassion.instaroom.summary.BookingSummaryDialog
 import pl.elpassion.instaroom.util.isBooked
 import pl.elpassion.instaroom.util.isOwnBooked
@@ -91,7 +86,7 @@ class DashboardFragment : Fragment() {
         state?:return
 
         when (state) {
-            is DashboardState.RoomListState -> updateRoomList(state)
+            is DashboardState.RoomList -> updateRoomList(state)
             is DashboardState.BookingDetailsState -> showBookingDetails()
             is DashboardState.BookingInProgressState -> showProgressDialog()
             is DashboardState.BookingSuccessState -> showSummaryDialog()
@@ -114,7 +109,7 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun updateRoomList(state: DashboardState.RoomListState) {
+    private fun updateRoomList(state: DashboardState.RoomList) {
         items.replaceWith(createItems(state.rooms, requireContext()))
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }

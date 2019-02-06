@@ -9,8 +9,9 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
+import java.lang.Exception
 
-class TokenRepositoryImpl(application: Application, private val tokenRequester: GoogleApi) :
+class TokenRepositoryImpl(application: Application, private val tokenRequester: GoogleApiWrapper) :
     TokenRepository {
 
     private val sharedPreferencesProvider =
@@ -33,14 +34,19 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
         } ?: false
 
 
-    override suspend fun getToken(): String? = withContext(Dispatchers.IO) {
+    override suspend fun getToken(): String = withContext(Dispatchers.IO) {
         if (!isTokenValid) refreshToken()
-        tokenData?.googleToken
+        tokenData?.googleToken ?: ""
     }
 
+    class AuthorizationException : Exception()
+
     private fun refreshToken() {
-        tokenRequester.refreshToken()?.let { token ->
-            tokenData = TokenData(token, expirationDate())
+        val refreshedToken = tokenRequester.refreshToken()
+        if (refreshedToken != null) {
+            tokenData = TokenData(refreshedToken, expirationDate())
+        } else {
+            tokenData = null
         }
     }
 
