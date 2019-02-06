@@ -30,8 +30,8 @@
         android:theme="@style/BookingSeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
+        android:layout_marginStart="@dimen/basic_padding"
+        android:layout_marginEnd="@dimen/basic_padding"
         android:layout_marginTop="10dp"
         android:progressTint="@color/colorPrimary"
         android:progressBackgroundTint="@color/editTextDefaultHighlight"
@@ -44,6 +44,7 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFirst"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -54,6 +55,7 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionSecond"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="30 min"
@@ -63,6 +65,7 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionThird"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="45 min"
@@ -82,9 +85,10 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFifth"
+        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2 hr"
+        android:text="2 hrs"
         android:layout_marginEnd="@dimen/basic_padding"
         app:layout_constraintBaseline_toBaselineOf="@id/bookingTimeOptionFirst"
         app:layout_constraintEnd_toEndOf="parent" />

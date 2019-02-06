@@ -61,6 +61,7 @@ suspend fun runBookingFlow(
 
     fun updateBookingDuration(newBookingDuration: BookingDuration) {
         bookingDuration = newBookingDuration
+        state.set(BookingState.ConfiguringQuickBooking(bookingDuration.ordinal, limit))
     }
 
     fun updateBookingPreciseTime() {
@@ -154,6 +155,7 @@ suspend fun runBookingFlow(
                 title,
                 isAllDay,
                 getQuickBookingFromText(),
+                bookingDuration.ordinal,
                 limit,
                 preciseFromTime.format(hourMinuteTimeFormatter),
                 preciseToTime.format(hourMinuteTimeFormatter)
@@ -286,7 +288,8 @@ sealed class BookingState {
         val title: String,
         val allDayBooking: Boolean,
         val fromText: String?,
-        val limit: Int?,
+        val selectedDuration: Int,
+        val limit: Int,
         val fromTime: String?,
         val toTime: String?
         ) : BookingState()
@@ -294,6 +297,11 @@ sealed class BookingState {
     data class ConfiguringPreciseBooking(
         val fromTime: String,
         val toTime: String
+    ) : BookingState()
+
+    data class ConfiguringQuickBooking(
+        val durationSelectedPos: Int,
+        val limit: Int
     ) : BookingState()
 
     sealed class ChangingType : BookingState() {

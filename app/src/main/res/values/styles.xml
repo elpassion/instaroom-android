@@ -171,6 +171,14 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="TextLight.Unavailable">
+        <item name="android:textColor">@color/textUnavailable</item>
+    </style>
+
+    <style name="TextLight.Unavailable.Small">
+        <item name="android:textSize">@dimen/text_12</item>
+    </style>
+
     <style name="TextLight.Primary.Small">
         <item name="android:textSize">@dimen/text_12</item>
     </style>

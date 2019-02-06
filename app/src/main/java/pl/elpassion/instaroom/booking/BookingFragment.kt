@@ -3,6 +3,7 @@ package pl.elpassion.instaroom.booking
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,6 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.booking_details_fragment.*
 import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
-import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.util.BookingDuration
@@ -30,6 +30,17 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
+    private val unavailableTextColor by lazy { resources.getColor(R.color.textUnavailable) }
+    private val activeTextColor by lazy { resources.getColor(R.color.colorPrimary) }
+    private val inactiveTextColor by lazy { resources.getColor(R.color.textGrey) }
+
+    private val bookingDurationTextViews by lazy {
+        listOf(
+            bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
+            bookingTimeOptionFourth, bookingTimeOptionFifth
+        )
+    }
+
     override fun onCreateView(
 
         inflater: LayoutInflater,
@@ -41,7 +52,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.bookingState.observe(this, Observer(::updateView))
-        
+
         Observable.mergeArray(
             setupTabs(),
             setupTitleEditText(),
@@ -79,7 +90,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
 
         val timeChangesS = dialog.timeChanges()
             .map { newHourMinuteTime ->
-                if(fromTime)
+                if (fromTime)
                     BookingAction.ChangeBookingStartTime(newHourMinuteTime)
                 else
                     BookingAction.ChangBookingEndTime(newHourMinuteTime)
@@ -138,6 +149,24 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
             is BookingState.ChangingType.QuickBooking ->
                 showBookingGroup(true)
             is BookingState.ChangingType.PreciseBooking -> showBookingGroup(false)
+            is BookingState.ConfiguringQuickBooking -> selectBookingDurationText(
+                bookingState.durationSelectedPos,
+                bookingState.limit
+            )
+        }
+    }
+
+    private fun selectBookingDurationText(selectedPos: Int, limit: Int) {
+        bookingDurationTextViews.forEachIndexed { index, textView ->
+            val enabled = index <= limit
+            val textColor = if (enabled) inactiveTextColor else unavailableTextColor
+            textView.setTextColor(textColor)
+            textView.setTypeface(textView.typeface, Typeface.NORMAL)
+        }
+
+        bookingDurationTextViews[selectedPos].apply {
+            setTextColor(activeTextColor)
+            setTypeface(typeface, Typeface.BOLD)
         }
     }
 
@@ -160,6 +189,8 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         bookingFromNowFor.text = bookingState.fromText
         bookingTimeBar.limit = bookingState.limit
 
+        selectBookingDurationText(bookingState.selectedDuration, bookingState.limit)
+
         bookingTimeFrom.text = bookingState.fromTime
         bookingTimeTo.text = bookingState.toTime
 
@@ -174,14 +205,15 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     }
 
     private fun showBookingGroup(quick: Boolean) {
-        bookingQuickGroup.visibility = if(quick) View.VISIBLE else View.GONE
-        bookingPreciseGroup.visibility = if(quick) View.GONE else View.VISIBLE
+        bookingQuickGroup.visibility = if (quick) View.VISIBLE else View.GONE
+        bookingPreciseGroup.visibility = if (quick) View.GONE else View.VISIBLE
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
         super.onDismiss(dialog)
         model.bookingActionS.accept(BookingAction.Dismiss)
     }
+
     companion object {
         const val TAG = "BOOKING_FRAGMENT_TAG"
     }

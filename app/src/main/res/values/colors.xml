@@ -35,7 +35,7 @@
     <color name="divider">#FFE8ECED</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="durationUnavailable">#DBDBDC</color>
+    <color name="textUnavailable">#DBDBDC</color>
 
     <color name="defaultTabTextColor">#ABABAB</color>
     <color name="editTextDefaultHighlight">#D6D6D6</color>

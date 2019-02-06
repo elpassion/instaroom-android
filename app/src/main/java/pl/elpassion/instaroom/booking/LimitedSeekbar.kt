@@ -34,7 +34,7 @@ class LimitedSeekbar @JvmOverloads constructor(
             }
             .filter{ newValue ->
                 limit?.let {
-                    it<=newValue
+                    it>=newValue
                 } ?:true
             }
 
