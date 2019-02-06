@@ -22,6 +22,7 @@ import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.HourMinuteTime
 import pl.elpassion.instaroom.TimePickerDialogFragment
 import pl.elpassion.instaroom.dashboard.getRoomBackground
+import pl.elpassion.instaroom.util.TabLayoutUtils
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit
 
@@ -146,8 +147,8 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     }
 
     private fun initializeBookingView(bookingState: BookingState.Initializing) {
-        if (!bookingState.quickAvailable) disableTabAt(0)
-        if (!bookingState.preciseAvailable) disableTabAt(1)
+        enableTab(0, bookingState.quickAvailable)
+        enableTab(1, bookingState.preciseAvailable)
 
         appointmentBookingTitle.text = bookingState.room.name
         appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
@@ -163,10 +164,13 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         bookingTimeTo.text = bookingState.toTime
 
         showBookingGroup(!bookingState.isPrecise)
+
+        val activeTab = if (bookingState.isPrecise) 1 else 0
+        appointmentBookingTabs.getTabAt(activeTab)?.select()
     }
 
-    private fun disableTabAt(pos: Int) {
-        appointmentBookingTabs.getChildAt(pos).setOnTouchListener { _, _ -> true }
+    private fun enableTab(pos: Int, enable: Boolean) {
+        TabLayoutUtils.enableTab(appointmentBookingTabs, pos, enable)
     }
 
     private fun showBookingGroup(quick: Boolean) {
