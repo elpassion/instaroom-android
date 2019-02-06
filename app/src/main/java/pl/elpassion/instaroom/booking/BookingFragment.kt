@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.checkedChanges
@@ -30,16 +31,11 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
-    private val unavailableTextColor by lazy { resources.getColor(R.color.textUnavailable) }
-    private val activeTextColor by lazy { resources.getColor(R.color.colorPrimary) }
-    private val inactiveTextColor by lazy { resources.getColor(R.color.textGrey) }
+    private val unavailableTextStyle by lazy { R.style.TextLight_Unavailable_Small }
+    private val activeTextStyle by lazy { R.style.TextBold_Primary_Small }
+    private val inactiveTextStyle by lazy { R.style.TextBold_Grey_Small }
 
-    private val bookingDurationTextViews by lazy {
-        listOf(
-            bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
-            bookingTimeOptionFourth, bookingTimeOptionFifth
-        )
-    }
+    private lateinit var bookingDurationTextViews: List<TextView>
 
     override fun onCreateView(
 
@@ -51,6 +47,12 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        bookingDurationTextViews = listOf(
+            bookingTimeOptionFirst, bookingTimeOptionSecond, bookingTimeOptionThird,
+            bookingTimeOptionFourth, bookingTimeOptionFifth
+        )
+
         model.bookingState.observe(this, Observer(::updateView))
 
         Observable.mergeArray(
@@ -159,15 +161,12 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     private fun selectBookingDurationText(selectedPos: Int, limit: Int) {
         bookingDurationTextViews.forEachIndexed { index, textView ->
             val enabled = index <= limit
-            val textColor = if (enabled) inactiveTextColor else unavailableTextColor
-            textView.setTextColor(textColor)
-            textView.setTypeface(textView.typeface, Typeface.NORMAL)
+            val textStyle = if (enabled) inactiveTextStyle else unavailableTextStyle
+
+            textView.setTextAppearance(textStyle)
         }
 
-        bookingDurationTextViews[selectedPos].apply {
-            setTextColor(activeTextColor)
-            setTypeface(typeface, Typeface.BOLD)
-        }
+        bookingDurationTextViews[selectedPos].setTextAppearance(activeTextStyle)
     }
 
     private fun configurePreciseBooking(bookingState: BookingState.ConfiguringPreciseBooking) {
@@ -188,6 +187,7 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
 
         bookingFromNowFor.text = bookingState.fromText
         bookingTimeBar.limit = bookingState.limit
+        bookingTimeBar.progress = bookingState.selectedDuration
 
         selectBookingDurationText(bookingState.selectedDuration, bookingState.limit)
 

@@ -44,7 +44,6 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFirst"
-        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -55,7 +54,6 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionSecond"
-        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="30 min"
@@ -65,7 +63,6 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionThird"
-        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="45 min"
@@ -75,7 +72,6 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFourth"
-        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="60 min"
@@ -85,7 +81,6 @@
 
     <TextView
         android:id="@+id/bookingTimeOptionFifth"
-        style="@style/TextLight.Grey.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2 hrs"

@@ -211,6 +211,14 @@
         <item name="android:textSize">@dimen/text_20</item>
     </style>
 
+    <style name="TextBold.Grey">
+        <item name="android:textColor">@color/textGrey</item>
+    </style>
+
+    <style name="TextBold.Grey.Small">
+        <item name="android:textSize">@dimen/text_12</item>
+    </style>
+
     <style name="TextBold.Black.CustomLarge">
         <item name="android:textSize">19sp</item>
     </style>
