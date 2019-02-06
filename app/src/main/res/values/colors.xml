@@ -36,6 +36,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="textUnavailable">#DBDBDC</color>
+    <color name="preciseTimeBorder">#DFDFE0</color>
 
     <color name="defaultTabTextColor">#ABABAB</color>
     <color name="editTextDefaultHighlight">#D6D6D6</color>

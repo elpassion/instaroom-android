@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:orientation="horizontal"
+    tools:parentTag="android.widget.LinearLayout"
+    tools:background="@drawable/booking_precise_time_background">
+
+    <TextView
+        android:id="@+id/timeTextView"
+        style="@style/TextBold.Primary.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        tools:text="12:30"/>
+
+    <TextView
+        android:id="@+id/periodTextView"
+        style="@style/TextBold.Primary.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:layout_gravity="bottom"
+        tools:text="AM"/>
+
+</merge>

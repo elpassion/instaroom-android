@@ -191,6 +191,10 @@
         <item name="android:textSize">@dimen/text_12</item>
     </style>
 
+    <style name="TextBold.Primary.Large">
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
     <style name="TextBold.Black">
         <item name="android:textColor">@color/textBlack</item>
     </style>

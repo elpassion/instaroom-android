@@ -114,6 +114,7 @@
 
     <TextView
         android:id="@+id/bookingTimeToLabel"
+        style="@style/TextLight.Black.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/to"
@@ -121,10 +122,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
+    <pl.elpassion.instaroom.booking.PreciseTimeLayout
         android:id="@+id/bookingTimeFrom"
-        android:layout_width="110dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/booking_precise_time_background"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp"
+        android:minWidth="90dp"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/bookingTimeFromLabel"
         app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
 
@@ -138,11 +148,19 @@
         app:layout_constraintStart_toEndOf="@id/bookingTimeFrom"
         app:layout_constraintTop_toTopOf="@id/bookingTimeFrom" />
 
-    <com.google.android.material.button.MaterialButton
+    <pl.elpassion.instaroom.booking.PreciseTimeLayout
         android:id="@+id/bookingTimeTo"
-        android:layout_width="110dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/booking_precise_time_background"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:layout_marginBottom="4dp"
+        android:minWidth="90dp"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/bookingTimeToLabel"
-        app:layout_constraintTop_toBottomOf="@id/bookingTimeFromLabel" />
+        app:layout_constraintTop_toTopOf="@id/bookingTimeFrom" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

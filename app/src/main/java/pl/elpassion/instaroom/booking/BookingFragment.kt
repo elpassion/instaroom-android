@@ -171,8 +171,8 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
     }
 
     private fun configurePreciseBooking(bookingState: BookingState.ConfiguringPreciseBooking) {
-        bookingTimeFrom.text = bookingState.fromTime
-        bookingTimeTo.text = bookingState.toTime
+        bookingTimeFrom.setTime(bookingState.fromTime)
+        bookingTimeTo.setTime(bookingState.toTime)
     }
 
     private fun initializeBookingView(bookingState: BookingState.Initializing) {
@@ -191,8 +191,10 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
 
         selectBookingDurationText(bookingState.selectedDuration, bookingState.limit)
 
-        bookingTimeFrom.text = bookingState.fromTime
-        bookingTimeTo.text = bookingState.toTime
+        bookingState.fromTime?.let {
+            bookingTimeFrom.setTime(bookingState.fromTime)
+            bookingTimeTo.setTime(bookingState.toTime!!)
+        }
 
         showBookingGroup(!bookingState.isPrecise)
 
