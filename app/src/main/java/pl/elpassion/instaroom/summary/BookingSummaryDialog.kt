@@ -3,12 +3,10 @@ package pl.elpassion.instaroom.summary
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import com.jakewharton.rxbinding3.view.clicks
@@ -19,8 +17,6 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.dashboard.DashboardFragment
-import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.endDateTime
@@ -69,23 +65,39 @@ class BookingSummaryDialog : DialogFragment() {
 
     private fun updateView(summaryState: SummaryState) {
         when (summaryState) {
-            is SummaryState.Initialized -> configView(summaryState.event, summaryState.room)
+            is SummaryState.Initialized -> configView(summaryState.event, summaryState.room, summaryState.isSynced)
             is SummaryState.Dismissing -> dismiss()
             is SummaryState.ViewEvent -> showEventInCalendar(summaryState.link)
         }
+    }
+
+    private fun enableEditButton() {
+        editButton.isEnabled = true
+        editButton.alpha = 1f
+    }
+
+    private fun disableEditButton() {
+        editButton.isEnabled = false
+        editButton.alpha = 0.3f
     }
 
     private fun showEventInCalendar(link: String) {
         viewEventInCalendar(link, REQ_OPEN_CALENDAR)
     }
 
-    private fun configView(event: Event, room: Room) {
+    private fun configView(
+        event: Event,
+        room: Room,
+        synced: Boolean
+    ) {
         bookingTitle.text = event.name
         bookingFromTime.setTime(event.startDateTime.format(hourMinuteTimeFormatter))
         bookingToTime.setTime(event.endDateTime.format(hourMinuteTimeFormatter))
 
         bookingRoomInfo.setTextColor(Color.parseColor(room.titleColor))
         bookingRoomInfo.text = "in ${room.name}"
+
+        if (synced) enableEditButton() else disableEditButton()
     }
 
     override fun onDismiss(dialog: DialogInterface?) {

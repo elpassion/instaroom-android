@@ -25,9 +25,6 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
 
     override var tokenData: TokenData? by repository.asProperty(TOKEN_DATA)
 
-    override val isUserSignedIn: Boolean
-        get() = tokenData != null
-
     override val isTokenValid: Boolean
         get() = tokenData?.let { (_, tokenExpirationDate) ->
             tokenExpirationDate.isAfter(ZonedDateTime.now())
@@ -39,9 +36,7 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
         tokenData?.googleToken ?: ""
     }
 
-    class AuthorizationException : Exception()
-
-    private fun refreshToken() {
+    override fun refreshToken() {
         val refreshedToken = tokenRequester.refreshToken()
         if (refreshedToken != null) {
             tokenData = TokenData(refreshedToken, expirationDate())

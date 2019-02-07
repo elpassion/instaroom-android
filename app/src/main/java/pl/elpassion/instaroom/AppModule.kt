@@ -18,8 +18,9 @@ val appModule = module {
             get()
         )
     }
+    single { CalendarInitializer(androidApplication(), get())}
     single { NavHostFragment.create(R.navigation.app_navigation) }
     single { DateTimeFormatter.ofPattern("hh:mm a")}
 
-    viewModel { AppViewModel(get(), get(), get(), get()) }
+    viewModel { AppViewModel(get(), get(), get(), get(), get()) }
 }
