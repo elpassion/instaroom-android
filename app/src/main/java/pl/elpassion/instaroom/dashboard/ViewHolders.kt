@@ -68,7 +68,7 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         itemRoomOwnBookedRoomName.setTextColor(Color.parseColor(item.room.titleColor))
         itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
-        val event = item.room.events.first()
+        val event = item.room.events.first { it.isOwnBooked }
         itemRoomOwnBookedRoomBookButton.setOnClickListener {
             event.htmlLink?.let { link ->
                 onOpenCalendar(link)
