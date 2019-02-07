@@ -114,6 +114,11 @@
         <item name="android:layout_marginTop">@dimen/xbasic_padding</item>
     </style>
 
+    <style name="ItemRoomDeleteButton" parent="Button.White">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
     <style name="AvenirBook">
         <item name="android:fontFamily">@font/avenir_book</item>
     </style>

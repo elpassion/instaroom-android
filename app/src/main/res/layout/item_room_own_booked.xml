@@ -72,4 +72,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/itemRoomOwnBookedRoomDeleteButton"
+        style="@style/ItemRoomDeleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:text="@string/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomBookButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -60,7 +60,8 @@ class RoomBookedViewHolder(
     }
 }
 
-class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (String) -> Unit) :
+class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (String) -> Unit,
+                              private val onDeleteEvent: (String) -> Unit) :
     ViewHolderBinder<DashboardItem>(itemView) {
 
     override fun bind(item: DashboardItem) = with(itemView) {
@@ -78,6 +79,10 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
             event.htmlLink?.let { link ->
                 onOpenCalendar(link)
             }
+        }
+
+        itemRoomOwnBookedRoomDeleteButton.setOnClickListener{
+            onDeleteEvent(event.id)
         }
 
         itemRoomOwnBookedRoomEventTitle.text = event.name

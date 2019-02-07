@@ -64,7 +64,7 @@ class DashboardFragment : Fragment() {
                     when (item) {
 
                         is OwnBookedRoomItem -> R.layout.item_room_own_booked to { view: View ->
-                            RoomOwnBookedViewHolder(view, ::onCalendarOpen)
+                            RoomOwnBookedViewHolder(view, ::onCalendarOpen, ::onDeleteEvent)
                         }
                         is BookedRoomItem -> R.layout.item_room_booked to { view: View ->
                             RoomBookedViewHolder(view, ::onCalendarOpen, ::onBookingClicked)
@@ -80,6 +80,10 @@ class DashboardFragment : Fragment() {
         roomsSwipeRefresh.setOnRefreshListener {
             model.dashboardActionS.accept(DashboardAction.RefreshRooms)
         }
+    }
+
+    private fun onDeleteEvent(eventId: String) {
+        model.dashboardActionS.accept(DashboardAction.DeleteEvent(eventId))
     }
 
     private fun updateView(state: DashboardState?) {
@@ -110,6 +114,8 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateRoomList(state: DashboardState.RoomList) {
+        if(progressDialog.isAdded) progressDialog.dismiss()
+
         items.replaceWith(createItems(state.rooms, requireContext()))
         roomsRecyclerView.adapter?.notifyDataSetChanged()
         state.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }

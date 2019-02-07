@@ -52,6 +52,15 @@ suspend fun runDashboardFlow(
         }
     }
 
+
+    suspend fun processEventDelete(eventId: String) {
+        withContext(Dispatchers.IO) {
+            state.set(DashboardState.BookingInProgressState)
+            deleteEvent(getToken(), eventId)
+            loadRooms()
+        }
+    }
+
     fun restoreRoomListState() {
         state.set(DashboardState.RoomList(rooms, false))
     }
@@ -86,10 +95,10 @@ suspend fun runDashboardFlow(
                 return
             }
             is DashboardAction.ShowBookingDetails -> processBooking(action.room)
+            is DashboardAction.DeleteEvent -> processEventDelete(action.eventId)
         }
     }
 }
-
 
 
 sealed class DashboardAction {
@@ -98,9 +107,7 @@ sealed class DashboardAction {
     object SelectSignOut : DashboardAction()
 
     data class ShowBookingDetails(val room: Room) : DashboardAction()
-
-
-
+    data class DeleteEvent(val eventId: String) : DashboardAction()
 }
 
 sealed class DashboardState {
