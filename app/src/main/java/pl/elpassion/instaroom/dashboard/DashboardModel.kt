@@ -3,9 +3,13 @@ package pl.elpassion.instaroom.dashboard
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
+import pl.elpassion.instaroom.CalendarService
 import pl.elpassion.instaroom.kalendar.*
+import pl.elpassion.instaroom.summary.SummaryState
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
@@ -17,7 +21,8 @@ suspend fun runDashboardFlow(
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
     signOut: suspend () -> Unit,
-    getToken: suspend () -> String
+    getToken: suspend () -> String,
+    calendarService: CalendarService
 ) {
     val rooms = mutableListOf<Room>()
 
@@ -54,9 +59,11 @@ suspend fun runDashboardFlow(
 
 
     suspend fun processEventDelete(eventId: String) {
+        state.set(DashboardState.BookingInProgressState)
+
         withContext(Dispatchers.IO) {
-            state.set(DashboardState.BookingInProgressState)
             deleteEvent(getToken(), eventId)
+            calendarService.refreshCalendar()
             loadRooms()
         }
     }

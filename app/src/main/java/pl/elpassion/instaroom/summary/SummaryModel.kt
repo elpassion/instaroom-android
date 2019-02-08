@@ -3,19 +3,18 @@ package pl.elpassion.instaroom.summary
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.rx2.awaitFirst
-import pl.elpassion.instaroom.CalendarInitializer
+import pl.elpassion.instaroom.CalendarService
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.set
 import kotlinx.coroutines.*
-import kotlin.system.*
 
 suspend fun runSummaryFlow(
     actionS: Observable<SummaryAction>,
     state: MutableLiveData<SummaryState>,
     event: Event,
     room: Room,
-    calendarInitializer: CalendarInitializer
+    calendarService: CalendarService
 ) {
 
     var isSynced = false
@@ -24,7 +23,7 @@ suspend fun runSummaryFlow(
 
     val async = GlobalScope.async {
         println("summary async")
-        calendarInitializer.refreshCalendar()
+        calendarService.refreshCalendar()
         isSynced = true
         println("summary refreshed")
         state.set(SummaryState.Initialized(event, room, isSynced))

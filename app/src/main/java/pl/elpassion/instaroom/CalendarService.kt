@@ -16,9 +16,15 @@ import com.elpassion.android.commons.sharedpreferences.asProperty
 import com.elpassion.android.commons.sharedpreferences.createSharedPrefs
 import com.elpassion.sharedpreferences.moshiadapter.moshiConverterAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.repository.GoogleApiWrapper
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
-class CalendarInitializer (
+class CalendarService (
     val application: Application,
     googleApiWrapper: GoogleApiWrapper
 ){
@@ -81,26 +87,32 @@ class CalendarInitializer (
         }
     }
 
-    suspend fun refreshCalendar() {
-        val extras = Bundle()
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
-        val am = AccountManager.get(application)
-        val accounts = am.getAccountsByType("com.google")
+    suspend fun refreshCalendar(): Unit =
+        suspendCancellableCoroutine { continuation ->
+            val extras = Bundle()
+            extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true)
+            extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true)
+            val am = AccountManager.get(application)
+            val accounts = am.getAccountsByType("com.google")
 
-        val userAccount = accounts.find { it.name == userEmail }
+            val userAccount = accounts.find { it.name == userEmail }
+            var handler: Any? = null
 
-        userAccount ?: return
+            handler = ContentResolver.addStatusChangeListener(SYNC_OBSERVER_TYPE_ACTIVE) { src ->
+                println("status src = $src")
+                val isActive = ContentResolver.isSyncActive(userAccount, CALENDAR_AUTHORITY)
+                val isPending = ContentResolver.isSyncPending(userAccount, CALENDAR_AUTHORITY)
+                println("isPending = $isPending, isActive = $isActive")
 
-        ContentResolver.addStatusChangeListener(SYNC_OBSERVER_TYPE_ACTIVE) { src ->
-            if (ContentResolver.isSyncActive(userAccount, CALENDAR_AUTHORITY)) {
-                return@addStatusChangeListener
+                if(!isPending && !isActive){
+                    ContentResolver.removeStatusChangeListener(handler)
+                    continuation.resume(Unit)
+                }
             }
+
+            ContentResolver.requestSync(userAccount, CALENDAR_AUTHORITY, extras)
         }
 
-        ContentResolver.requestSync(userAccount, CALENDAR_AUTHORITY, extras)
-
-    }
 
 
     companion object {

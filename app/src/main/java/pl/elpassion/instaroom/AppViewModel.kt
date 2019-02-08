@@ -38,7 +38,7 @@ class AppViewModel(
     tokenRepository: TokenRepository,
     navHostFragment: NavHostFragment,
     private val googleApiWrapper: GoogleApiWrapper,
-    private val calendarInitializer: CalendarInitializer,
+    private val calendarService: CalendarService,
     private val hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
@@ -76,7 +76,7 @@ class AppViewModel(
                     ::signOut,
                     tokenRepository,
                     googleApiWrapper,
-                    calendarInitializer,
+                    calendarService,
                     ::initBookingFlow,
                     ::initSummaryFlow,
                     loginActionS,
@@ -91,7 +91,7 @@ class AppViewModel(
         runBookingFlow(bookingActionS, _bookingState, room, googleApiWrapper.getUserName(), hourMinuteTimeFormatter)
 
     private suspend fun initSummaryFlow(event: Event, room: Room) =
-        runSummaryFlow(summaryActionS, _summaryState, event, room, calendarInitializer)
+        runSummaryFlow(summaryActionS, _summaryState, event, room, calendarService)
 
 
     override fun onCleared() = job.cancel()
@@ -102,7 +102,7 @@ suspend fun processAppFlow(
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
     googleApiWrapper: GoogleApiWrapper,
-    calendarInitializer: CalendarInitializer,
+    calendarService: CalendarService,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
@@ -113,7 +113,7 @@ suspend fun processAppFlow(
         navigate(R.id.action_startFragment_to_dashboardFragment)
     } else {
         navigate(R.id.action_startFragment_to_loginFragment)
-        runLoginFlow(loginActionS, tokenRepository, calendarInitializer)
+        runLoginFlow(loginActionS, tokenRepository, calendarService)
         navigate(R.id.action_loginFragment_to_dashboardFragment)
     }
 
@@ -125,7 +125,8 @@ suspend fun processAppFlow(
             runBookingFlow,
             runSummaryFlow,
             signOut,
-            tokenRepository::getToken
+            tokenRepository::getToken,
+            calendarService
         )
     } catch (e: GoogleJsonResponseException) {
         println("new exception = $e")
