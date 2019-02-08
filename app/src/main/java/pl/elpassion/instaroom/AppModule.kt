@@ -8,8 +8,9 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 import org.threeten.bp.format.DateTimeFormatter
+import pl.elpassion.instaroom.calendar.CalendarInitializer
+import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.repository.*
-import pl.elpassion.instaroom.util.CalendarRefresher
 
 val appModule = module {
 
@@ -21,8 +22,8 @@ val appModule = module {
         )
     }
     single<UserRepository> { UserRepositoryImpl(androidApplication(), get()) }
-    single { CalendarInitializer(androidApplication())}
-    single { CalendarRefresher(androidApplication(), get())}
+    single { CalendarInitializer(androidApplication()) }
+    single { CalendarRefresher(androidApplication(), get()) }
     single { NavHostFragment.create(R.navigation.app_navigation) }
     single { DateTimeFormatter.ofPattern("hh:mm a")}
 

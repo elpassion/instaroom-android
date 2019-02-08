@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom
+package pl.elpassion.instaroom.calendar
 
 import android.annotation.SuppressLint
 import android.app.Application

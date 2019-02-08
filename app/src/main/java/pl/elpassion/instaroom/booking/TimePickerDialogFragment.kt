@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom
+package pl.elpassion.instaroom.booking
 
 import android.app.Dialog
 import android.app.TimePickerDialog

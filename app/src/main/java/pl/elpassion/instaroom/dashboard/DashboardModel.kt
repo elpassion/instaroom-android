@@ -5,8 +5,8 @@ import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
+import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.*
-import pl.elpassion.instaroom.util.CalendarRefresher
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException

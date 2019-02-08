@@ -8,16 +8,14 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
 import com.jakewharton.rxrelay2.PublishRelay
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.booking.BookingAction
-import pl.elpassion.instaroom.booking.runBookingFlow
 import pl.elpassion.instaroom.booking.BookingState
+import pl.elpassion.instaroom.booking.runBookingFlow
+import pl.elpassion.instaroom.calendar.CalendarInitializer
+import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.dashboard.DashboardAction
 import pl.elpassion.instaroom.dashboard.DashboardState
 import pl.elpassion.instaroom.dashboard.runDashboardFlow
@@ -31,7 +29,6 @@ import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.summary.SummaryAction
 import pl.elpassion.instaroom.summary.SummaryState
 import pl.elpassion.instaroom.summary.runSummaryFlow
-import pl.elpassion.instaroom.util.CalendarRefresher
 import kotlin.coroutines.CoroutineContext
 
 

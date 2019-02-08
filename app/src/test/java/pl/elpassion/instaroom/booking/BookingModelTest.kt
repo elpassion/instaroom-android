@@ -12,7 +12,10 @@ import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.util.*
+import pl.elpassion.instaroom.util.BookingDuration
+import pl.elpassion.instaroom.util.HourMinuteTime
+import pl.elpassion.instaroom.util.executeTasksInstantly
+import pl.elpassion.instaroom.util.toEpochMilliSecond
 import kotlin.coroutines.CoroutineContext
 
 fun ZonedDateTime.withHourMinute(hourMinuteTime: HourMinuteTime) =

@@ -2,13 +2,13 @@ package pl.elpassion.instaroom.summary
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.rx2.awaitFirst
-import pl.elpassion.instaroom.CalendarInitializer
+import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.set
-import kotlinx.coroutines.*
-import pl.elpassion.instaroom.util.CalendarRefresher
 
 suspend fun runSummaryFlow(
     actionS: Observable<SummaryAction>,

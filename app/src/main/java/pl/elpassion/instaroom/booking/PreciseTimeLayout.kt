@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.view.setPadding
 import kotlinx.android.synthetic.main.precise_time_layout.view.*
 import pl.elpassion.instaroom.R
 

@@ -11,7 +11,6 @@ import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.*
-import java.lang.Exception
 
 suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,

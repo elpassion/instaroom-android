@@ -4,8 +4,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
-import pl.elpassion.instaroom.CalendarInitializer
+import pl.elpassion.instaroom.calendar.CalendarInitializer
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
 

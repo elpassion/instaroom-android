@@ -3,7 +3,6 @@ package pl.elpassion.instaroom.booking
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,10 +18,9 @@ import kotlinx.android.synthetic.main.booking_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
+import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.HourMinuteTime
-import pl.elpassion.instaroom.TimePickerDialogFragment
-import pl.elpassion.instaroom.dashboard.getRoomBackground
 import pl.elpassion.instaroom.util.TabLayoutUtils
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit

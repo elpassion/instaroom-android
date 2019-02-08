@@ -13,7 +13,6 @@ import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstruct
 import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
-import pl.elpassion.instaroom.ProgressDialogFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingFragment
 import pl.elpassion.instaroom.dashboard.RoomItem.*
@@ -29,7 +28,7 @@ class DashboardFragment : Fragment() {
     private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
     private val bookingFragment by lazy {BookingFragment()}
-    private val progressDialog by lazy {ProgressDialogFragment()}
+    private val progressDialog by lazy { ProgressDialogFragment() }
     private val summaryDialog by lazy {BookingSummaryDialog()}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

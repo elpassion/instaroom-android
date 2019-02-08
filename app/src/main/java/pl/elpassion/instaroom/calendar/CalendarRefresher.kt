@@ -1,4 +1,4 @@
-package pl.elpassion.instaroom.util
+package pl.elpassion.instaroom.calendar
 
 import android.accounts.Account
 import android.accounts.AccountManager
@@ -53,7 +53,8 @@ class CalendarRefresher(
                     }
                 }
 
-            ContentResolver.requestSync(userAccount, CALENDAR_AUTHORITY, syncBundle)
+            ContentResolver.requestSync(userAccount,
+                CALENDAR_AUTHORITY, syncBundle)
         }
 
     companion object {
