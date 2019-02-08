@@ -1,18 +1,21 @@
 package pl.elpassion.instaroom.repository
 
+import android.accounts.Account
 import android.app.Application
 import android.preference.PreferenceManager
 import com.elpassion.android.commons.sharedpreferences.asProperty
 import com.elpassion.android.commons.sharedpreferences.createSharedPrefs
 import com.elpassion.sharedpreferences.moshiadapter.moshiConverterAdapter
+import com.google.android.gms.auth.GoogleAuthUtil
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.threeten.bp.ZonedDateTime
-import java.lang.Exception
 
-class TokenRepositoryImpl(application: Application, private val tokenRequester: GoogleApiWrapper) :
-    TokenRepository {
+class TokenRepositoryImpl(
+    private val application: Application,
+    private val googleAccountProvider: GoogleAccountProvider
+) : TokenRepository {
 
     private val sharedPreferencesProvider =
         { PreferenceManager.getDefaultSharedPreferences(application) }
@@ -37,18 +40,29 @@ class TokenRepositoryImpl(application: Application, private val tokenRequester: 
     }
 
     override fun refreshToken() {
-        val refreshedToken = tokenRequester.refreshToken()
+        var refreshedToken: String? = null
+        googleAccountProvider.userGoogleAccount()?.let {googleSignInAccount ->
+            googleSignInAccount.account?.let {account ->
+                refreshedToken = getNewToken(account)
+            }
+        }
+
         if (refreshedToken != null) {
-            tokenData = TokenData(refreshedToken, expirationDate())
+            tokenData = TokenData(refreshedToken!!, expirationDate())
         } else {
             tokenData = null
         }
     }
+
+    private fun getNewToken(account: Account)=
+        GoogleAuthUtil.getToken(application, account, GOOGLE_CALENDAR_API)
+
 
     private fun expirationDate() = ZonedDateTime.now().plusMinutes(EXPIRATION_TIME_IN_MINUTES)
 
     companion object {
         private const val EXPIRATION_TIME_IN_MINUTES = 59L
         private const val TOKEN_DATA = "token data"
+        private const val GOOGLE_CALENDAR_API = "oauth2:https://www.googleapis.com/auth/calendar.events"
     }
 }

@@ -17,7 +17,7 @@ suspend fun runBookingFlow(
     actionS: Observable<BookingAction>,
     state: MutableLiveData<BookingState>,
     room: Room,
-    userName: String,
+    userName: String?,
     hourMinuteTimeFormatter: DateTimeFormatter
 ): BookingEvent? {
     var bookingEvent: BookingEvent? = null
@@ -27,7 +27,7 @@ suspend fun runBookingFlow(
     val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
 
     var title = ""
-    val hint = "$userName's booking"
+    val hint = "${userName?:"Unknown"}'s booking"
     var isPrecise = !quickAvailable
     var isAllDay = false
 

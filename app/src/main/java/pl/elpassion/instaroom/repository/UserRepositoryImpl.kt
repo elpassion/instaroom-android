@@ -5,12 +5,11 @@ import android.preference.PreferenceManager
 import com.elpassion.android.commons.sharedpreferences.asProperty
 import com.elpassion.android.commons.sharedpreferences.createSharedPrefs
 import com.elpassion.sharedpreferences.moshiadapter.moshiConverterAdapter
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.squareup.moshi.Moshi
 
 class UserRepositoryImpl(
     application: Application,
-    private val googleApiWrapper: GoogleApiWrapper
+    private val googleAccountProvider: GoogleAccountProvider
 ) : UserRepository {
 
     private val sharedPreferencesProvider =
@@ -29,7 +28,7 @@ class UserRepositoryImpl(
     override var userName: String? by repository.asProperty(USER_NAME_TAG)
 
     override fun saveData() {
-        val account = googleApiWrapper.userGoogleAccount()
+        val account = googleAccountProvider.userGoogleAccount()
 
         userEmail = account?.email
         userPhotoUrl = account?.photoUrl.toString()

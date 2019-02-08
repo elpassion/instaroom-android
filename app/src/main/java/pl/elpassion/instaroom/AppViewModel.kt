@@ -26,7 +26,6 @@ import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
-import pl.elpassion.instaroom.repository.GoogleApiWrapper
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.summary.SummaryAction
@@ -40,10 +39,10 @@ class AppViewModel(
     tokenRepository: TokenRepository,
     userRepository: UserRepository,
     navHostFragment: NavHostFragment,
-    private val calendarRefresher: CalendarRefresher,
-    private val googleApiWrapper: GoogleApiWrapper,
-    private val calendarInitializer: CalendarInitializer,
-    private val hourMinuteTimeFormatter: DateTimeFormatter
+    googleSignInClient: GoogleSignInClient,
+    calendarInitializer: CalendarInitializer,
+    calendarRefresher: CalendarRefresher,
+    hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -70,8 +69,14 @@ class AppViewModel(
         }
 
         suspend fun signOut() {
-            withContext(Dispatchers.IO) { signOut(tokenRepository, googleApiWrapper.googleSignInClient) }
+            withContext(Dispatchers.IO) { signOut(tokenRepository, googleSignInClient) }
         }
+
+        suspend fun initBookingFlow(room: Room): BookingEvent? =
+            runBookingFlow(bookingActionS, _bookingState, room, userRepository.userName, hourMinuteTimeFormatter)
+
+        suspend fun initSummaryFlow(event: Event, room: Room) =
+            runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
 
         launch {
             while (true) {
@@ -80,7 +85,6 @@ class AppViewModel(
                     ::signOut,
                     tokenRepository,
                     userRepository,
-                    googleApiWrapper,
                     calendarInitializer,
                     calendarRefresher,
                     ::initBookingFlow,
@@ -93,11 +97,7 @@ class AppViewModel(
         }
     }
 
-    private suspend fun initBookingFlow(room: Room): BookingEvent? =
-        runBookingFlow(bookingActionS, _bookingState, room, googleApiWrapper.getUserName(), hourMinuteTimeFormatter)
 
-    private suspend fun initSummaryFlow(event: Event, room: Room) =
-        runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
 
 
     override fun onCleared() = job.cancel()
@@ -108,7 +108,6 @@ suspend fun processAppFlow(
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
     userRepository: UserRepository,
-    googleApiWrapper: GoogleApiWrapper,
     calendarService: CalendarInitializer,
     calendarRefresher: CalendarRefresher,
     runBookingFlow: suspend (Room) -> BookingEvent?,
@@ -130,7 +129,7 @@ suspend fun processAppFlow(
         runDashboardFlow(
             dashboardActionS,
             _dashboardState,
-            googleApiWrapper.getEmail(),
+            userRepository.userEmail,
             runBookingFlow,
             runSummaryFlow,
             signOut,

@@ -35,7 +35,7 @@ class CalendarRefresher(
     suspend fun refresh(): Unit =
         suspendCancellableCoroutine { continuation ->
             syncListener =
-                ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE) { src ->
+                ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE) {
                     val isActive = ContentResolver.isSyncActive(
                         userAccount,
                         CALENDAR_AUTHORITY
