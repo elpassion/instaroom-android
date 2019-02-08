@@ -5,6 +5,9 @@ import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import java.io.Serializable
 
+const val CALENDAR_DEEP_LINK = "content://com.android.calendar/calendars"
+const val CALENDAR_ROOM_NAME_PREFIX = "Spire-C-10-Salka"
+
 
 val Room.isBooked: Boolean
     get() = events.firstOrNull()?.run { startDateTime.isBefore(ZonedDateTime.now()) } ?: false

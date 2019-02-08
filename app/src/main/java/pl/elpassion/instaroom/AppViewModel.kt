@@ -28,17 +28,21 @@ import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.GoogleApiWrapper
 import pl.elpassion.instaroom.repository.TokenRepository
+import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.summary.SummaryAction
 import pl.elpassion.instaroom.summary.SummaryState
 import pl.elpassion.instaroom.summary.runSummaryFlow
+import pl.elpassion.instaroom.util.CalendarRefresher
 import kotlin.coroutines.CoroutineContext
 
 
 class AppViewModel(
     tokenRepository: TokenRepository,
+    userRepository: UserRepository,
     navHostFragment: NavHostFragment,
+    private val calendarRefresher: CalendarRefresher,
     private val googleApiWrapper: GoogleApiWrapper,
-    private val calendarService: CalendarService,
+    private val calendarInitializer: CalendarInitializer,
     private val hourMinuteTimeFormatter: DateTimeFormatter
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
@@ -75,8 +79,10 @@ class AppViewModel(
                     ::navigate,
                     ::signOut,
                     tokenRepository,
+                    userRepository,
                     googleApiWrapper,
-                    calendarService,
+                    calendarInitializer,
+                    calendarRefresher,
                     ::initBookingFlow,
                     ::initSummaryFlow,
                     loginActionS,
@@ -91,7 +97,7 @@ class AppViewModel(
         runBookingFlow(bookingActionS, _bookingState, room, googleApiWrapper.getUserName(), hourMinuteTimeFormatter)
 
     private suspend fun initSummaryFlow(event: Event, room: Room) =
-        runSummaryFlow(summaryActionS, _summaryState, event, room, calendarService)
+        runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
 
 
     override fun onCleared() = job.cancel()
@@ -101,8 +107,10 @@ suspend fun processAppFlow(
     navigate: (Int) -> Unit,
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
+    userRepository: UserRepository,
     googleApiWrapper: GoogleApiWrapper,
-    calendarService: CalendarService,
+    calendarService: CalendarInitializer,
+    calendarRefresher: CalendarRefresher,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
     loginActionS: PublishRelay<SignInAction>,
@@ -113,9 +121,10 @@ suspend fun processAppFlow(
         navigate(R.id.action_startFragment_to_dashboardFragment)
     } else {
         navigate(R.id.action_startFragment_to_loginFragment)
-        runLoginFlow(loginActionS, tokenRepository, calendarService)
+        runLoginFlow(loginActionS, tokenRepository, calendarService, userRepository)
         navigate(R.id.action_loginFragment_to_dashboardFragment)
     }
+
 
     try {
         runDashboardFlow(
@@ -126,7 +135,7 @@ suspend fun processAppFlow(
             runSummaryFlow,
             signOut,
             tokenRepository::getToken,
-            calendarService
+            calendarRefresher
         )
     } catch (e: GoogleJsonResponseException) {
         println("new exception = $e")

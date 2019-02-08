@@ -36,7 +36,7 @@ class GoogleApiWrapper(private val context: Context) {
 
     val googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
 
-    private fun userGoogleAccount() = GoogleSignIn.getLastSignedInAccount(context)
+    fun userGoogleAccount() = GoogleSignIn.getLastSignedInAccount(context)
 
     private fun getNewToken(account: Account)= GoogleAuthUtil.getToken(context, account, "oauth2:https://www.googleapis.com/auth/calendar.events")
 }
