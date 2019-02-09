@@ -13,9 +13,11 @@ class InstaRoomActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.instaroom_activity)
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.navigationContainer, navHostFragment)
-            .setPrimaryNavigationFragment(navHostFragment)
-            .commit()
+        if(savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.navigationContainer, navHostFragment)
+                .setPrimaryNavigationFragment(navHostFragment)
+                .commit()
+        }
     }
 }
