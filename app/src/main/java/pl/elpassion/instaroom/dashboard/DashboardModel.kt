@@ -3,6 +3,7 @@ package pl.elpassion.instaroom.dashboard
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.calendar.CalendarRefresher
@@ -10,10 +11,13 @@ import pl.elpassion.instaroom.kalendar.*
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import retrofit2.HttpException
+import java.net.UnknownHostException
 
 suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
-    state: MutableLiveData<DashboardState>,
+    stateD: MutableLiveData<DashboardState>,
+    dashboardRoomListD: MutableLiveData<DashboardRoomList>,
+    refreshingD: MutableLiveData<DashboardRefreshing>,
     userEmail: String?,
     runBookingFlow: suspend (Room) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
@@ -23,65 +27,70 @@ suspend fun runDashboardFlow(
 ) {
     val rooms = mutableListOf<Room>()
 
+    suspend fun toggleErrorState(errorMessage: String) {
+        stateD.set(DashboardState.Error(errorMessage))
+        delay(1000)
+        stateD.set(DashboardState.Default)
+    }
+
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
         getSomeRooms(getToken(), userEmail?:"")
     }
 
     suspend fun loadRooms() =
         try {
-            state.set(DashboardState.RoomList(rooms, true))
+            refreshingD.set(DashboardRefreshing(true))
             rooms.replaceWith(getRooms())
-            state.set(DashboardState.RoomList(rooms, false))
-        } catch (e: HttpException) {
-            state.set(DashboardState.RoomList(rooms, false, e.message()))
+            dashboardRoomListD.set(DashboardRoomList(rooms))
+        } catch (e: UnknownHostException) {
+            toggleErrorState("HTTP EXCEPTION")
+        } finally {
+            refreshingD.set(DashboardRefreshing(false))
         }
 
     suspend fun bookRoom(bookingEvent: BookingEvent, room: Room) {
         withContext(Dispatchers.IO) {
             try {
-                state.set(DashboardState.BookingInProgressState)
+                stateD.set(DashboardState.BookingInProgressState)
                 val newEvent = bookSomeRoom(getToken(), bookingEvent)
                 if(newEvent != null) {
-                    state.set(DashboardState.BookingSuccessState)
+                    stateD.set(DashboardState.BookingSuccessState)
                     runSummaryFlow(newEvent, room)
+                    stateD.set(DashboardState.Default)
                 } else {
-                    state.set(DashboardState.RoomList(rooms, false, "Booking error"))
+                    toggleErrorState("Booking error...")
                 }
                 loadRooms()
-            } catch (e: HttpException) {
-                state.set(DashboardState.RoomList(rooms, false, e.message()))
+            } catch (e: UnknownHostException) {
+                toggleErrorState("HTTP EXCEPTION")
             }
         }
     }
 
 
     suspend fun processEventDelete(eventId: String) {
-        state.set(DashboardState.BookingInProgressState)
+        stateD.set(DashboardState.BookingInProgressState)
 
         withContext(Dispatchers.IO) {
-            deleteEvent(getToken(), eventId)
-            calendarRefresher.refresh()
-            loadRooms()
+            try {
+                deleteEvent(getToken(), eventId)
+                calendarRefresher.refresh()
+                stateD.set(DashboardState.Default)
+                loadRooms()
+            } catch(e: UnknownHostException) {
+                toggleErrorState("HTTP EXCEPTION")
+            }
         }
-    }
-
-    fun restoreRoomListState() {
-        state.set(DashboardState.RoomList(rooms, false))
     }
 
     suspend fun selectSignOut() {
         rooms.clear()
-        state.set(
-            DashboardState.RoomList(
-                rooms,
-                false
-            )
-        )
+        stateD.set(DashboardState.Default)
         signOut()
     }
 
     suspend fun processBooking(room: Room) {
-        state.set(DashboardState.BookingDetailsState)
+        stateD.set(DashboardState.BookingDetailsState)
         val bookingEvent: BookingEvent? = runBookingFlow(room)
         if(bookingEvent != null) {
             bookRoom(bookingEvent, room)
@@ -114,13 +123,19 @@ sealed class DashboardAction {
     data class DeleteEvent(val eventId: String) : DashboardAction()
 }
 
-sealed class DashboardState {
 
-    data class RoomList(
-        val rooms: List<Room>,
-        val isRefreshing: Boolean,
-        val errorMessage: String? = null
-    ) : DashboardState()
+
+data class DashboardRoomList(
+    val rooms: List<Room>
+)
+
+data class DashboardRefreshing(
+    val isRefreshing: Boolean
+)
+
+sealed class DashboardState {
+    object Default : DashboardState()
+    data class Error(val errorMessage: String) : DashboardState()
 
     object BookingInProgressState : DashboardState()
     object BookingSuccessState : DashboardState()

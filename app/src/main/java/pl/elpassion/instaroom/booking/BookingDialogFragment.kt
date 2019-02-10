@@ -25,7 +25,7 @@ import pl.elpassion.instaroom.util.TabLayoutUtils
 import pl.elpassion.instaroom.util.selections
 import java.util.concurrent.TimeUnit
 
-class BookingFragment : RoundedBottomSheetDialogFragment() {
+class BookingDialogFragment : RoundedBottomSheetDialogFragment() {
 
     private val model by sharedViewModel<AppViewModel>()
 
@@ -51,7 +51,13 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
             bookingTimeOptionFourth, bookingTimeOptionFifth
         )
 
-        model.bookingState.observe(this, Observer(::updateView))
+        model.bookingConstantsD.observe(this, Observer(::updateConstantView))
+        model.bookingQuickTimeD.observe(this, Observer(::updateQuickTimeView))
+        model.bookingPreciseTimeD.observe(this, Observer(::updatePreciseTimeView))
+        model.bookingAllDayD.observe(this, Observer(::updateAllDayView))
+        model.bookingTitleD.observe(this, Observer(::updateTitleView))
+        model.bookingTypeD.observe(this, Observer(::updateTypeView))
+        model.bookingStateD.observe(this, Observer(::updateView))
 
         Observable.mergeArray(
             setupTabs(),
@@ -63,6 +69,65 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
             setupConfirmButton(),
             setupCancelButton()
         ).subscribe(model.bookingActionS)
+    }
+
+    private fun updateConstantView(bookingConstants: BookingConstants?) {
+        bookingConstants?.let {
+            enableTab(0, bookingConstants.quickBookingAvailable)
+            enableTab(1, bookingConstants.preciseBookingAvailable)
+
+            appointmentBookingTitle.text = bookingConstants.room.name
+
+            try {
+                appointmentBookingTitle.setTextColor(Color.parseColor(bookingConstants.room.titleColor))
+            } catch (e: IllegalArgumentException) {
+                println("Error parsing color")
+            }
+
+            bookingConstants.room.let {room ->
+                appointmentBookingBackground.setBackgroundResource(getRoomBackground(room))
+            }
+
+            bookingTitle.hint = bookingConstants.hint
+
+            bookingFromNowFor.text = bookingConstants.quickBookingTimeText
+        }
+
+    }
+
+    private fun updateQuickTimeView(bookingQuickTime: BookingQuickTime?) {
+        bookingQuickTime?.let {
+            bookingTimeBar.limit = bookingQuickTime.limit
+            bookingTimeBar.progress = bookingQuickTime.durationPosition
+
+            selectBookingDurationText(bookingQuickTime.durationPosition, bookingQuickTime.limit)
+        }
+
+    }
+
+    private fun updatePreciseTimeView(bookingPreciseTime: BookingPreciseTime?) {
+        bookingPreciseTime?.let {
+            bookingPreciseTime.fromText?. let { text -> bookingTimeFrom.setTime(text) }
+            bookingPreciseTime.toText?. let { text -> bookingTimeTo.setTime(text) }
+        }
+    }
+
+    private fun updateAllDayView(bookingAllDay: BookingAllDay?) {
+        bookingAllDay?.let {
+            bookingAllDaySwitch.isEnabled = bookingAllDay.enabled
+        }
+    }
+
+    private fun updateTitleView(bookingTitleD: BookingTitle?) {
+        bookingTitle.setText(bookingTitleD?.text)
+    }
+
+    private fun updateTypeView(bookingType: BookingType?) {
+        bookingType?.let {
+            showBookingGroup(bookingType.isQuick)
+            val activeTab = if (bookingType.isQuick) 0 else 1
+            appointmentBookingTabs.getTabAt(activeTab)?.select()
+        }
     }
 
     private fun setupCancelButton() = appointmentBookingCancelButton
@@ -136,23 +201,14 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         bookingState ?: return
 
         when (bookingState) {
-            is BookingState.Initializing ->
-                initializeBookingView(bookingState)
+            is BookingState.Default -> Unit
             is BookingState.PickingTime ->
                 showTimePickerDialog(
                     bookingState.fromTime,
                     bookingState.hourMinuteTime
                 )
-            BookingState.Dismissing -> dismiss()
-            is BookingState.ConfiguringPreciseBooking ->
-                configurePreciseBooking(bookingState)
-            is BookingState.ChangingType.QuickBooking ->
-                showBookingGroup(true)
-            is BookingState.ChangingType.PreciseBooking -> showBookingGroup(false)
-            is BookingState.ConfiguringQuickBooking -> selectBookingDurationText(
-                bookingState.durationSelectedPos,
-                bookingState.limit
-            )
+            is BookingState.Dismissing -> dismiss()
+            is BookingState.Error -> Unit // show error
         }
     }
 
@@ -165,40 +221,6 @@ class BookingFragment : RoundedBottomSheetDialogFragment() {
         }
 
         bookingDurationTextViews[selectedPos].setTextAppearance(activeTextStyle)
-    }
-
-    private fun configurePreciseBooking(bookingState: BookingState.ConfiguringPreciseBooking) {
-        bookingTimeFrom.setTime(bookingState.fromTime)
-        bookingTimeTo.setTime(bookingState.toTime)
-    }
-
-    private fun initializeBookingView(bookingState: BookingState.Initializing) {
-        enableTab(0, bookingState.quickAvailable)
-        enableTab(1, bookingState.preciseAvailable)
-
-        appointmentBookingTitle.text = bookingState.room.name
-        appointmentBookingTitle.setTextColor(Color.parseColor(bookingState.room.titleColor))
-        appointmentBookingBackground.setBackgroundResource(getRoomBackground(bookingState.room))
-
-        bookingTitle.setText(bookingState.title)
-        bookingTitle.hint = bookingState.hint
-        bookingAllDaySwitch.isChecked = bookingState.allDayBooking
-
-        bookingFromNowFor.text = bookingState.fromText
-        bookingTimeBar.limit = bookingState.limit
-        bookingTimeBar.progress = bookingState.selectedDuration
-
-        selectBookingDurationText(bookingState.selectedDuration, bookingState.limit)
-
-        bookingState.fromTime?.let {
-            bookingTimeFrom.setTime(bookingState.fromTime)
-            bookingTimeTo.setTime(bookingState.toTime!!)
-        }
-
-        showBookingGroup(!bookingState.isPrecise)
-
-        val activeTab = if (bookingState.isPrecise) 1 else 0
-        appointmentBookingTabs.getTabAt(activeTab)?.select()
     }
 
     private fun enableTab(pos: Int, enable: Boolean) {

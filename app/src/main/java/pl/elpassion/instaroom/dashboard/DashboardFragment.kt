@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.R
-import pl.elpassion.instaroom.booking.BookingFragment
+import pl.elpassion.instaroom.booking.BookingDialogFragment
 import pl.elpassion.instaroom.dashboard.RoomItem.*
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.summary.BookingSummaryDialog
@@ -27,19 +27,75 @@ class DashboardFragment : Fragment() {
 
     private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
-    private val bookingFragment by lazy {BookingFragment()}
-    private val progressDialog by lazy { ProgressDialogFragment() }
-    private val summaryDialog by lazy {BookingSummaryDialog()}
+    private var bookingDialog: BookingDialogFragment? = null
+    private var progressDialog: ProgressDialogFragment? = null
+    private var summaryDialog: BookingSummaryDialog? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
         inflater.inflate(R.layout.dashboard_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model.dashboardState.observe(this, Observer(::updateView))
+        restoreDialogs(savedInstanceState)
+
+        model.dashboardStateD.observe(this, Observer(::updateView))
+        model.dashboardRoomListD.observe(this, Observer(::updateRoomsList))
+        model.dashboardRefreshingD.observe(this, Observer(::updateRefreshView))
         setupMenu()
         setupList()
+    }
+
+    private fun restoreDialogs(savedInstanceState: Bundle?) {
+        savedInstanceState?.let {
+            bookingDialog = fragmentManager?.getFragment(
+                savedInstanceState,
+                BookingDialogFragment.TAG
+            ) as BookingDialogFragment?
+            println("bookingDialog is null? ${bookingDialog == null}")
+            progressDialog = fragmentManager?.getFragment(
+                savedInstanceState,
+                ProgressDialogFragment.TAG
+            ) as ProgressDialogFragment?
+            println("progressDialog is null? ${bookingDialog == null}")
+            summaryDialog = fragmentManager?.getFragment(
+                savedInstanceState,
+                BookingSummaryDialog.TAG
+            ) as BookingSummaryDialog?
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        bookingDialog?.run {
+            if(this.isAdded) fragmentManager?.putFragment(outState, BookingDialogFragment.TAG, this)
+        }
+
+        progressDialog?.run {
+            if(this.isAdded) fragmentManager?.putFragment(outState, ProgressDialogFragment.TAG, this)
+        }
+
+        summaryDialog?.run {
+            if(this.isAdded) fragmentManager?.putFragment(outState, BookingSummaryDialog.TAG, this)
+        }
+    }
+
+    private fun updateRefreshView(dashboardRefreshing: DashboardRefreshing?) {
+        dashboardRefreshing?.let {
+            roomsSwipeRefresh.isRefreshing = dashboardRefreshing.isRefreshing
+        }
+
+    }
+
+    private fun updateRoomsList(dashboardRoomList: DashboardRoomList?) {
+        dashboardRoomList?.let {
+            items.replaceWith(createItems(dashboardRoomList.rooms, requireContext()))
+            roomsRecyclerView.adapter?.notifyDataSetChanged()
+        }
     }
 
 
@@ -86,46 +142,56 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateView(state: DashboardState?) {
-        state?:return
+        state ?: return
 
         when (state) {
-            is DashboardState.RoomList -> updateRoomList(state)
             is DashboardState.BookingDetailsState -> showBookingDetails()
             is DashboardState.BookingInProgressState -> showProgressDialog()
             is DashboardState.BookingSuccessState -> showSummaryDialog()
+            is DashboardState.Default -> hideDialogs()
+            is DashboardState.Error -> showError(state.errorMessage)
         }
     }
 
+    private fun hideDialogs() {
+        bookingDialog?.apply { if (this.isAdded) this.dismiss() }
+        summaryDialog?.apply { if (this.isAdded) this.dismiss() }
+        progressDialog?.apply { if (this.isAdded) this.dismiss() }
+    }
+
+    private fun showError(errorMessage: String) {
+        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
     private fun showSummaryDialog() {
-        progressDialog.dismiss()
-        summaryDialog.show(fragmentManager, BookingSummaryDialog.TAG)
+        if (summaryDialog != null && summaryDialog!!.isAdded) return
+
+        progressDialog?.apply { if (this.isAdded) this.dismiss() }
+        if(summaryDialog == null) summaryDialog = BookingSummaryDialog()
+        summaryDialog!!.show(fragmentManager, BookingSummaryDialog.TAG)
     }
 
 
     private fun showProgressDialog() {
-        progressDialog.show(fragmentManager, ProgressDialogFragment.PROGRESS_DIALOG_TAG)
+        if (progressDialog != null && progressDialog!!.isAdded) return
+        if(progressDialog == null) progressDialog = ProgressDialogFragment()
+        progressDialog!!.show(fragmentManager, ProgressDialogFragment.TAG)
     }
 
     private fun showBookingDetails() {
-        if(!bookingFragment.isAdded){
-            bookingFragment.show(fragmentManager, BookingFragment.TAG)
-        }
-    }
+        if (bookingDialog != null && bookingDialog!!.isAdded) return
 
-    private fun updateRoomList(state: DashboardState.RoomList) {
-        if(progressDialog.isAdded) progressDialog.dismiss()
-
-        items.replaceWith(createItems(state.rooms, requireContext()))
-        roomsRecyclerView.adapter?.notifyDataSetChanged()
-        state.errorMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
-        roomsSwipeRefresh.isRefreshing = state.isRefreshing
+        if(bookingDialog == null) bookingDialog = BookingDialogFragment()
+        bookingDialog!!.show(fragmentManager, BookingDialogFragment.TAG)
     }
 
     private fun onCalendarOpen(link: String) {
         viewEventInCalendar(link, REQ_OPEN_CALENDAR)
     }
 
-    private fun onBookingClicked(room: Room) { model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room)) }
+    private fun onBookingClicked(room: Room) {
+        model.dashboardActionS.accept(DashboardAction.ShowBookingDetails(room))
+    }
 
 
     companion object {
@@ -135,13 +201,15 @@ class DashboardFragment : Fragment() {
 
 sealed class DashboardItem
 
-sealed class RoomItem : DashboardItem(){
+sealed class RoomItem : DashboardItem() {
     abstract val room: Room
+
     data class OwnBookedRoomItem(override val room: Room) : RoomItem()
     data class BookedRoomItem(override val room: Room) : RoomItem()
     data class FreeRoomItem(override val room: Room) : RoomItem()
 
 }
+
 data class HeaderItem(val name: String) : DashboardItem()
 
 private fun createItems(rooms: List<Room>, context: Context): List<DashboardItem> {

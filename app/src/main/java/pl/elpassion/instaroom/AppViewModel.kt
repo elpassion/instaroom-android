@@ -11,14 +11,10 @@ import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
 import org.threeten.bp.format.DateTimeFormatter
-import pl.elpassion.instaroom.booking.BookingAction
-import pl.elpassion.instaroom.booking.BookingState
-import pl.elpassion.instaroom.booking.runBookingFlow
+import pl.elpassion.instaroom.booking.*
 import pl.elpassion.instaroom.calendar.CalendarInitializer
 import pl.elpassion.instaroom.calendar.CalendarRefresher
-import pl.elpassion.instaroom.dashboard.DashboardAction
-import pl.elpassion.instaroom.dashboard.DashboardState
-import pl.elpassion.instaroom.dashboard.runDashboardFlow
+import pl.elpassion.instaroom.dashboard.*
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
@@ -45,8 +41,16 @@ class AppViewModel(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    val dashboardState: LiveData<DashboardState> get() = _dashboardState
-    val bookingState: LiveData<BookingState> get() = _bookingState
+    val dashboardStateD: LiveData<DashboardState> get() = _dashboardStateD
+    val dashboardRoomListD: LiveData<DashboardRoomList> get() = _dashboardRoomListD
+    val dashboardRefreshingD: LiveData<DashboardRefreshing> get() = _dashboardRefreshingD
+    val bookingStateD: LiveData<BookingState> get() = _bookingStateD
+    val bookingQuickTimeD: LiveData<BookingQuickTime> get() = _bookingQuickTimeD
+    val bookingPreciseTimeD: LiveData<BookingPreciseTime> get() = _bookingPreciseTimeD
+    val bookingConstantsD: LiveData<BookingConstants> get() = _bookingConstantsD
+    val bookingAllDayD: LiveData<BookingAllDay> get() = _bookingAllDayD
+    val bookingTypeD: LiveData<BookingType> get() = _bookingTypeD
+    val bookingTitleD: LiveData<BookingTitle> get() = _bookingTitleD
     val summaryState: LiveData<SummaryState> get() = _summaryState
 
     val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
@@ -54,8 +58,16 @@ class AppViewModel(
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
     val summaryActionS: PublishRelay<SummaryAction> = PublishRelay.create()
 
-    private val _dashboardState = MutableLiveData<DashboardState>()
-    private val _bookingState = MutableLiveData<BookingState>()
+    private val _dashboardStateD = MutableLiveData<DashboardState>()
+    private val _dashboardRoomListD = MutableLiveData<DashboardRoomList>()
+    private val _dashboardRefreshingD = MutableLiveData<DashboardRefreshing>()
+    private val _bookingStateD = MutableLiveData<BookingState>()
+    private val _bookingQuickTimeD = MutableLiveData<BookingQuickTime>()
+    private val _bookingPreciseTimeD = MutableLiveData<BookingPreciseTime>()
+    private val _bookingConstantsD = MutableLiveData<BookingConstants>()
+    private val _bookingAllDayD = MutableLiveData<BookingAllDay>()
+    private val _bookingTypeD = MutableLiveData<BookingType>()
+    private val _bookingTitleD = MutableLiveData<BookingTitle>()
     private val _summaryState = MutableLiveData<SummaryState>()
 
     private val job = Job()
@@ -70,10 +82,40 @@ class AppViewModel(
         }
 
         suspend fun initBookingFlow(room: Room): BookingEvent? =
-            runBookingFlow(bookingActionS, _bookingState, room, userRepository.userName, hourMinuteTimeFormatter)
+            runBookingFlow(
+                bookingActionS,
+                _bookingStateD,
+                _bookingTitleD,
+                _bookingTypeD,
+                _bookingPreciseTimeD,
+                _bookingQuickTimeD,
+                _bookingAllDayD,
+                _bookingConstantsD,
+                room,
+                userRepository.userName,
+                hourMinuteTimeFormatter
+            )
 
         suspend fun initSummaryFlow(event: Event, room: Room) =
             runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
+
+        suspend fun initLoginFlow() =
+            runLoginFlow(loginActionS, tokenRepository, calendarInitializer, userRepository)
+
+        suspend fun initDashboardFlow() {
+            runDashboardFlow(
+                dashboardActionS,
+                _dashboardStateD,
+                _dashboardRoomListD,
+                _dashboardRefreshingD,
+                userRepository.userEmail,
+                ::initBookingFlow,
+                ::initSummaryFlow,
+                ::signOut,
+                tokenRepository::getToken,
+                calendarRefresher
+            )
+        }
 
         launch {
             while (true) {
@@ -81,20 +123,12 @@ class AppViewModel(
                     ::navigate,
                     ::signOut,
                     tokenRepository,
-                    userRepository,
-                    calendarInitializer,
-                    calendarRefresher,
-                    ::initBookingFlow,
-                    ::initSummaryFlow,
-                    loginActionS,
-                    dashboardActionS,
-                    _dashboardState
+                    ::initLoginFlow,
+                    ::initDashboardFlow
                 )
             }
         }
     }
-
-
 
 
     override fun onCleared() = job.cancel()
@@ -104,35 +138,20 @@ suspend fun processAppFlow(
     navigate: (Int) -> Unit,
     signOut: suspend () -> Unit,
     tokenRepository: TokenRepository,
-    userRepository: UserRepository,
-    calendarService: CalendarInitializer,
-    calendarRefresher: CalendarRefresher,
-    runBookingFlow: suspend (Room) -> BookingEvent?,
-    runSummaryFlow: suspend (Event, Room) -> Unit,
-    loginActionS: PublishRelay<SignInAction>,
-    dashboardActionS: PublishRelay<DashboardAction>,
-    _dashboardState: MutableLiveData<DashboardState>
+    runLoginFlow: suspend () -> Unit,
+    runDashboardFlow: suspend () -> Unit
 ) {
     if (tokenRepository.isUserSignedIn) {
         navigate(R.id.action_startFragment_to_dashboardFragment)
     } else {
         navigate(R.id.action_startFragment_to_loginFragment)
-        runLoginFlow(loginActionS, tokenRepository, calendarService, userRepository)
+        runLoginFlow()
         navigate(R.id.action_loginFragment_to_dashboardFragment)
     }
 
 
     try {
-        runDashboardFlow(
-            dashboardActionS,
-            _dashboardState,
-            userRepository.userEmail,
-            runBookingFlow,
-            runSummaryFlow,
-            signOut,
-            tokenRepository::getToken,
-            calendarRefresher
-        )
+        runDashboardFlow()
     } catch (e: GoogleJsonResponseException) {
         println("new exception = $e")
         signOut()
