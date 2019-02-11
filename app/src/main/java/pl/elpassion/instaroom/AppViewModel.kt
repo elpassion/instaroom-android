@@ -118,15 +118,13 @@ class AppViewModel(
         }
 
         launch {
-            while (true) {
-                processAppFlow(
-                    ::navigate,
-                    ::signOut,
-                    tokenRepository,
-                    ::initLoginFlow,
-                    ::initDashboardFlow
-                )
-            }
+            processAppFlow(
+                ::navigate,
+                ::signOut,
+                tokenRepository,
+                ::initLoginFlow,
+                ::initDashboardFlow
+            )
         }
     }
 
@@ -141,22 +139,28 @@ suspend fun processAppFlow(
     runLoginFlow: suspend () -> Unit,
     runDashboardFlow: suspend () -> Unit
 ) {
-    if (tokenRepository.isUserSignedIn) {
-        navigate(R.id.action_startFragment_to_dashboardFragment)
-    } else {
-        navigate(R.id.action_startFragment_to_loginFragment)
-        runLoginFlow()
-        navigate(R.id.action_loginFragment_to_dashboardFragment)
-    }
+    while (true) {
+
+        if (tokenRepository.isUserSignedIn) {
+            navigate(R.id.action_startFragment_to_dashboardFragment)
+        } else {
+            navigate(R.id.action_startFragment_to_loginFragment)
+            runLoginFlow()
+            navigate(R.id.action_loginFragment_to_dashboardFragment)
+        }
 
 
-    try {
-        runDashboardFlow()
-    } catch (e: GoogleJsonResponseException) {
-        println("new exception = $e")
-        signOut()
+        try {
+            runDashboardFlow()
+        } catch (e: GoogleJsonResponseException) {
+            println("new exception = $e")
+            signOut()
+        }
+
+        navigate(R.id.action_dashboardFragment_to_startFragment)
+
     }
-    navigate(R.id.action_dashboardFragment_to_startFragment)
+
 }
 
 
