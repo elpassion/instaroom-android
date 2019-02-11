@@ -26,7 +26,7 @@ suspend fun runBookingFlow(
 
     val bookingValues = initializeBookingVariables(userName, room)
 
-    bookingValues.apply {
+    bookingValues.run {
 
         var bookingEvent: BookingEvent? = null
 
