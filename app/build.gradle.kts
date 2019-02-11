@@ -6,6 +6,8 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-android-extensions")
+    id("io.fabric")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -79,6 +81,9 @@ dependencies {
     implementation("com.jakewharton.rxbinding3:rxbinding-material:3.0.0-alpha2")
     
     implementation("com.github.elpassion:instaroom:b825146c6d")
+
+    implementation("com.google.firebase:firebase-core:16.0.7")
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.mockk:mockk:1.9")

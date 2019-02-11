@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "632800485821",
+    "firebase_url": "https://instaroom-218412.firebaseio.com",
+    "project_id": "instaroom-218412",
+    "storage_bucket": "instaroom-218412.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632800485821:android:4d12f36993d9b5ba",
+        "android_client_info": {
+          "package_name": "pl.elpassion.instaroom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632800485821-sob36jfu63blnm49cab98ijrkqs92euu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.elpassion.instaroom",
+            "certificate_hash": "b6c5e0eaca78e33988ca29ed382b3cc39b5dbfae"
+          }
+        },
+        {
+          "client_id": "632800485821-c7ed2edjr9mpdrmmkvu74jmn782f25u3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY-ucfz6m7MbqNXl5RXQCihlW3SJlfNTc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632800485821-c7ed2edjr9mpdrmmkvu74jmn782f25u3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "632800485821-aq41jevr1h0k110al3gfmu86s4a5trkk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.elpassion.instaroomFlutter"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
