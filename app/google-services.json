@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "632800485821-98u8leoo02mno3m940kevgv3tlrjqc5o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.elpassion.instaroom",
+            "certificate_hash": "1dc2b7c96ee741bd1fb34844b34033b0ce8a48ec"
+          }
+        },
+        {
           "client_id": "632800485821-c7ed2edjr9mpdrmmkvu74jmn782f25u3.apps.googleusercontent.com",
           "client_type": 3
         }
