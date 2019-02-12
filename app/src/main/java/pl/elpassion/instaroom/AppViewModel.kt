@@ -24,6 +24,7 @@ import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.summary.SummaryAction
 import pl.elpassion.instaroom.summary.SummaryState
 import pl.elpassion.instaroom.summary.runSummaryFlow
+import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
 
@@ -177,6 +178,8 @@ suspend fun processAppFlow(
         } catch (e: GoogleJsonResponseException) {
             println("new exception = $e")
             signOut()
+        } catch (e: IOException) {
+            println("No internet connection")
         }
 
         navigate(R.id.action_dashboardFragment_to_startFragment)

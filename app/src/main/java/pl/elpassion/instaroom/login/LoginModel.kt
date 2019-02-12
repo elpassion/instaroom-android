@@ -42,9 +42,11 @@ suspend fun runLoginFlow(
             repository.getToken()
             userRepository.saveData()
         }
+
+        loginInfoD.set(LoginInfo(null))
     }
 }
 
 object SignInAction
 
-data class LoginInfo(val message: String)
+data class LoginInfo(val message: String?)

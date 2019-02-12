@@ -24,5 +24,7 @@ suspend fun runPermissionFlow(
     }
 
     val (grantedPermissions) = Peko.requestPermissionsAsync(sourceActivity, *permissionList.toTypedArray())
-    return grantedPermissions == permissionList
+    println("grantedPermissions = $grantedPermissions")
+    println("perms granted = $grantedPermissions, perms required = $permissionList")
+    return grantedPermissions.containsAll(permissionList)
 }

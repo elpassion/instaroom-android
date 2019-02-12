@@ -43,7 +43,7 @@ suspend fun runDashboardFlow(
             rooms.replaceWith(getRooms())
             dashboardRoomListD.set(DashboardRoomList(rooms))
         } catch (e: UnknownHostException) {
-            toggleErrorState("HTTP EXCEPTION")
+            toggleErrorState("Network exception...")
         } finally {
             refreshingD.set(DashboardRefreshing(false))
         }
@@ -62,7 +62,7 @@ suspend fun runDashboardFlow(
                 }
                 loadRooms()
             } catch (e: UnknownHostException) {
-                toggleErrorState("HTTP EXCEPTION")
+                toggleErrorState("Network exception...")
             }
         }
     }
@@ -78,7 +78,7 @@ suspend fun runDashboardFlow(
                 stateD.set(DashboardState.Default)
                 loadRooms()
             } catch(e: UnknownHostException) {
-                toggleErrorState("HTTP EXCEPTION")
+                toggleErrorState("Network exception...")
             }
         }
     }
