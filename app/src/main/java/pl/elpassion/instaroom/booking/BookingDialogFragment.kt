@@ -119,7 +119,11 @@ class BookingDialogFragment : RoundedBottomSheetDialogFragment() {
     }
 
     private fun updateTitleView(bookingTitleD: BookingTitle?) {
-        bookingTitle.setText(bookingTitleD?.text)
+        bookingTitleD?.let {
+            if(it.text != bookingTitle.text.toString()) {
+                bookingTitle.setText(it.text)
+            }
+        }
     }
 
     private fun updateTypeView(bookingType: BookingType?) {
