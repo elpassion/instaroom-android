@@ -9,6 +9,7 @@ plugins {
     id("io.fabric")
     id("com.google.gms.google-services")
 }
+apply("version.gradle")
 
 android {
     compileSdkVersion(28)
@@ -17,8 +18,6 @@ android {
         applicationId = "pl.elpassion.instaroom"
         minSdkVersion(23)
         targetSdkVersion(28)
-        versionCode = 2
-        versionName = "1.01"
 
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
     }

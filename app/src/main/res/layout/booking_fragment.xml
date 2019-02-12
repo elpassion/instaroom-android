@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:name="pl.elpassion.instaroom.booking.BookingFragment"
+    android:focusableInTouchMode="true"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
     app:behavior_skipCollapsed="true"
