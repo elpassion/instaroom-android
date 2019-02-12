@@ -84,6 +84,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-core:16.0.7")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
+    implementation("com.markodevcic.peko:peko:1.0.0")
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.mockk:mockk:1.9")

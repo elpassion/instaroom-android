@@ -13,6 +13,7 @@ import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstruct
 import kotlinx.android.synthetic.main.dashboard_fragment.*
 import org.koin.android.viewmodel.ext.android.sharedViewModel
 import pl.elpassion.instaroom.AppViewModel
+import pl.elpassion.instaroom.LifecycleFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingDialogFragment
 import pl.elpassion.instaroom.dashboard.RoomItem.*
@@ -23,9 +24,8 @@ import pl.elpassion.instaroom.util.isOwnBooked
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.viewEventInCalendar
 
-class DashboardFragment : Fragment() {
+class DashboardFragment : LifecycleFragment() {
 
-    private val model by sharedViewModel<AppViewModel>()
     private val items = mutableListOf<DashboardItem>()
     private var bookingDialog: BookingDialogFragment? = null
     private var progressDialog: ProgressDialogFragment? = null

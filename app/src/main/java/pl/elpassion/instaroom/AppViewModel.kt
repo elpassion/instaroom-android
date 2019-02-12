@@ -1,12 +1,10 @@
 package pl.elpassion.instaroom
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.api.client.googleapis.json.GoogleJsonResponseException
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
@@ -18,6 +16,7 @@ import pl.elpassion.instaroom.dashboard.*
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.login.LoginInfo
 import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
@@ -41,6 +40,7 @@ class AppViewModel(
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
+    val loginInfoD: LiveData<LoginInfo> get() = _loginInfoD
     val dashboardStateD: LiveData<DashboardState> get() = _dashboardStateD
     val dashboardRoomListD: LiveData<DashboardRoomList> get() = _dashboardRoomListD
     val dashboardRefreshingD: LiveData<DashboardRefreshing> get() = _dashboardRefreshingD
@@ -53,11 +53,14 @@ class AppViewModel(
     val bookingTitleD: LiveData<BookingTitle> get() = _bookingTitleD
     val summaryState: LiveData<SummaryState> get() = _summaryState
 
+    val lifecycleActionS: BehaviorRelay<LifecycleAction> = BehaviorRelay.create()
+
     val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
     val summaryActionS: PublishRelay<SummaryAction> = PublishRelay.create()
 
+    private val _loginInfoD = MutableLiveData<LoginInfo>()
     private val _dashboardStateD = MutableLiveData<DashboardState>()
     private val _dashboardRoomListD = MutableLiveData<DashboardRoomList>()
     private val _dashboardRefreshingD = MutableLiveData<DashboardRefreshing>()
@@ -81,6 +84,9 @@ class AppViewModel(
             withContext(Dispatchers.IO) { signOut(tokenRepository, googleSignInClient) }
         }
 
+        suspend fun initPermissionFlow(permissionList: List<String>) : Boolean =
+            runPermissionFlow(lifecycleActionS, permissionList)
+
         suspend fun initBookingFlow(room: Room): BookingEvent? =
             runBookingFlow(
                 bookingActionS,
@@ -100,7 +106,7 @@ class AppViewModel(
             runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
 
         suspend fun initLoginFlow() =
-            runLoginFlow(loginActionS, tokenRepository, calendarInitializer, userRepository)
+            runLoginFlow(loginActionS, _loginInfoD, tokenRepository, calendarInitializer, userRepository, ::initPermissionFlow)
 
         suspend fun initDashboardFlow() {
             runDashboardFlow(
@@ -128,9 +134,25 @@ class AppViewModel(
         }
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
+    fun onLifecycleEvent(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event in listOf(
+                Lifecycle.Event.ON_CREATE,
+                Lifecycle.Event.ON_START,
+                Lifecycle.Event.ON_RESUME
+            )
+        ) {
+            lifecycleActionS.accept(LifecycleAction(source, event))
+        }
+    }
 
     override fun onCleared() = job.cancel()
 }
+
+data class LifecycleAction(
+    val source: LifecycleOwner,
+    val event: Lifecycle.Event
+)
 
 suspend fun processAppFlow(
     navigate: (Int) -> Unit,
