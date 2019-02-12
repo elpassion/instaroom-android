@@ -61,26 +61,15 @@
         app:layout_constraintTop_toTopOf="@id/itemRoomOwnBookedRoomEventTitle" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/itemRoomOwnBookedRoomBookButton"
-        style="@style/ItemRoomBookedButton"
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:layout_marginTop="@dimen/xxlarge_padding"
-        android:text="@string/edit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
-
-    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/itemRoomOwnBookedRoomDeleteButton"
         style="@style/ItemRoomDeleteButton"
         android:layout_width="match_parent"
         android:layout_height="46dp"
         android:text="@string/delete"
+        android:layout_marginTop="@dimen/xxlarge_padding"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomBookButton" />
+        app:layout_constraintTop_toBottomOf="@id/itemRoomOwnBookedRoomEventTimeEnd" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

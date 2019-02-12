@@ -70,11 +70,7 @@ class RoomOwnBookedViewHolder(itemView: View, private val onOpenCalendar: (Strin
         itemRoomOwnBookedRoomName.setBackgroundResource(getRoomBackground(item.room))
         itemRoomOwnBookedRoomName.text = item.room.name
         val event = item.room.events.first { it.isOwnBooked }
-        itemRoomOwnBookedRoomBookButton.setOnClickListener {
-            event.htmlLink?.let { link ->
-                onOpenCalendar(link)
-            }
-        }
+
         itemRoomOwnBookedRoomEventIcon.setOnClickListener {
             event.htmlLink?.let { link ->
                 onOpenCalendar(link)

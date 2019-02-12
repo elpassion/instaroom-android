@@ -17,8 +17,13 @@
     <TextView
         android:id="@+id/itemRoomBookedTitle"
         style="@style/ItemRoomBookedTitle"
+        android:layout_width="match_parent"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="5dp"
         app:layout_constraintTop_toBottomOf="@id/itemRoomBookedName"
+        app:layout_constraintEnd_toStartOf="@id/itemRoomBookedIcon"
         tools:text="Interview with John Doe" />
 
     <TextView
