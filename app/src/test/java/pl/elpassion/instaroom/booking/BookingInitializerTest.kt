@@ -1,163 +1,148 @@
 package pl.elpassion.instaroom.booking
 
-import io.kotlintest.matchers.future.completedExceptionally
 import io.kotlintest.shouldThrow
 import io.kotlintest.specs.FreeSpec
-import org.junit.Test
 
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.kalendar.Event
-import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.BookingDuration
-import pl.elpassion.instaroom.util.endDateTime
-import pl.elpassion.instaroom.util.startDateTime
 
 class BookingInitializerTest : FreeSpec() {
 
-    private val room = Room("", "", emptyList(), "", "", "", "")
-    private val emptyEvent = Event("", "", "EVENT 1", "", "", false)
-    private val initTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-
-    private fun createEventsWithXMinutesBreakAfterYEvent(
-        breakDurationInMinutes: Int,
-        pos: Int
-    ): List<Event> {
-        val result = mutableListOf<Event>()
-        var previousEventEndTime: ZonedDateTime
-        var currentEventEndTime = initTime
-        for (i in 0..3) {
-            previousEventEndTime = if (i == pos) {
-                currentEventEndTime.plusMinutes(breakDurationInMinutes.toLong())
-            } else {
-                currentEventEndTime
-            }
-            currentEventEndTime = previousEventEndTime.plusMinutes(15)
-
-            result.add(
-                emptyEvent.copy(
-                    startTime = previousEventEndTime.toString(),
-                    endTime = currentEventEndTime.toString()
-                )
-            )
-        }
-        return result
-    }
-
-    private val eventsWithMoreThan15MinutesBreakAfterFirst: List<Event> =
-        createEventsWithXMinutesBreakAfterYEvent(16, 1)
-    private val eventsWithMoreThan15MinutesBreakBeforeFirst =
-        createEventsWithXMinutesBreakAfterYEvent(16, 0)
-    private val eventsWith10MinutesBreakAfterFirst: List<Event> =
-        createEventsWithXMinutesBreakAfterYEvent(10, 1)
-    private val eventsWithNoBreaks: List<Event> =
-        createEventsWithXMinutesBreakAfterYEvent(0, 1)
-
-    private val eventsWith10MinutesBreakBeforeFirst =
-        createEventsWithXMinutesBreakAfterYEvent(10, 0)
-
     init {
 
-        "find first free quick booking" - {
+        val initTime = getTime("12:00")
 
-            "with at least 15 minutes break after first event returns expected time" {
-                val events = eventsWithMoreThan15MinutesBreakAfterFirst
-                val result = findFirstFreeQuickBookingTime(
-                    events,
-                    initTime
-                )
-                assert(result == Pair(events[0].endDateTime, events[1].startDateTime))
-            }
+        "find first free booking event" - {
 
-            "with at least 15 minutes break before events returns expected time" {
-                val events = eventsWithMoreThan15MinutesBreakBeforeFirst
-                val result = findFirstFreeQuickBookingTime(
-                    events,
-                    initTime
-                )
-                assert(result == Pair(initTime, events[0].startDateTime))
-            }
+            "with at least 15 min break in between events" - {
+                val events: List<Event> =
+                    listOf(
+                        eventWithTime("12:00", "12:15"),
+                        eventWithTime("12:45", "13:00"),
+                        eventWithTime("13:00", "15:00")
+                    )
 
-            "with less than 15 minutes break after first event throws exception" {
-                shouldThrow<BookingUnavailableException> {
-                    val events = eventsWith10MinutesBreakAfterFirst
-                    findFirstFreeQuickBookingTime(
+                "quick booking range returns valid range" {
+                    val result = findFirstFreeQuickBookingTime(
                         events,
                         initTime
                     )
+                    assert(result == eventTimeRange("12:15", "12:45"))
                 }
-            }
 
-            "with less than 15 minutes break before first event throws exception" {
-                shouldThrow<BookingUnavailableException> {
-                    val events = eventsWith10MinutesBreakBeforeFirst
-                    findFirstFreeQuickBookingTime(
+                "precise booking range returns valid range" {
+                    val result = findFirstFreePreciseBookingTime(
                         events,
                         initTime
                     )
+                    assert(result == eventTimeRange("12:15", "12:45"))
                 }
             }
 
-            "with no breaks throws exception" {
-                shouldThrow<BookingUnavailableException> {
-                    val events = eventsWithNoBreaks
-                    findFirstFreeQuickBookingTime(
+            "with less than 15 min break in between events" - {
+                val events: List<Event> =
+                    listOf(
+                        eventWithTime("12:00", "12:15"),
+                        eventWithTime("12:25", "13:00"),
+                        eventWithTime("13:00", "15:00")
+                    )
+
+                "quick booking range throws exception" {
+                    shouldThrow<BookingUnavailableException> {
+                        findFirstFreeQuickBookingTime(
+                            events,
+                            initTime
+                        )
+                    }
+                }
+
+                "precise booking range returns valid range" {
+                    val result = findFirstFreePreciseBookingTime(
                         events,
                         initTime
                     )
+                    assert(result == eventTimeRange("12:15", "12:25"))
                 }
             }
 
-        }
-
-        "find first free precise booking" - {
-
-            "with at least 15 minutes break after first event returns expected time" {
-                val events = eventsWithMoreThan15MinutesBreakAfterFirst
-                val result = findFirstFreePreciseBookingTime(
-                    events,
-                    initTime
+            "with at least 15 min break before events" - {
+                val events = listOf(
+                    eventWithTime("12:30", "12:45"),
+                    eventWithTime("12:45", "13:00"),
+                    eventWithTime("13:00", "15:00")
                 )
-                assert(result == Pair(events[0].endDateTime, events[1].startDateTime))
-            }
 
-            "with at least 15 minutes break before events returns expected time" {
-                val events = eventsWithMoreThan15MinutesBreakBeforeFirst
-                val result = findFirstFreePreciseBookingTime(
-                    events,
-                    initTime
-                )
-                assert(result == Pair(initTime, events[0].startDateTime))
-            }
+                println("getTime = $initTime\nevents = $events")
 
-            "with less than 15 minutes break after first event returns expected time" {
-                val events = eventsWith10MinutesBreakAfterFirst
-                val result = findFirstFreePreciseBookingTime(
-                    events,
-                    initTime
-                )
-                assert(result == Pair(events[0].endDateTime, events[1].startDateTime))
-            }
-
-            "with less than 15 minutes break before first event returns expected time" {
-                val events = eventsWith10MinutesBreakBeforeFirst
-                val result = findFirstFreePreciseBookingTime(
-                    events,
-                    initTime
-                )
-                assert(result == Pair(initTime, events[0].startDateTime))
-            }
-
-            "with no breaks throws exception" {
-                shouldThrow<BookingUnavailableException> {
-                    val events = eventsWithNoBreaks
-                    findFirstFreePreciseBookingTime(
+                "quick booking range returns valid range" {
+                    val result = findFirstFreeQuickBookingTime(
                         events,
                         initTime
                     )
+                    assert(result == eventTimeRange("12:00", "12:30"))
+                }
+
+                "precise booking range returns valid range" {
+                    val result = findFirstFreePreciseBookingTime(
+                        events,
+                        initTime
+                    )
+                    assert(result == eventTimeRange("12:00", "12:30"))
                 }
             }
 
+            "with less than 15 min break before events" - {
+                val events = listOf(
+                    eventWithTime("12:10", "12:25"),
+                    eventWithTime("12:25", "13:00"),
+                    eventWithTime("13:00", "15:00")
+                )
+
+                "quick booking range throws exception" {
+                    shouldThrow<BookingUnavailableException> {
+                        findFirstFreeQuickBookingTime(
+                            events,
+                            initTime
+                        )
+                    }
+                }
+
+                "precise booking range returns valid range" {
+                    val result = findFirstFreePreciseBookingTime(
+                        events,
+                        initTime
+                    )
+                    val expected = eventTimeRange("12:00", "12:10")
+                    println("result = $result\nexpected = $expected")
+                    assert(result == eventTimeRange("12:00", "12:10"))
+                }
+            }
+
+            "with no breaks" - {
+                val events = listOf(
+                    eventWithTime("12:00", "12:15"),
+                    eventWithTime("12:15", "13:00"),
+                    eventWithTime("13:00", "15:00")
+                )
+
+                "quick booking range throws exception" {
+                    shouldThrow<BookingUnavailableException> {
+                        findFirstFreeQuickBookingTime(
+                            events,
+                            initTime
+                        )
+                    }
+                }
+
+                "precise booking range throws exception" {
+                    shouldThrow<BookingUnavailableException> {
+                        findFirstFreePreciseBookingTime(
+                            events,
+                            initTime
+                        )
+                    }
+                }
+            }
         }
 
         "calculate quick booking limit index" - {
@@ -165,9 +150,9 @@ class BookingInitializerTest : FreeSpec() {
             "within <15 minutes range break returns -1" {
                 val result = calculateQuickBookingLimitIndex(
                     initTime,
-                    initTime.plusMinutes(16)
+                    initTime.plusMinutes(10)
                 )
-                assert(result == BookingDuration.MIN_15.ordinal)
+                assert(result == -1)
             }
 
             "within <15,30) minutes range break returns MIN_15 ordinal" {
@@ -212,12 +197,11 @@ class BookingInitializerTest : FreeSpec() {
         }
 
         "initialize booking variables" - {
-            val defaultUserName = "Name"
-            val defaultResult = BookingValues(
+            val defaultBookingValues = BookingValues(
                 true,
                 true,
                 false,
-                room,
+                emptyRoom,
                 "",
                 "$defaultUserName's booking",
                 initTime,
@@ -230,50 +214,73 @@ class BookingInitializerTest : FreeSpec() {
             )
 
             "with events with no break" {
-                val roomWithEvents = room.copy(events = eventsWithNoBreaks)
-                val result = initializeBookingVariables(
-                    defaultUserName,
-                    roomWithEvents
+                val events = listOf(
+                    eventWithTime("12:00", "12:15"),
+                    eventWithTime("12:15", "13:00"),
+                    eventWithTime("13:00", "15:00")
                 )
-                val expected = defaultResult.copy(
+
+                val roomWithEvents = emptyRoom.copy(events = events)
+
+                val result = initializeBookingVariables(
+                    roomWithEvents,
+                    initTime
+                )
+
+                val expected = defaultBookingValues.copy(
+                    room = roomWithEvents,
                     quickAvailable = false,
                     preciseAvailable = false,
-                    isPrecise = true,
-                    room = roomWithEvents)
+                    isPrecise = true
+                    )
 
                 assert(result == expected)
             }
 
             "with events with only precise break" {
-                val events = eventsWith10MinutesBreakBeforeFirst
-                val roomWithEvents = room.copy(events = events)
-                val result = initializeBookingVariables(
-                    defaultUserName,
-                    roomWithEvents
+                val events = listOf(
+                    eventWithTime("12:00", "12:15"),
+                    eventWithTime("12:25", "13:00"),
+                    eventWithTime("13:00", "15:00")
                 )
-                val expected = defaultResult.copy(
+
+                val roomWithEvents = emptyRoom.copy(events = events)
+
+                val result = initializeBookingVariables(
+                    roomWithEvents,
+                    initTime
+                )
+                val expected = defaultBookingValues.copy(
                     quickAvailable = false,
-                    preciseAvailable = true,
                     isPrecise = true,
                     room = roomWithEvents,
-                    preciseFromTime = initTime,
-                    preciseToTime = events[0].startDateTime)
+                    preciseFromTime = getTime("12:15"),
+                    preciseToTime = getTime("12:25")
+                )
 
                 assert(result == expected)
             }
 
             "with events with quick and precise break" {
-                val events = eventsWithMoreThan15MinutesBreakBeforeFirst
-                val roomWithEvents = room.copy(events = events)
+                val events = listOf(
+                    eventWithTime("12:00", "12:15"),
+                    eventWithTime("12:44", "13:00"),
+                    eventWithTime("13:00", "15:00")
+                )
+
+                val roomWithEvents = emptyRoom.copy(events = events)
                 val result = initializeBookingVariables(
                     defaultUserName,
-                    roomWithEvents
+                    roomWithEvents,
+                    initTime
                 )
-                val expected = defaultResult.copy(
+                val expected = defaultBookingValues.copy(
                     room = roomWithEvents,
-                    preciseToTime = events[0].startDateTime,
-                    limit = BookingDuration.MIN_15.ordinal)
-
+                    quickFromTime = getTime("12:15"),
+                    limit = BookingDuration.MIN_15.ordinal,
+                    preciseFromTime = getTime("12:15"),
+                    preciseToTime = getTime("12:44")
+                    )
                 assert(result == expected)
             }
         }

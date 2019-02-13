@@ -8,6 +8,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
+import org.threeten.bp.Clock
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.booking.*
 import pl.elpassion.instaroom.calendar.CalendarInitializer
@@ -35,7 +36,8 @@ class AppViewModel(
     googleSignInClient: GoogleSignInClient,
     calendarInitializer: CalendarInitializer,
     calendarRefresher: CalendarRefresher,
-    hourMinuteTimeFormatter: DateTimeFormatter
+    hourMinuteTimeFormatter: DateTimeFormatter,
+    clock: Clock
 ) : ViewModel(), CoroutineScope, LifecycleObserver {
 
     override val coroutineContext: CoroutineContext
@@ -100,6 +102,7 @@ class AppViewModel(
                 _bookingConstantsD,
                 room,
                 userRepository.userName,
+                clock,
                 hourMinuteTimeFormatter
             )
 

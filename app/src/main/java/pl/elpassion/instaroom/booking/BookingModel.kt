@@ -5,6 +5,8 @@ import com.google.api.client.util.DateTime
 import io.reactivex.Observable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.rx2.awaitFirst
+import org.threeten.bp.Clock
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Room
@@ -21,10 +23,13 @@ suspend fun runBookingFlow(
     constantsD: MutableLiveData<BookingConstants>,
     room: Room,
     userName: String?,
+    clock: Clock,
     hourMinuteTimeFormatter: DateTimeFormatter
 ): BookingEvent? {
 
-    val bookingValues = initializeBookingVariables(userName, room)
+    val currentTime = ZonedDateTime.now(clock)
+
+    val bookingValues = initializeBookingVariables(userName, room, currentTime)
 
     bookingValues.run {
 

@@ -8,11 +8,9 @@ import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.endDateTime
 import pl.elpassion.instaroom.util.startDateTime
 
-fun initializeBookingVariables(userName: String?, room: Room): BookingValues {
+fun initializeBookingVariables(userName: String?, room: Room, currentTime: ZonedDateTime): BookingValues {
     var quickAvailable = true
     var preciseAvailable = true
-
-    val currentTime = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES)
 
     val title = ""
     val hint = "${userName?:"Unknown"}'s booking"
@@ -37,8 +35,8 @@ fun initializeBookingVariables(userName: String?, room: Room): BookingValues {
 
     try {
         val pair = findFirstFreePreciseBookingTime(events, currentTime)
-        preciseFromTime = pair.first
-        preciseToTime = pair.second
+        preciseFromTime = pair.first!!
+        preciseToTime = pair.second!!
 
     } catch (e: BookingUnavailableException) {
         preciseAvailable = false
