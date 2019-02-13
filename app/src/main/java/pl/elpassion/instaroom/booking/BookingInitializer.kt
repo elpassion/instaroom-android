@@ -16,12 +16,11 @@ fun initializeBookingVariables(userName: String?, room: Room): BookingValues {
 
     val title = ""
     val hint = "${userName?:"Unknown"}'s booking"
-    val isPrecise = !quickAvailable
     val isAllDay = false
 
     var quickFromTime = currentTime
     val bookingDuration = BookingDuration.MIN_15
-    var limit = 0
+    var limit = -1
 
     var preciseFromTime = currentTime
     var preciseToTime = currentTime
@@ -31,7 +30,7 @@ fun initializeBookingVariables(userName: String?, room: Room): BookingValues {
     try {
         val pair = findFirstFreeQuickBookingTime(events, currentTime)
         quickFromTime = pair.first
-        limit = calculateQuickBookingLimit(pair.first, pair.second)
+        limit = calculateQuickBookingLimitIndex(pair.first, pair.second)
     } catch (e: BookingUnavailableException) {
         quickAvailable = false
     }
@@ -44,6 +43,8 @@ fun initializeBookingVariables(userName: String?, room: Room): BookingValues {
     } catch (e: BookingUnavailableException) {
         preciseAvailable = false
     }
+
+    val isPrecise = !quickAvailable
 
     return BookingValues(
         quickAvailable,
@@ -122,7 +123,7 @@ private fun findFirstFreeBookingTime(
 }
 
 
-fun calculateQuickBookingLimit(
+fun calculateQuickBookingLimitIndex(
     quickFromTime: ZonedDateTime,
     quickToTime: ZonedDateTime
 ): Int {
@@ -136,5 +137,5 @@ fun calculateQuickBookingLimit(
             return maxIndex - index
     }
 
-    return 0
+    return -1
 }
