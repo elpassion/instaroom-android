@@ -38,4 +38,5 @@
     <string name="sign_in_with_google">Sign in with google</string>
     <string name="booking_success_dialog_title">Appointment created</string>
     <string name="delete">delete</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>

@@ -17,8 +17,8 @@ import pl.elpassion.instaroom.dashboard.*
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.login.LoginAction
 import pl.elpassion.instaroom.login.LoginInfo
-import pl.elpassion.instaroom.login.SignInAction
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
@@ -58,7 +58,7 @@ class AppViewModel(
 
     val lifecycleActionS: BehaviorRelay<LifecycleAction> = BehaviorRelay.create()
 
-    val loginActionS: PublishRelay<SignInAction> = PublishRelay.create()
+    val loginActionS: PublishRelay<LoginAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
     val summaryActionS: PublishRelay<SummaryAction> = PublishRelay.create()

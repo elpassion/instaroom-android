@@ -32,4 +32,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appLogo" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/privacyPolicyButton"
+        style="@style/AvenirBook"
+        android:background="@android:color/transparent"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/privacy_policy"
+        android:padding="15dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="25dp"/>
+
+    <WebView
+        android:id="@+id/privacyWebView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:id="@+id/closePrivacyImageView"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="center"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/loginGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="privacyPolicyButton, signInButton, appLogo"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/privacyGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="closePrivacyImageView, privacyWebView"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

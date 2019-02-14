@@ -1,26 +1,42 @@
 package pl.elpassion.instaroom.login
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.rx2.awaitFirst
+import kotlinx.coroutines.rx2.consumeEach
 import kotlinx.coroutines.withContext
 import pl.elpassion.instaroom.calendar.CalendarInitializer
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.util.set
 
+@SuppressLint("CheckResult")
 suspend fun runLoginFlow(
-    signInActionS: Observable<SignInAction>,
+    loginActionS: Observable<LoginAction>,
     loginInfoD: MutableLiveData<LoginInfo>,
     repository: TokenRepository,
     calendarInitializer: CalendarInitializer,
     userRepository: UserRepository,
     runPermissionFlow: suspend (List<String>) -> Boolean
 ) {
+
+    loginActionS
+        .filter { it == LoginAction.SelectPrivacyPolicy }
+        .subscribe {
+            loginInfoD.set(LoginInfo.PrivacyHtml)
+        }
+
+    loginActionS
+        .filter { it == LoginAction.HidePrivacyPolicy }
+        .subscribe {
+            loginInfoD.set(LoginInfo.Default)
+        }
+
     while (repository.tokenData == null) {
-        signInActionS.awaitFirst()
+        loginActionS.filter{ it == LoginAction.SignInAction }.awaitFirst()
 
         val permissionsGranted = runPermissionFlow(
             listOf(
@@ -30,11 +46,11 @@ suspend fun runLoginFlow(
         )
 
         if(!permissionsGranted) {
-            loginInfoD.set(LoginInfo("App requires calendar permissions to run as expected"))
+            loginInfoD.set(LoginInfo.Message("App requires calendar permissions to run as expected"))
             continue
         }
 
-        loginInfoD.set(LoginInfo("All good. Seeing events in calendar will be available soon..."))
+        loginInfoD.set(LoginInfo.Message("All good. Seeing events in calendar will be available soon..."))
 
         withContext(Dispatchers.IO) {
             calendarInitializer.syncRoomCalendars()
@@ -43,10 +59,19 @@ suspend fun runLoginFlow(
             userRepository.saveData()
         }
 
-        loginInfoD.set(LoginInfo(null))
+        loginInfoD.set(LoginInfo.Default)
+
     }
 }
 
-object SignInAction
+sealed class LoginAction {
+    object SignInAction : LoginAction()
+    object SelectPrivacyPolicy : LoginAction()
+    object HidePrivacyPolicy : LoginAction()
+}
 
-data class LoginInfo(val message: String?)
+sealed class LoginInfo {
+    data class Message(val message: String)  : LoginInfo()
+    object PrivacyHtml : LoginInfo()
+    object Default : LoginInfo()
+}
