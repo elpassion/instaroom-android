@@ -1,11 +1,14 @@
 package pl.elpassion.instaroom.booking
 
+import com.google.api.client.util.DateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.BookingDuration
+import pl.elpassion.instaroom.util.HourMinuteTime
+import pl.elpassion.instaroom.util.toEpochMilliSecond
 
 val defaultUserName = "Name"
 
@@ -20,6 +23,10 @@ val initTime =
 fun getTime(time: String) : ZonedDateTime {
     val (hour, minute) = time.split(":")
     return initTime.withHour(hour.toInt()).withMinute(minute.toInt()).truncatedTo(ChronoUnit.MINUTES)
+}
+
+fun getDateTime(time: String): DateTime {
+    return DateTime(getTime(time).toEpochMilliSecond())
 }
 
 fun eventTimeRange(start: String, end: String) : Pair<ZonedDateTime, ZonedDateTime> {
@@ -45,4 +52,13 @@ private fun eventWithTime(startHour: Int, startMinute: Int, endHour: Int, endMin
         startTime = initTime.withHour(startHour).withMinute(startMinute).toString(),
         endTime = initTime.withHour(endHour).withMinute(endMinute).toString()
     )
+}
+
+fun hourMinuteWithTime(text: String) : HourMinuteTime {
+    val (hour, minute) = text.split(":")
+    return HourMinuteTime(hour.toInt(), minute.toInt())
+}
+
+fun pickingTimeStateWithText(fromTime: Boolean, text: String): BookingState.PickingTime {
+    return BookingState.PickingTime(fromTime, hourMinuteWithTime(text))
 }

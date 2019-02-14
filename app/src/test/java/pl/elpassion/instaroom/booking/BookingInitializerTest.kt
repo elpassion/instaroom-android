@@ -221,15 +221,8 @@ class BookingInitializerTest : FreeSpec() {
                 assert(initializedValues!!.title.isEmpty())
             }
 
-            "booking types available" - {
-
-                "quick" {
-                    assert(initializedValues!!.quickAvailable)
-                }
-
-                "precise" {
-                    assert(initializedValues!!.preciseAvailable)
-                }
+            "quick booking type available" {
+                assert(initializedValues!!.quickAvailable)
             }
 
             "default type is quick" {
@@ -284,10 +277,6 @@ class BookingInitializerTest : FreeSpec() {
                 assert(initializedValues?.quickAvailable == false)
             }
 
-            "precise booking is available" {
-                assert(initializedValues?.preciseAvailable == true)
-            }
-
             "default booking type is precise" {
                 assert(initializedValues?.isPrecise == true)
             }
@@ -320,10 +309,6 @@ class BookingInitializerTest : FreeSpec() {
 
             "quick booking is available" {
                 assert(initializedValues?.quickAvailable == true)
-            }
-
-            "precise booking is available" {
-                assert(initializedValues?.preciseAvailable == true)
             }
 
             "default booking type is quick" {

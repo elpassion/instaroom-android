@@ -74,7 +74,6 @@ class BookingDialogFragment : RoundedBottomSheetDialogFragment() {
     private fun updateConstantView(bookingConstants: BookingConstants?) {
         bookingConstants?.let {
             enableTab(0, bookingConstants.quickBookingAvailable)
-            enableTab(1, bookingConstants.preciseBookingAvailable)
 
             appointmentBookingTitle.text = bookingConstants.room.name
 

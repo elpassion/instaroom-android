@@ -35,6 +35,8 @@ suspend fun runBookingFlow(
         }
 
         fun updateBookingDuration(newBookingDuration: BookingDuration) {
+            if(newBookingDuration.ordinal > limit) return
+
             bookingDuration = newBookingDuration
             quickTimeD.set(BookingQuickTime(newBookingDuration.ordinal, limit))
         }
@@ -99,7 +101,7 @@ suspend fun runBookingFlow(
         }
 
         fun enablePreciseBooking() {
-            if (!preciseAvailable || isPrecise) return
+            if (isPrecise) return
 
             isPrecise = true
             updateBookingType()
@@ -125,15 +127,6 @@ suspend fun runBookingFlow(
             }
         }
 
-        fun noBookingAvailable(): Boolean = !quickAvailable && !preciseAvailable
-
-        if (noBookingAvailable()) {
-            stateD.set(BookingState.Error("Booking in unavailable in this room now."))
-            delay(1000)
-            stateD.set(BookingState.Dismissing)
-            return bookingEvent
-        }
-
         stateD.set(BookingState.Default)
         titleD.set(BookingTitle(title))
         preciseTimeD.set(BookingPreciseTime(
@@ -146,7 +139,6 @@ suspend fun runBookingFlow(
             room,
             hint,
             quickAvailable,
-            preciseAvailable,
             getQuickBookingFromText())
         )
         allDayD.set(BookingAllDay(isAllDay))
@@ -214,7 +206,6 @@ data class BookingConstants(
     val room: Room,
     val hint: String,
     val quickBookingAvailable: Boolean,
-    val preciseBookingAvailable: Boolean,
     val quickBookingTimeText: String?
 )
 data class BookingType(val isQuick: Boolean)

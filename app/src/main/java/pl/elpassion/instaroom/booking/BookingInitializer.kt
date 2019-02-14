@@ -50,7 +50,6 @@ fun initializeBookingVariables(userName: String?, room: Room, currentTime: Zoned
 
     return BookingValues(
         quickAvailable,
-        preciseAvailable,
         isPrecise,
         room,
         title,
@@ -68,7 +67,6 @@ fun initializeBookingVariables(userName: String?, room: Room, currentTime: Zoned
 
 data class BookingValues(
     val quickAvailable: Boolean,
-    val preciseAvailable: Boolean,
     var isPrecise: Boolean,
     val room: Room,
     var title: String,
@@ -80,10 +78,7 @@ data class BookingValues(
     var preciseFromTime: ZonedDateTime,
     var preciseToTime: ZonedDateTime,
     var isAllDay: Boolean
-) {
-    val isAvailable: Boolean
-    get() = quickAvailable || preciseAvailable
-}
+)
 
 fun findFirstFreeQuickBookingTime(
     events: List<Event>,
