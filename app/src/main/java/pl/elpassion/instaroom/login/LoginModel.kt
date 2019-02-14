@@ -55,7 +55,7 @@ suspend fun runLoginFlow(
             calendarInitializer.syncRoomCalendars()
         } catch (e: IllegalArgumentException) {
             loginInfoD.set(LoginInfo.Message(e.message?:"Unknown exception"))
-            return
+            continue
         }
 
         loginInfoD.set(LoginInfo.Message("All good. Seeing events in calendar will be available soon..."))
