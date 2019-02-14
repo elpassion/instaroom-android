@@ -90,7 +90,7 @@ class AppViewModel(
         suspend fun initPermissionFlow(permissionList: List<String>) : Boolean =
             runPermissionFlow(lifecycleActionS, permissionList)
 
-        suspend fun initBookingFlow(room: Room): BookingEvent? =
+        suspend fun initBookingFlow(bookingValues: BookingValues): BookingEvent? =
             runBookingFlow(
                 bookingActionS,
                 _bookingStateD,
@@ -100,11 +100,11 @@ class AppViewModel(
                 _bookingQuickTimeD,
                 _bookingAllDayD,
                 _bookingConstantsD,
-                room,
-                userRepository.userName,
-                clock,
-                hourMinuteTimeFormatter
+                hourMinuteTimeFormatter,
+                bookingValues
             )
+
+
 
         suspend fun initSummaryFlow(event: Event, room: Room) =
             runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
@@ -118,12 +118,13 @@ class AppViewModel(
                 _dashboardStateD,
                 _dashboardRoomListD,
                 _dashboardRefreshingD,
-                userRepository.userEmail,
+                userRepository,
                 ::initBookingFlow,
                 ::initSummaryFlow,
                 ::signOut,
                 tokenRepository::getToken,
-                calendarRefresher
+                calendarRefresher,
+                clock
             )
         }
 

@@ -6,11 +6,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.rx2.awaitFirst
 import kotlinx.coroutines.withContext
+import org.threeten.bp.Clock
+import org.threeten.bp.ZonedDateTime
+import pl.elpassion.instaroom.booking.BookingValues
+import pl.elpassion.instaroom.booking.initializeBookingVariables
 import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.*
+import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
-import retrofit2.HttpException
 import java.net.UnknownHostException
 
 suspend fun runDashboardFlow(
@@ -18,12 +22,13 @@ suspend fun runDashboardFlow(
     stateD: MutableLiveData<DashboardState>,
     dashboardRoomListD: MutableLiveData<DashboardRoomList>,
     refreshingD: MutableLiveData<DashboardRefreshing>,
-    userEmail: String?,
-    runBookingFlow: suspend (Room) -> BookingEvent?,
+    userRepository: UserRepository,
+    runBookingFlow: suspend (BookingValues) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
     signOut: suspend () -> Unit,
     getToken: suspend () -> String,
-    calendarRefresher: CalendarRefresher
+    calendarRefresher: CalendarRefresher,
+    clock: Clock
 ) {
     val rooms = mutableListOf<Room>()
 
@@ -34,7 +39,7 @@ suspend fun runDashboardFlow(
     }
 
     suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        getSomeRooms(getToken(), userEmail?:"")
+        getSomeRooms(getToken(), userRepository.userEmail?:"")
     }
 
     suspend fun loadRooms() =
@@ -90,8 +95,19 @@ suspend fun runDashboardFlow(
     }
 
     suspend fun processBooking(room: Room) {
+        val bookingValues = initializeBookingVariables(
+            userRepository.userName,
+            room,
+            ZonedDateTime.now(clock)
+        )
+
+        if(bookingValues == null) {
+            toggleErrorState("Booking is unavailable in this room at the moment...")
+            return
+        }
+
         stateD.set(DashboardState.BookingDetailsState)
-        val bookingEvent: BookingEvent? = runBookingFlow(room)
+        val bookingEvent: BookingEvent? = runBookingFlow(bookingValues)
         if(bookingEvent != null) {
             bookRoom(bookingEvent, room)
         }

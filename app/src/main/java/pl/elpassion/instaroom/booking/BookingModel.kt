@@ -21,15 +21,9 @@ suspend fun runBookingFlow(
     quickTimeD: MutableLiveData<BookingQuickTime>,
     allDayD: MutableLiveData<BookingAllDay>,
     constantsD: MutableLiveData<BookingConstants>,
-    room: Room,
-    userName: String?,
-    clock: Clock,
-    hourMinuteTimeFormatter: DateTimeFormatter
+    hourMinuteTimeFormatter: DateTimeFormatter,
+    bookingValues: BookingValues
 ): BookingEvent? {
-
-    val currentTime = ZonedDateTime.now(clock)
-
-    val bookingValues = initializeBookingVariables(userName, room, currentTime)
 
     bookingValues.run {
 

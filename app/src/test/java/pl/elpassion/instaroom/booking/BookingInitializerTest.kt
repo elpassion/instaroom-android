@@ -214,30 +214,30 @@ class BookingInitializerTest : FreeSpec() {
             )
 
             "hint is username with suffix" {
-                assert(initializedValues.hint == "User's booking")
+                assert(initializedValues!!.hint == "User's booking")
             }
 
             "title is empty" {
-                assert(initializedValues.title.isEmpty())
+                assert(initializedValues!!.title.isEmpty())
             }
 
             "booking types available" - {
 
                 "quick" {
-                    assert(initializedValues.quickAvailable)
+                    assert(initializedValues!!.quickAvailable)
                 }
 
                 "precise" {
-                    assert(initializedValues.preciseAvailable)
+                    assert(initializedValues!!.preciseAvailable)
                 }
             }
 
             "default type is quick" {
-                assert(initializedValues.isPrecise == false)
+                assert(initializedValues?.isPrecise == false)
             }
 
             "room didn't change" {
-                assert(initializedValues.room == roomWithEvents)
+                assert(initializedValues?.room == roomWithEvents)
             }
         }
 
@@ -258,12 +258,8 @@ class BookingInitializerTest : FreeSpec() {
                 initTime
             )
 
-            "quick booking is unavailable" {
-                assert(initializedValues.quickAvailable == false)
-            }
-
-            "precise booking is unavailable" {
-                assert(initializedValues.preciseAvailable == false)
+            "returns null" {
+                assert(initializedValues == null)
             }
         }
 
@@ -285,23 +281,23 @@ class BookingInitializerTest : FreeSpec() {
             )
 
             "quick booking is unavailable" {
-                assert(initializedValues.quickAvailable == false)
+                assert(initializedValues?.quickAvailable == false)
             }
 
             "precise booking is available" {
-                assert(initializedValues.preciseAvailable == true)
+                assert(initializedValues?.preciseAvailable == true)
             }
 
             "default booking type is precise" {
-                assert(initializedValues.isPrecise == true)
+                assert(initializedValues?.isPrecise == true)
             }
 
             "precise from time as expected" {
-                assert(initializedValues.preciseFromTime == getTime("12:15"))
+                assert(initializedValues?.preciseFromTime == getTime("12:15"))
             }
 
             "precise to time as expected" {
-                assert(initializedValues.preciseToTime == getTime("12:25"))
+                assert(initializedValues?.preciseToTime == getTime("12:25"))
             }
         }
 
@@ -323,32 +319,31 @@ class BookingInitializerTest : FreeSpec() {
             )
 
             "quick booking is available" {
-                assert(initializedValues.quickAvailable == true)
+                assert(initializedValues?.quickAvailable == true)
             }
 
             "precise booking is available" {
-                assert(initializedValues.preciseAvailable == true)
+                assert(initializedValues?.preciseAvailable == true)
             }
 
             "default booking type is quick" {
-                assert(initializedValues.isPrecise == false)
+                assert(initializedValues?.isPrecise == false)
             }
 
             "precise from time as expected" {
-                assert(initializedValues.preciseFromTime == getTime("12:15"))
+                assert(initializedValues?.preciseFromTime == getTime("12:15"))
             }
 
             "precise to time as expected" {
-                assert(initializedValues.preciseToTime == getTime("12:45"))
+                assert(initializedValues?.preciseToTime == getTime("12:45"))
             }
 
             "quick from time as expected" {
-                assert(initializedValues.quickFromTime == getTime("12:15"))
+                assert(initializedValues?.quickFromTime == getTime("12:15"))
             }
 
             "quick limit index as expected" {
-                println("limit = ${initializedValues.limit}")
-                assert(initializedValues.limit == BookingDuration.MIN_30.ordinal)
+                assert(initializedValues?.limit == BookingDuration.MIN_30.ordinal)
             }
         }
     }

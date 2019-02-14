@@ -8,13 +8,10 @@ import pl.elpassion.instaroom.util.BookingDuration
 import pl.elpassion.instaroom.util.endDateTime
 import pl.elpassion.instaroom.util.startDateTime
 
-fun initializeBookingVariables(userName: String?, room: Room, currentTime: ZonedDateTime): BookingValues {
+fun initializeBookingVariables(userName: String?, room: Room, currentTime: ZonedDateTime): BookingValues? {
+
     var quickAvailable = true
     var preciseAvailable = true
-
-    val title = ""
-    val hint = "${userName?:"Unknown"}'s booking"
-    val isAllDay = false
 
     var quickFromTime = currentTime
     val bookingDuration = BookingDuration.MIN_15
@@ -42,6 +39,13 @@ fun initializeBookingVariables(userName: String?, room: Room, currentTime: Zoned
         preciseAvailable = false
     }
 
+    if(!(preciseAvailable || quickAvailable)) {
+        return null
+    }
+
+    val title = ""
+    val hint = "${userName?:"Unknown"}'s booking"
+    val isAllDay = false
     val isPrecise = !quickAvailable
 
     return BookingValues(
@@ -76,7 +80,10 @@ data class BookingValues(
     var preciseFromTime: ZonedDateTime,
     var preciseToTime: ZonedDateTime,
     var isAllDay: Boolean
-)
+) {
+    val isAvailable: Boolean
+    get() = quickAvailable || preciseAvailable
+}
 
 fun findFirstFreeQuickBookingTime(
     events: List<Event>,

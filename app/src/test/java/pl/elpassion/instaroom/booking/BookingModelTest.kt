@@ -15,14 +15,12 @@
 //import org.threeten.bp.ZonedDateTime
 //import org.threeten.bp.format.DateTimeFormatter
 //import pl.elpassion.instaroom.kalendar.BookingEvent
+//import pl.elpassion.instaroom.kalendar.Event
 //import pl.elpassion.instaroom.kalendar.Room
 //import pl.elpassion.instaroom.util.BookingDuration
 //import pl.elpassion.instaroom.util.HourMinuteTime
 //import pl.elpassion.instaroom.util.executeTasksInstantly
 //import kotlin.coroutines.CoroutineContext
-//
-//fun ZonedDateTime.withHourMinute(hourMinuteTime: HourMinuteTime) =
-//    this.withHour(hourMinuteTime.hour).withMinute(hourMinuteTime.minute)
 //
 //class BookingModelTest : FreeSpec(), CoroutineScope {
 //    @ExperimentalCoroutinesApi
@@ -43,24 +41,28 @@
 //    private val allDayD = MutableLiveData<BookingAllDay>()
 //    private val constantsD = MutableLiveData<BookingConstants>()
 //
+//    suspend fun initBookingFlow(events: List<Event>): BookingEvent? {
+//        return runBookingFlow(
+//            actionS,
+//            stateD,
+//            titleD,
+//            typeD,
+//            preciseTimeD,
+//            quickTimeD,
+//            allDayD,
+//            constantsD,
+//            emptyRoom.copy(events = events),
+//            defaultUserName,
+//            fixed(Instant.now(), ZoneId.of("UTC")),
+//            DateTimeFormatter.ofPattern("hh:mm a")
+//        )
+//    }
+//
 //    init {
 //        executeTasksInstantly()
 //        var result: BookingEvent? = null
 //        launch {
-//            result = runBookingFlow(
-//                actionS,
-//                stateD,
-//                titleD,
-//                typeD,
-//                preciseTimeD,
-//                quickTimeD,
-//                allDayD,
-//                constantsD,
-//                roomWithEvents,
-//                defaultUserName,
-//                fixed(Instant.now(), ZoneId.of("UTC")),
-//                DateTimeFormatter.ofPattern("hh:mm a")
-//                )
+//            result = initBookingFlow()
 //        }
 //
 //        stateD.observeForever(mock())
