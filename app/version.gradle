@@ -1,6 +1,6 @@
 android {
     defaultConfig {
-        versionCode 10002
-        versionName "0.1.2"
+        versionCode 10004
+        versionName "0.1.4"
     }
 }

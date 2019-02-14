@@ -12,6 +12,7 @@ import pl.elpassion.instaroom.calendar.CalendarInitializer
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.util.set
+import java.lang.IllegalArgumentException
 
 @SuppressLint("CheckResult")
 suspend fun runLoginFlow(
@@ -50,11 +51,16 @@ suspend fun runLoginFlow(
             continue
         }
 
+        try {
+            calendarInitializer.syncRoomCalendars()
+        } catch (e: IllegalArgumentException) {
+            loginInfoD.set(LoginInfo.Message(e.message?:"Unknown exception"))
+            return
+        }
+
         loginInfoD.set(LoginInfo.Message("All good. Seeing events in calendar will be available soon..."))
 
         withContext(Dispatchers.IO) {
-            calendarInitializer.syncRoomCalendars()
-
             repository.getToken()
             userRepository.saveData()
         }
