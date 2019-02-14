@@ -101,7 +101,7 @@ private fun findFirstFreeBookingTime(
 ): Pair<ZonedDateTime, ZonedDateTime>? {
     events.firstOrNull()?.let { event ->
         if (event.startDateTime.isAfter(currentTime) &&
-            currentTime.until(event.startDateTime, ChronoUnit.MILLIS) > minFreeTime
+            currentTime.until(event.startDateTime, ChronoUnit.MILLIS) >= minFreeTime
         ) {
             return Pair(currentTime, event.startDateTime)
         }
@@ -111,7 +111,7 @@ private fun findFirstFreeBookingTime(
         if (firstEvent.endDateTime.until(
                 secondEvent.startDateTime,
                 ChronoUnit.MILLIS
-            ) > minFreeTime
+            ) >= minFreeTime
         ) {
             return Pair(firstEvent.endDateTime, secondEvent.startDateTime)
         }
@@ -131,7 +131,7 @@ fun calculateQuickBookingLimitIndex(
     val timeLeft = quickFromTime.until(quickToTime, ChronoUnit.MILLIS)
 
     limits.reversed().forEachIndexed { index, time ->
-        if (time.timeInMillis < timeLeft)
+        if (time.timeInMillis <= timeLeft)
             return maxIndex - index
     }
 

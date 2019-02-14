@@ -196,92 +196,159 @@ class BookingInitializerTest : FreeSpec() {
             }
         }
 
-        "initialize booking variables" - {
-            val defaultBookingValues = BookingValues(
-                true,
-                true,
-                false,
-                emptyRoom,
-                "",
-                "$defaultUserName's booking",
-                initTime,
-                initTime,
-                BookingDuration.MIN_15,
-                -1,
-                initTime,
-                initTime,
-                false
+        "initialize booking variables (except time)" - {
+
+            val defaultUserName = "User"
+            val defaultEvents = listOf(
+                eventWithTime("12:00", "12:15"),
+                eventWithTime("12:30", "13:00"),
+                eventWithTime("13:00", "15:00")
             )
 
-            "with events with no break" {
-                val events = listOf(
-                    eventWithTime("12:00", "12:15"),
-                    eventWithTime("12:15", "13:00"),
-                    eventWithTime("13:00", "15:00")
-                )
+            val roomWithEvents = emptyRoom.copy(events = defaultEvents)
 
-                val roomWithEvents = emptyRoom.copy(events = events)
+            val initializedValues = initializeBookingVariables(
+                defaultUserName,
+                roomWithEvents,
+                initTime
+            )
 
-                val result = initializeBookingVariables(
-                    roomWithEvents,
-                    initTime
-                )
-
-                val expected = defaultBookingValues.copy(
-                    room = roomWithEvents,
-                    quickAvailable = false,
-                    preciseAvailable = false,
-                    isPrecise = true
-                    )
-
-                assert(result == expected)
+            "hint is username with suffix" {
+                assert(initializedValues.hint == "User's booking")
             }
 
-            "with events with only precise break" {
-                val events = listOf(
-                    eventWithTime("12:00", "12:15"),
-                    eventWithTime("12:25", "13:00"),
-                    eventWithTime("13:00", "15:00")
-                )
-
-                val roomWithEvents = emptyRoom.copy(events = events)
-
-                val result = initializeBookingVariables(
-                    roomWithEvents,
-                    initTime
-                )
-                val expected = defaultBookingValues.copy(
-                    quickAvailable = false,
-                    isPrecise = true,
-                    room = roomWithEvents,
-                    preciseFromTime = getTime("12:15"),
-                    preciseToTime = getTime("12:25")
-                )
-
-                assert(result == expected)
+            "title is empty" {
+                assert(initializedValues.title.isEmpty())
             }
 
-            "with events with quick and precise break" {
-                val events = listOf(
+            "booking types available" - {
+
+                "quick" {
+                    assert(initializedValues.quickAvailable)
+                }
+
+                "precise" {
+                    assert(initializedValues.preciseAvailable)
+                }
+            }
+
+            "default type is quick" {
+                assert(initializedValues.isPrecise == false)
+            }
+
+            "room didn't change" {
+                assert(initializedValues.room == roomWithEvents)
+            }
+        }
+
+        "initialize booking variables with events with no breaks" - {
+
+            val defaultUserName = "User"
+            val defaultEvents = listOf(
+                eventWithTime("12:00", "12:15"),
+                eventWithTime("12:15", "13:00"),
+                eventWithTime("13:00", "15:00")
+            )
+
+            val roomWithEvents = emptyRoom.copy(events = defaultEvents)
+
+            val initializedValues = initializeBookingVariables(
+                defaultUserName,
+                roomWithEvents,
+                initTime
+            )
+
+            "quick booking is unavailable" {
+                assert(initializedValues.quickAvailable == false)
+            }
+
+            "precise booking is unavailable" {
+                assert(initializedValues.preciseAvailable == false)
+            }
+        }
+
+        "initialize booking variables with events with only precise break" - {
+
+            val defaultUserName = "User"
+            val defaultEvents = listOf(
+                eventWithTime("12:00", "12:15"),
+                eventWithTime("12:25", "13:00"),
+                eventWithTime("13:00", "15:00")
+            )
+
+            val roomWithEvents = emptyRoom.copy(events = defaultEvents)
+
+            val initializedValues = initializeBookingVariables(
+                defaultUserName,
+                roomWithEvents,
+                initTime
+            )
+
+            "quick booking is unavailable" {
+                assert(initializedValues.quickAvailable == false)
+            }
+
+            "precise booking is available" {
+                assert(initializedValues.preciseAvailable == true)
+            }
+
+            "default booking type is precise" {
+                assert(initializedValues.isPrecise == true)
+            }
+
+            "precise from time as expected" {
+                assert(initializedValues.preciseFromTime == getTime("12:15"))
+            }
+
+            "precise to time as expected" {
+                assert(initializedValues.preciseToTime == getTime("12:25"))
+            }
+        }
+
+        "initialize booking variables with events with quick and precise break" - {
+
+            val defaultUserName = "User"
+
+            val events = listOf(
                     eventWithTime("12:00", "12:15"),
-                    eventWithTime("12:44", "13:00"),
+                    eventWithTime("12:45", "13:00"),
                     eventWithTime("13:00", "15:00")
                 )
 
-                val roomWithEvents = emptyRoom.copy(events = events)
-                val result = initializeBookingVariables(
-                    defaultUserName,
-                    roomWithEvents,
-                    initTime
-                )
-                val expected = defaultBookingValues.copy(
-                    room = roomWithEvents,
-                    quickFromTime = getTime("12:15"),
-                    limit = BookingDuration.MIN_15.ordinal,
-                    preciseFromTime = getTime("12:15"),
-                    preciseToTime = getTime("12:44")
-                    )
-                assert(result == expected)
+            val roomWithEvents = emptyRoom.copy(events = events)
+            val initializedValues = initializeBookingVariables(
+                defaultUserName,
+                roomWithEvents,
+                initTime
+            )
+
+            "quick booking is available" {
+                assert(initializedValues.quickAvailable == true)
+            }
+
+            "precise booking is available" {
+                assert(initializedValues.preciseAvailable == true)
+            }
+
+            "default booking type is quick" {
+                assert(initializedValues.isPrecise == false)
+            }
+
+            "precise from time as expected" {
+                assert(initializedValues.preciseFromTime == getTime("12:15"))
+            }
+
+            "precise to time as expected" {
+                assert(initializedValues.preciseToTime == getTime("12:45"))
+            }
+
+            "quick from time as expected" {
+                assert(initializedValues.quickFromTime == getTime("12:15"))
+            }
+
+            "quick limit index as expected" {
+                println("limit = ${initializedValues.limit}")
+                assert(initializedValues.limit == BookingDuration.MIN_30.ordinal)
             }
         }
     }

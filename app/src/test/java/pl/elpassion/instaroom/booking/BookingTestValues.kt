@@ -7,8 +7,6 @@ import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.BookingDuration
 
-val defaultUserName = "Name"
-
 val emptyEvent = Event("", "", "", "", "", false)
 
 val emptyRoom = Room("", "", emptyList(), "", "", "", "")
@@ -19,10 +17,6 @@ val initMinute = 0
 val initTime =
     ZonedDateTime.of(2019, 1, 1, initHour, initMinute, 0, 0, ZoneId.systemDefault())
         .truncatedTo(ChronoUnit.MINUTES)
-
-fun initializeBookingVariables(room: Room, initTime: ZonedDateTime) : BookingValues {
-    return initializeBookingVariables(defaultUserName, room, initTime)
-}
 
 fun getTime(time: String) : ZonedDateTime {
     val (hour, minute) = time.split(":")
