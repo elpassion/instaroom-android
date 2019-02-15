@@ -35,7 +35,6 @@ suspend fun runSummaryFlow(
 
 
     loop@ while(true) {
-        println("summary loop")
         when (actionS.awaitFirst()) {
             is SummaryAction.SelectDismiss -> stateD.set(SummaryState.Dismissing)
             is SummaryAction.EditEvent -> stateD.set(SummaryState.ViewingEvent(event.htmlLink!!))

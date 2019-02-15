@@ -3,7 +3,6 @@ package pl.elpassion.instaroom.summary
 import androidx.lifecycle.MutableLiveData
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
-import com.nhaarman.mockitokotlin2.mock
 import io.kotlintest.IsolationMode
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.*
@@ -12,7 +11,6 @@ import pl.elpassion.instaroom.booking.getTime
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.util.executeTasksInstantly
 import pl.mareklangiewicz.smokk.smokk
-import java.time.ZonedDateTime
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
@@ -47,7 +45,7 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
 
         val refresh = smokk<Unit>()
 
-        val d = GlobalScope.launch {
+        val flow = GlobalScope.launch {
             runSummaryFlow(
                 actionS,
                 state,
@@ -59,13 +57,13 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
             )
         }
 
-        assert(d.isActive)
+        assert(flow.isActive)
 
+        val stateObserver = state.test()
         "should initialize with expected values" - {
 
             "with default state" {
-                state
-                    .test()
+                stateObserver
                     .awaitValue()
                     .assertValue(SummaryState.Default)
             }
@@ -90,21 +88,28 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
                 .assertValue(SummaryCalendarSync(true, false))
         }
 
-//        "dismiss click should dismiss dialog" {
-//            actionS.accept(SummaryAction.SelectDismiss)
-//            testObserver.awaitValue().assertValue(SummaryState.Dismissing)
-//        }
-//
-//        "edit in calendar click shows event" {
-//            actionS.accept(SummaryAction.EditEvent)
-//            testObserver.awaitValue().assertValue(SummaryState.ViewEvent(event.htmlLink!!))
-//        }
-//
-//        "dismissing dialog ends task" {
-//            assert(!taskFinished)
-//            actionS.accept(SummaryAction.Dismiss)
-//            assert(taskFinished)
-//        }
+        "edit event click should set state as viewing event" {
+            actionS.accept(SummaryAction.EditEvent)
+            stateObserver.awaitNextValue().assertValue(SummaryState.ViewingEvent("link"))
+        }
+
+        "select dismiss sets state as dismissing" {
+            actionS.accept(SummaryAction.SelectDismiss)
+            stateObserver.awaitNextValue().assertValue(SummaryState.Dismissing)
+        }
+
+        "dismissing finishes job" {
+            actionS.accept(SummaryAction.Dismiss)
+            //TODO: What to do to not use delay?
+            delay(1)
+            assert(flow.isCompleted)
+        }
+
+        "dismissing cancels refresh async" {
+            actionS.accept(SummaryAction.Dismiss)
+            //TODO: HOW TO?
+            assert(false)
+        }
 
     }
 
