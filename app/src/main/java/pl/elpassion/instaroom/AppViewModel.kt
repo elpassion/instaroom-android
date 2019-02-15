@@ -22,9 +22,7 @@ import pl.elpassion.instaroom.login.LoginInfo
 import pl.elpassion.instaroom.login.runLoginFlow
 import pl.elpassion.instaroom.repository.TokenRepository
 import pl.elpassion.instaroom.repository.UserRepository
-import pl.elpassion.instaroom.summary.SummaryAction
-import pl.elpassion.instaroom.summary.SummaryState
-import pl.elpassion.instaroom.summary.runSummaryFlow
+import pl.elpassion.instaroom.summary.*
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
 
@@ -44,9 +42,11 @@ class AppViewModel(
         get() = Dispatchers.Main + job
 
     val loginInfoD: LiveData<LoginInfo> get() = _loginInfoD
+
     val dashboardStateD: LiveData<DashboardState> get() = _dashboardStateD
     val dashboardRoomListD: LiveData<DashboardRoomList> get() = _dashboardRoomListD
     val dashboardRefreshingD: LiveData<DashboardRefreshing> get() = _dashboardRefreshingD
+
     val bookingStateD: LiveData<BookingState> get() = _bookingStateD
     val bookingQuickTimeD: LiveData<BookingQuickTime> get() = _bookingQuickTimeD
     val bookingPreciseTimeD: LiveData<BookingPreciseTime> get() = _bookingPreciseTimeD
@@ -54,7 +54,10 @@ class AppViewModel(
     val bookingAllDayD: LiveData<BookingAllDay> get() = _bookingAllDayD
     val bookingTypeD: LiveData<BookingType> get() = _bookingTypeD
     val bookingTitleD: LiveData<BookingTitle> get() = _bookingTitleD
-    val summaryState: LiveData<SummaryState> get() = _summaryState
+
+    val summaryStateD: LiveData<SummaryState> get() = _summaryStateD
+    val summaryDataD: LiveData<SummaryData> get() = _summaryDataD
+    val summaryCalendarSyncD: LiveData<SummaryCalendarSync> get() = _summaryCalendarSyncD
 
     val lifecycleActionS: BehaviorRelay<LifecycleAction> = BehaviorRelay.create()
 
@@ -74,7 +77,9 @@ class AppViewModel(
     private val _bookingAllDayD = MutableLiveData<BookingAllDay>()
     private val _bookingTypeD = MutableLiveData<BookingType>()
     private val _bookingTitleD = MutableLiveData<BookingTitle>()
-    private val _summaryState = MutableLiveData<SummaryState>()
+    private val _summaryStateD = MutableLiveData<SummaryState>()
+    private val _summaryDataD = MutableLiveData<SummaryData>()
+    private val _summaryCalendarSyncD = MutableLiveData<SummaryCalendarSync>()
 
     private val job = Job()
 
@@ -87,7 +92,7 @@ class AppViewModel(
             withContext(Dispatchers.IO) { signOut(tokenRepository, googleSignInClient) }
         }
 
-        suspend fun initPermissionFlow(permissionList: List<String>) : Boolean =
+        suspend fun initPermissionFlow(permissionList: List<String>): Boolean =
             runPermissionFlow(lifecycleActionS, permissionList)
 
         suspend fun initBookingFlow(bookingValues: BookingValues): BookingEvent? =
@@ -104,13 +109,26 @@ class AppViewModel(
                 bookingValues
             )
 
-
-
         suspend fun initSummaryFlow(event: Event, room: Room) =
-            runSummaryFlow(summaryActionS, _summaryState, event, room, calendarRefresher)
+            runSummaryFlow(
+                summaryActionS,
+                _summaryStateD,
+                _summaryDataD,
+                _summaryCalendarSyncD,
+                event,
+                room,
+                calendarRefresher
+            )
 
         suspend fun initLoginFlow() =
-            runLoginFlow(loginActionS, _loginInfoD, tokenRepository, calendarInitializer, userRepository, ::initPermissionFlow)
+            runLoginFlow(
+                loginActionS,
+                _loginInfoD,
+                tokenRepository,
+                calendarInitializer,
+                userRepository,
+                ::initPermissionFlow
+            )
 
         suspend fun initDashboardFlow() {
             runDashboardFlow(

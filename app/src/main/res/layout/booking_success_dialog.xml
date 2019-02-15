@@ -78,6 +78,19 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="5dp"
+        style="@style/BookingProgressBar"
+        android:elevation="5dp"
+        app:layout_constraintRight_toRightOf="@id/editButton"
+        app:layout_constraintTop_toTopOf="@id/editButton"
+        app:layout_constraintBottom_toBottomOf="@id/editButton"/>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/editButton"
         android:layout_width="0dp"
@@ -87,6 +100,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/separator"
         android:text="@string/edit_in_google_calendar" />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/dismissButton"

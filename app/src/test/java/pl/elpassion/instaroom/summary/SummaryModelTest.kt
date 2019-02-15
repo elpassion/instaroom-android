@@ -7,6 +7,8 @@
 //import io.kotlintest.IsolationMode
 //import io.kotlintest.specs.FreeSpec
 //import kotlinx.coroutines.*
+//import pl.elpassion.instaroom.booking.emptyRoom
+//import pl.elpassion.instaroom.booking.getTime
 //import pl.elpassion.instaroom.kalendar.Event
 //import pl.elpassion.instaroom.util.executeTasksInstantly
 //import java.time.ZonedDateTime
@@ -29,11 +31,14 @@
 //        "",
 //        "link",
 //        "Test event",
-//        ZonedDateTime.now().toString(),
-//        ZonedDateTime.now().plusHours(1).toString()
+//        getTime("12:00").toString(),
+//        getTime("12:30").toString(),
+//        true
 //    )
 //
-//    private val initialState = SummaryState.Initialized(event, room)
+//    private val room = emptyRoom
+//
+//    private val initialState = SummaryState.Initialized(event, )
 //
 //    init {
 //        executeTasksInstantly()

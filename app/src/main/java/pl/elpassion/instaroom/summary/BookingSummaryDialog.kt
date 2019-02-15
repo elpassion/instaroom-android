@@ -45,7 +45,9 @@ class BookingSummaryDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model.summaryState.observe(this, Observer(::updateView))
+        model.summaryStateD.observe(this, Observer(::updateViewState))
+        model.summaryDataD.observe(this, Observer(::updateViewData))
+        model.summaryCalendarSyncD.observe(this, Observer(::updateCalendarSyncView))
 
         Observable.mergeArray(
             setupDismissButton(),
@@ -53,21 +55,42 @@ class BookingSummaryDialog : DialogFragment() {
         ).subscribe(model.summaryActionS)
     }
 
-
     private fun setupDismissButton() = dismissButton
-            .clicks()
-            .map { SummaryAction.SelectDismiss }
+        .clicks()
+        .map { SummaryAction.SelectDismiss }
 
     private fun setupEditEventButton() = editButton
         .clicks()
         .map { SummaryAction.EditEvent }
 
+    private fun updateCalendarSyncView(summaryCalendarSync: SummaryCalendarSync?) {
+        summaryCalendarSync?.let { sync ->
+            if(sync.isSynced) enableEditButton() else disableEditButton()
+            progressBar.visibility = if (sync.isSyncing) View.VISIBLE else View.GONE
+        }
+    }
 
-    private fun updateView(summaryState: SummaryState) {
+    private fun updateViewData(summaryData: SummaryData?) {
+        summaryData?.let { data ->
+            val event = data.event
+            bookingTitle.text = event.name
+            bookingFromTime.setTime(event.startDateTime.format(hourMinuteTimeFormatter))
+            bookingToTime.setTime(event.endDateTime.format(hourMinuteTimeFormatter))
+
+            val room = data.room
+            bookingRoomInfo.setTextColor(Color.parseColor(room.titleColor))
+            bookingRoomInfo.text = "in ${room.name}"
+        }
+    }
+
+
+    private fun updateViewState(summaryState: SummaryState?) {
+        summaryState ?: return
+
         when (summaryState) {
-            is SummaryState.Initialized -> configView(summaryState.event, summaryState.room, summaryState.isSynced)
+            is SummaryState.Default -> Unit
             is SummaryState.Dismissing -> dismiss()
-            is SummaryState.ViewEvent -> showEventInCalendar(summaryState.link)
+            is SummaryState.ViewingEvent -> showEventInCalendar(summaryState.link)
         }
     }
 
@@ -83,21 +106,6 @@ class BookingSummaryDialog : DialogFragment() {
 
     private fun showEventInCalendar(link: String) {
         viewEventInCalendar(link, REQ_OPEN_CALENDAR)
-    }
-
-    private fun configView(
-        event: Event,
-        room: Room,
-        synced: Boolean
-    ) {
-        bookingTitle.text = event.name
-        bookingFromTime.setTime(event.startDateTime.format(hourMinuteTimeFormatter))
-        bookingToTime.setTime(event.endDateTime.format(hourMinuteTimeFormatter))
-
-        bookingRoomInfo.setTextColor(Color.parseColor(room.titleColor))
-        bookingRoomInfo.text = "in ${room.name}"
-
-        if (synced) enableEditButton() else disableEditButton()
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
