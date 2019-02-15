@@ -18,21 +18,20 @@ suspend fun runSummaryFlow(
     syncD: MutableLiveData<SummaryCalendarSync>,
     event: Event,
     room: Room,
-    calendarRefresher: CalendarRefresher
+    refresh: suspend () -> Unit
 ) {
 
     stateD.set(SummaryState.Default)
     dataD.set(SummaryData(event, room))
-    syncD.set(SummaryCalendarSync(false, false))
 
     var async: Deferred<Unit>? = null
     event.htmlLink?.let {
         async = GlobalScope.async {
             syncD.set(SummaryCalendarSync(false, true))
-            calendarRefresher.refresh()
+            refresh()
             syncD.set(SummaryCalendarSync(true, false))
         }
-    }
+    } ?: syncD.set(SummaryCalendarSync(false, false))
 
 
     loop@ while(true) {
@@ -67,4 +66,13 @@ sealed class SummaryState {
     object Default : SummaryState()
     object Dismissing : SummaryState()
     data class ViewingEvent(val link: String): SummaryState()
+}
+
+suspend fun refreshCalendarForSummary(
+    syncD: MutableLiveData<SummaryCalendarSync>,
+    calendarRefresher: CalendarRefresher
+) {
+    syncD.set(SummaryCalendarSync(false, true))
+    calendarRefresher.refresh()
+    syncD.set(SummaryCalendarSync(true, false))
 }

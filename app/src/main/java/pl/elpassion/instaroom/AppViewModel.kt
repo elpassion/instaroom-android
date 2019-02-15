@@ -117,7 +117,7 @@ class AppViewModel(
                 _summaryCalendarSyncD,
                 event,
                 room,
-                calendarRefresher
+                calendarRefresher::refresh
             )
 
         suspend fun initLoginFlow() =
