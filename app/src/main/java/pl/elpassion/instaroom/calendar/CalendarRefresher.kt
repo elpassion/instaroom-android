@@ -53,6 +53,12 @@ class CalendarRefresher(
                     }
                 }
 
+            continuation.invokeOnCancellation {
+                syncListener?.let { listener ->
+                    ContentResolver.removeStatusChangeListener(listener)
+                }
+            }
+
             ContentResolver.requestSync(userAccount,
                 CALENDAR_AUTHORITY, syncBundle)
         }
