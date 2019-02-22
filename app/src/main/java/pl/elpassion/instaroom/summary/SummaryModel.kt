@@ -2,9 +2,7 @@ package pl.elpassion.instaroom.summary
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.awaitFirst
 import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.Event
@@ -19,22 +17,23 @@ suspend fun runSummaryFlow(
     event: Event,
     room: Room,
     refresh: suspend () -> Unit
-) {
+) = coroutineScope{
 
     stateD.set(SummaryState.Default)
     dataD.set(SummaryData(event, room))
 
-    var async: Deferred<Unit>? = null
     event.htmlLink?.let {
-        async = GlobalScope.async {
+        println("htmlLink not null - refreshing")
+        launch(Dispatchers.Main) {
             syncD.set(SummaryCalendarSync(false, true))
             refresh()
+            println("finished refreshing")
             syncD.set(SummaryCalendarSync(true, false))
         }
+
     } ?: syncD.set(SummaryCalendarSync(false, false))
 
-
-    loop@ while(true) {
+    loop@ while (true) {
         when (actionS.awaitFirst()) {
             is SummaryAction.SelectDismiss -> stateD.set(SummaryState.Dismissing)
             is SummaryAction.EditEvent -> stateD.set(SummaryState.ViewingEvent(event.htmlLink!!))
@@ -42,8 +41,10 @@ suspend fun runSummaryFlow(
         }
     }
 
-    async?.cancel()
+    coroutineContext.cancelChildren()
 }
+
+
 
 sealed class SummaryAction {
     object SelectDismiss : SummaryAction()
@@ -64,7 +65,7 @@ data class SummaryCalendarSync(
 sealed class SummaryState {
     object Default : SummaryState()
     object Dismissing : SummaryState()
-    data class ViewingEvent(val link: String): SummaryState()
+    data class ViewingEvent(val link: String) : SummaryState()
 }
 
 suspend fun refreshCalendarForSummary(
