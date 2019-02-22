@@ -24,7 +24,7 @@ suspend fun runSummaryFlow(
 
     event.htmlLink?.let {
         println("htmlLink not null - refreshing")
-        launch(Dispatchers.Main) {
+        launch {
             syncD.set(SummaryCalendarSync(false, true))
             refresh()
             println("finished refreshing")
