@@ -4,26 +4,29 @@ import androidx.lifecycle.MutableLiveData
 import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
 import io.kotlintest.IsolationMode
+import io.kotlintest.fail
 import io.kotlintest.specs.FreeSpec
+import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.*
 import pl.elpassion.instaroom.booking.emptyRoom
 import pl.elpassion.instaroom.booking.getTime
 import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.susck
 import pl.elpassion.instaroom.util.executeTasksInstantly
 import pl.mareklangiewicz.smokk.smokk
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
-class SummaryModelTest : FreeSpec(), CoroutineScope {
-    @ExperimentalCoroutinesApi
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Unconfined + job
+@InternalCoroutinesApi
+class SummaryModelTest : FreeSpec() {
 
     override fun isolationMode(): IsolationMode? {
         return IsolationMode.InstancePerLeaf
     }
 
-    private val job = Job()
+    private val flowJob: Job
     private val actionS = PublishRelay.create<SummaryAction>()
     private val state = MutableLiveData<SummaryState>()
     private val data = MutableLiveData<SummaryData>()
@@ -43,9 +46,9 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
     init {
         executeTasksInstantly()
 
-        val refresh = smokk<Unit>()
+        val actualRefresh = smokk<Unit>()
 
-        val flow = GlobalScope.launch {
+        CoroutineScope(Dispatchers.Unconfined).launch{
             runSummaryFlow(
                 actionS,
                 state,
@@ -53,11 +56,13 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
                 calendarSync,
                 event,
                 room,
-                refresh::invoke
+                actualRefresh::invoke
             )
+        }.run {
+            // we know that runSummaryFlow uses coroutineScope
+            flowJob = this.children.first()
         }
 
-        assert(flow.isActive)
 
         val stateObserver = state.test()
         "should initialize with expected values" - {
@@ -78,39 +83,53 @@ class SummaryModelTest : FreeSpec(), CoroutineScope {
         }
 
         "should run calendar refresh job" {
-            assert(refresh.invocations == 1)
+            assert(actualRefresh.invocations == 1)
         }
 
         "calendar refresh job should update state" {
-            refresh.resume(Unit)
+            actualRefresh.resume(Unit)
             calendarSync.test()
-                .awaitNextValue()
+                .awaitValue()
                 .assertValue(SummaryCalendarSync(true, false))
         }
 
         "edit event click should set state as viewing event" {
             actionS.accept(SummaryAction.EditEvent)
-            stateObserver.awaitNextValue().assertValue(SummaryState.ViewingEvent("link"))
+            stateObserver.awaitValue().assertValue(SummaryState.ViewingEvent("link"))
         }
 
         "select dismiss sets state as dismissing" {
             actionS.accept(SummaryAction.SelectDismiss)
-            stateObserver.awaitNextValue().assertValue(SummaryState.Dismissing)
+            stateObserver.awaitValue().assertValue(SummaryState.Dismissing)
         }
 
-        "dismissing finishes job" {
+        "f:dismissing finishes job" {
             actionS.accept(SummaryAction.Dismiss)
-            //TODO: What to do to not use delay?
-            delay(1)
-            assert(flow.isCompleted)
+            // we have to manually resume smokk cancelled function
+            actualRefresh.resumeWith(Result.failure(CancellationException()))
+            assert(flowJob.isCompleted)
         }
 
-        "dismissing cancels refresh async" {
+        "f:dismissing cancels children" {
             actionS.accept(SummaryAction.Dismiss)
-            //TODO: HOW TO?
-            assert(false)
+            assertChildrenCanceled(flowJob)
         }
 
+    }
+
+    private fun assertChildrenCanceled(job: Job) {
+        job.children.forEach {
+            if(!it.isCancelled) {
+                fail("Assertion failed")
+            }
+        }
+    }
+
+    private fun printJobs() {
+        println("child = $flowJob -> active = ${flowJob.isActive}, cancelled = ${flowJob.isCancelled}, completed = ${flowJob.isCompleted}")
+        flowJob.children.forEach { async ->
+            println("child = $async -> active = ${async.isActive}, cancelled = ${async.isCancelled}, completed = ${async.isCompleted}")
+        }
     }
 
 }
