@@ -87,6 +87,8 @@ dependencies {
 
     testImplementation("junit:junit:4.12")
     testImplementation("io.mockk:mockk:1.9")
+    testImplementation("com.github.langara:uspek:0.0.2")
+    testImplementation("com.github.langara:SMokK:0.0.2")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")
     testImplementation("org.threeten:threetenbp:1.3.7")
 

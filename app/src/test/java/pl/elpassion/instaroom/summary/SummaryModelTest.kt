@@ -6,18 +6,18 @@ import com.jraska.livedata.test
 import io.kotlintest.IsolationMode
 import io.kotlintest.fail
 import io.kotlintest.specs.FreeSpec
-import junit.framework.Assert.assertTrue
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import pl.elpassion.instaroom.booking.emptyRoom
 import pl.elpassion.instaroom.booking.getTime
 import pl.elpassion.instaroom.kalendar.Event
-import pl.elpassion.instaroom.susck
 import pl.elpassion.instaroom.util.executeTasksInstantly
 import pl.mareklangiewicz.smokk.smokk
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @InternalCoroutinesApi
 class SummaryModelTest : FreeSpec() {

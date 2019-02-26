@@ -2,7 +2,9 @@ package pl.elpassion.instaroom.summary
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.rx2.awaitFirst
 import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.Event
@@ -17,17 +19,17 @@ suspend fun runSummaryFlow(
     event: Event,
     room: Room,
     refresh: suspend () -> Unit
-) = coroutineScope{
+) = coroutineScope {
 
     stateD.set(SummaryState.Default)
     dataD.set(SummaryData(event, room))
 
     event.htmlLink?.let {
-        println("htmlLink not null - refreshing")
+//        println("htmlLink not null - refreshing")
         launch {
             syncD.set(SummaryCalendarSync(false, true))
             refresh()
-            println("finished refreshing")
+//            println("finished refreshing")
             syncD.set(SummaryCalendarSync(true, false))
         }
 
