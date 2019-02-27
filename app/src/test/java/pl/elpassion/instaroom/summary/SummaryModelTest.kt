@@ -5,6 +5,7 @@ import com.jakewharton.rxrelay2.PublishRelay
 import com.jraska.livedata.test
 import io.kotlintest.IsolationMode
 import io.kotlintest.fail
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.FreeSpec
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -15,8 +16,8 @@ import kotlinx.coroutines.launch
 import pl.elpassion.instaroom.booking.emptyRoom
 import pl.elpassion.instaroom.booking.getTime
 import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.smokk
 import pl.elpassion.instaroom.util.executeTasksInstantly
-import pl.mareklangiewicz.smokk.smokk
 import kotlin.coroutines.resume
 
 @InternalCoroutinesApi
@@ -26,7 +27,6 @@ class SummaryModelTest : FreeSpec() {
         return IsolationMode.InstancePerLeaf
     }
 
-    private val flowJob: Job
     private val actionS = PublishRelay.create<SummaryAction>()
     private val state = MutableLiveData<SummaryState>()
     private val data = MutableLiveData<SummaryData>()
@@ -48,7 +48,7 @@ class SummaryModelTest : FreeSpec() {
 
         val actualRefresh = smokk<Unit>()
 
-        CoroutineScope(Dispatchers.Unconfined).launch{
+        val mainJob = CoroutineScope(Dispatchers.Unconfined).launch{
             runSummaryFlow(
                 actionS,
                 state,
@@ -58,9 +58,6 @@ class SummaryModelTest : FreeSpec() {
                 room,
                 actualRefresh::invoke
             )
-        }.run {
-            // we know that runSummaryFlow uses coroutineScope
-            flowJob = this.children.first()
         }
 
 
@@ -83,7 +80,7 @@ class SummaryModelTest : FreeSpec() {
         }
 
         "should run calendar refresh job" {
-            assert(actualRefresh.invocations == 1)
+            actualRefresh.isActive shouldBe true
         }
 
         "calendar refresh job should update state" {
@@ -103,16 +100,17 @@ class SummaryModelTest : FreeSpec() {
             stateObserver.awaitValue().assertValue(SummaryState.Dismissing)
         }
 
-        "f:dismissing finishes job" {
+        "dismissing finishes job" {
             actionS.accept(SummaryAction.Dismiss)
+            println("actualRefresh = $actualRefresh")
             // we have to manually resume smokk cancelled function
             actualRefresh.resumeWith(Result.failure(CancellationException()))
-            assert(flowJob.isCompleted)
+            mainJob.isCompleted shouldBe true
         }
 
-        "f:dismissing cancels children" {
+        "dismissing cancels children" {
             actionS.accept(SummaryAction.Dismiss)
-            assertChildrenCanceled(flowJob)
+            actualRefresh.isCancelled shouldBe true
         }
 
     }
@@ -125,11 +123,6 @@ class SummaryModelTest : FreeSpec() {
         }
     }
 
-    private fun printJobs() {
-        println("child = $flowJob -> active = ${flowJob.isActive}, cancelled = ${flowJob.isCancelled}, completed = ${flowJob.isCompleted}")
-        flowJob.children.forEach { async ->
-            println("child = $async -> active = ${async.isActive}, cancelled = ${async.isCancelled}, completed = ${async.isCompleted}")
-        }
-    }
+
 
 }

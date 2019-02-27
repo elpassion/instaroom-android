@@ -25,11 +25,9 @@ suspend fun runSummaryFlow(
     dataD.set(SummaryData(event, room))
 
     event.htmlLink?.let {
-//        println("htmlLink not null - refreshing")
         launch {
             syncD.set(SummaryCalendarSync(false, true))
             refresh()
-//            println("finished refreshing")
             syncD.set(SummaryCalendarSync(true, false))
         }
 
@@ -38,7 +36,11 @@ suspend fun runSummaryFlow(
     loop@ while (true) {
         when (actionS.awaitFirst()) {
             is SummaryAction.SelectDismiss -> stateD.set(SummaryState.Dismissing)
-            is SummaryAction.EditEvent -> stateD.set(SummaryState.ViewingEvent(event.htmlLink!!))
+            is SummaryAction.EditEvent -> {
+                event.htmlLink?.let{
+                    stateD.set(SummaryState.ViewingEvent(it))
+                }
+            }
             is SummaryAction.Dismiss -> break@loop
         }
     }
@@ -68,13 +70,4 @@ sealed class SummaryState {
     object Default : SummaryState()
     object Dismissing : SummaryState()
     data class ViewingEvent(val link: String) : SummaryState()
-}
-
-suspend fun refreshCalendarForSummary(
-    syncD: MutableLiveData<SummaryCalendarSync>,
-    calendarRefresher: CalendarRefresher
-) {
-    syncD.set(SummaryCalendarSync(false, true))
-    calendarRefresher.refresh()
-    syncD.set(SummaryCalendarSync(true, false))
 }
