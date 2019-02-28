@@ -2,10 +2,8 @@ package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.awaitFirst
-import kotlinx.coroutines.withContext
 import org.threeten.bp.Clock
 import org.threeten.bp.ZonedDateTime
 import pl.elpassion.instaroom.booking.BookingValues
@@ -29,7 +27,7 @@ suspend fun runDashboardFlow(
     getToken: suspend () -> String,
     calendarRefresher: CalendarRefresher,
     clock: Clock
-) {
+) = coroutineScope {
     val rooms = mutableListOf<Room>()
 
     suspend fun toggleErrorState(errorMessage: String) {
@@ -42,16 +40,19 @@ suspend fun runDashboardFlow(
         getSomeRooms(getToken(), userRepository.userEmail?:"")
     }
 
-    suspend fun loadRooms() =
+    fun loadRooms() = launch {
         try {
             refreshingD.set(DashboardRefreshing(true))
-            rooms.replaceWith(getRooms())
+            val newROoms = getRooms()
+            rooms.replaceWith(newROoms)
+//            rooms.replaceWith(getRooms())
             dashboardRoomListD.set(DashboardRoomList(rooms))
         } catch (e: UnknownHostException) {
             toggleErrorState("Network exception...")
         } finally {
             refreshingD.set(DashboardRefreshing(false))
         }
+    }
 
     suspend fun bookRoom(bookingEvent: BookingEvent, room: Room) {
         withContext(Dispatchers.IO) {
@@ -115,18 +116,20 @@ suspend fun runDashboardFlow(
 
     loadRooms()
 
-    while (true) {
+    loop@ while (true) {
 
         when (val action = actionS.awaitFirst()) {
             is DashboardAction.RefreshRooms -> loadRooms()
             is DashboardAction.SelectSignOut -> {
                 selectSignOut()
-                return
+                break@loop
             }
             is DashboardAction.ShowBookingDetails -> processBooking(action.room)
             is DashboardAction.DeleteEvent -> processEventDelete(action.eventId)
         }
     }
+
+    coroutineContext.cancelChildren()
 }
 
 

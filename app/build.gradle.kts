@@ -79,7 +79,7 @@ dependencies {
     implementation("com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2")
     implementation("com.jakewharton.rxbinding3:rxbinding-material:3.0.0-alpha2")
     
-    implementation("com.github.elpassion:instaroom:b825146c6d")
+    implementation("com.github.elpassion:instaroom:627a20cfdc")
 
     implementation("com.google.firebase:firebase-core:16.0.7")
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
