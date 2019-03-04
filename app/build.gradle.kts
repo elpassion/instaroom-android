@@ -86,7 +86,7 @@ dependencies {
     implementation("com.markodevcic.peko:peko:1.0.0")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("io.mockk:mockk:1.9")
+//    testImplementation("io.mockk:mockk:1.9")
     testImplementation("com.github.langara:uspek:0.0.2")
     testImplementation("com.github.langara:SMokK:0.0.2")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0")

@@ -4,6 +4,7 @@ import com.google.api.client.util.DateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
+import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
 import pl.elpassion.instaroom.util.BookingDuration
@@ -20,16 +21,40 @@ val initTime =
     ZonedDateTime.of(2019, 1, 1, initHour, initMinute, 0, 0, ZoneId.systemDefault())
         .truncatedTo(ChronoUnit.MINUTES)
 
-fun getTime(time: String) : ZonedDateTime {
+val testBookingValues = BookingValues(
+    true,
+    true,
+    emptyRoom,
+    "",
+    "$defaultUserName's booking",
+    initTime,
+    initTime,
+    BookingDuration.MIN_15,
+    BookingDuration.HOUR_2.ordinal,
+    initTime,
+    initTime.plusHours(1),
+    false
+)
+
+val testBookingEvent = BookingEvent(
+    "",
+    "$defaultUserName's booking",
+    "email",
+    DateTime(initTime.toEpochMilliSecond()),
+    DateTime(initTime.plusHours(1).toEpochMilliSecond())
+)
+
+fun getTime(time: String): ZonedDateTime {
     val (hour, minute) = time.split(":")
-    return initTime.withHour(hour.toInt()).withMinute(minute.toInt()).truncatedTo(ChronoUnit.MINUTES)
+    return initTime.withHour(hour.toInt()).withMinute(minute.toInt())
+        .truncatedTo(ChronoUnit.MINUTES)
 }
 
 fun getDateTime(time: String): DateTime {
     return DateTime(getTime(time).toEpochMilliSecond())
 }
 
-fun eventTimeRange(start: String, end: String) : Pair<ZonedDateTime, ZonedDateTime> {
+fun eventTimeRange(start: String, end: String): Pair<ZonedDateTime, ZonedDateTime> {
     val (startHour, startMinute) = start.split(":")
     val (endHour, endMinute) = end.split(":")
 
@@ -40,7 +65,7 @@ fun eventTimeRange(start: String, end: String) : Pair<ZonedDateTime, ZonedDateTi
 
 }
 
-fun eventWithTime(start: String, end: String) : Event {
+fun eventWithTime(start: String, end: String): Event {
     val (startHour, startMinute) = start.split(":")
     val (endHour, endMinute) = end.split(":")
 
@@ -54,7 +79,7 @@ private fun eventWithTime(startHour: Int, startMinute: Int, endHour: Int, endMin
     )
 }
 
-fun hourMinuteWithTime(text: String) : HourMinuteTime {
+fun hourMinuteWithTime(text: String): HourMinuteTime {
     val (hour, minute) = text.split(":")
     return HourMinuteTime(hour.toInt(), minute.toInt())
 }

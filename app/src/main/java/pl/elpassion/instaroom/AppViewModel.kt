@@ -14,9 +14,7 @@ import pl.elpassion.instaroom.booking.*
 import pl.elpassion.instaroom.calendar.CalendarInitializer
 import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.dashboard.*
-import pl.elpassion.instaroom.kalendar.BookingEvent
-import pl.elpassion.instaroom.kalendar.Event
-import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.kalendar.*
 import pl.elpassion.instaroom.login.LoginAction
 import pl.elpassion.instaroom.login.LoginInfo
 import pl.elpassion.instaroom.login.runLoginFlow
@@ -88,12 +86,23 @@ class AppViewModel(
             navHostFragment.navController.navigate(fragmentId)
         }
 
+        suspend fun runDeleteEvent(eventId: String): Unit {
+           return pl.elpassion.instaroom.kalendar.deleteEvent(tokenRepository.getToken(), eventId)
+        }
+
         suspend fun signOut() {
             withContext(Dispatchers.IO) { signOut(tokenRepository, googleSignInClient) }
         }
 
         suspend fun initPermissionFlow(permissionList: List<String>): Boolean =
             runPermissionFlow(lifecycleActionS, permissionList)
+
+        suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
+            getSomeRooms(tokenRepository.getToken(), userRepository.userEmail?:"")
+        }
+
+        suspend fun runBookRoom(bookingEvent: BookingEvent): Event? =
+            bookSomeRoom(tokenRepository.getToken(), bookingEvent)
 
         suspend fun initBookingFlow(bookingValues: BookingValues): BookingEvent? =
             runBookingFlow(
@@ -141,7 +150,11 @@ class AppViewModel(
                 ::initSummaryFlow,
                 ::signOut,
                 tokenRepository::getToken,
-                calendarRefresher,
+                ::getRooms,
+                ::runBookRoom,
+                ::runDeleteEvent,
+                ::initializeBookingVariables,
+                calendarRefresher::refresh,
                 clock
             )
         }

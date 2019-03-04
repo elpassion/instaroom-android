@@ -7,13 +7,15 @@ import kotlinx.coroutines.rx2.awaitFirst
 import org.threeten.bp.Clock
 import org.threeten.bp.ZonedDateTime
 import pl.elpassion.instaroom.booking.BookingValues
-import pl.elpassion.instaroom.booking.initializeBookingVariables
 import pl.elpassion.instaroom.calendar.CalendarRefresher
-import pl.elpassion.instaroom.kalendar.*
+import pl.elpassion.instaroom.kalendar.BookingEvent
+import pl.elpassion.instaroom.kalendar.Event
+import pl.elpassion.instaroom.kalendar.Room
+import pl.elpassion.instaroom.kalendar.deleteEvent
 import pl.elpassion.instaroom.repository.UserRepository
-import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.set
 import java.net.UnknownHostException
+import kotlin.coroutines.CoroutineContext
 
 suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
@@ -25,32 +27,34 @@ suspend fun runDashboardFlow(
     runSummaryFlow: suspend (Event, Room) -> Unit,
     signOut: suspend () -> Unit,
     getToken: suspend () -> String,
-    calendarRefresher: CalendarRefresher,
+    getRooms: suspend () -> List<Room>,
+    bookSomeRoom: suspend (BookingEvent) -> Event?,
+    deleteEvent: suspend (String) -> Unit,
+    initializeBookingVariables: (userName: String?, room: Room, currentTime: ZonedDateTime) -> BookingValues?,
+    refreshCalendar: suspend () -> Unit,
     clock: Clock
 ) = coroutineScope {
-    val rooms = mutableListOf<Room>()
+
+    var loadRoomsJob: Job? = null
 
     suspend fun toggleErrorState(errorMessage: String) {
         stateD.set(DashboardState.Error(errorMessage))
-        delay(1000)
-        stateD.set(DashboardState.Default)
+//        delay(1000)
+//        stateD.set(DashboardState.Default)
     }
 
-    suspend fun getRooms(): List<Room> = withContext(Dispatchers.IO) {
-        getSomeRooms(getToken(), userRepository.userEmail?:"")
-    }
-
-    fun loadRooms() = launch {
-        try {
-            refreshingD.set(DashboardRefreshing(true))
-            val newROoms = getRooms()
-            rooms.replaceWith(newROoms)
-//            rooms.replaceWith(getRooms())
-            dashboardRoomListD.set(DashboardRoomList(rooms))
-        } catch (e: UnknownHostException) {
-            toggleErrorState("Network exception...")
-        } finally {
-            refreshingD.set(DashboardRefreshing(false))
+    suspend fun loadRooms() {
+        loadRoomsJob?.cancel()
+        loadRoomsJob = launch {
+            try {
+                refreshingD.set(DashboardRefreshing(true))
+                val rooms = getRooms()
+                dashboardRoomListD.set(DashboardRoomList(rooms))
+            } catch (e: UnknownHostException) {
+                toggleErrorState("Network exception...")
+            } finally {
+                refreshingD.set(DashboardRefreshing(false))
+            }
         }
     }
 
@@ -58,7 +62,7 @@ suspend fun runDashboardFlow(
         withContext(Dispatchers.IO) {
             try {
                 stateD.set(DashboardState.BookingInProgressState)
-                val newEvent = bookSomeRoom(getToken(), bookingEvent)
+                val newEvent = bookSomeRoom(bookingEvent)
                 if(newEvent != null) {
                     stateD.set(DashboardState.BookingSuccessState)
                     runSummaryFlow(newEvent, room)
@@ -79,8 +83,8 @@ suspend fun runDashboardFlow(
 
         withContext(Dispatchers.IO) {
             try {
-                deleteEvent(getToken(), eventId)
-                calendarRefresher.refresh()
+                deleteEvent(eventId)
+                refreshCalendar()
                 stateD.set(DashboardState.Default)
                 loadRooms()
             } catch(e: UnknownHostException) {
@@ -90,7 +94,7 @@ suspend fun runDashboardFlow(
     }
 
     suspend fun selectSignOut() {
-        rooms.clear()
+        dashboardRoomListD.set(DashboardRoomList(emptyList()))
         stateD.set(DashboardState.Default)
         signOut()
     }
@@ -130,6 +134,17 @@ suspend fun runDashboardFlow(
     }
 
     coroutineContext.cancelChildren()
+}
+
+fun printInfo(coroutineContext: CoroutineContext) {
+    val job = coroutineContext[Job]
+
+    job?.let {
+        println("runDashboardFlow: job = $it, isActive = ${it.isActive}, isCancelled = ${it.isCancelled}, isCompleted = ${it.isCompleted}")
+        it.children.forEach {
+            println("runDashboardFlow: child = $it, isActive = ${it.isActive}, isCancelled = ${it.isCancelled}, isCompleted = ${it.isCompleted}")
+        }
+    } ?: println("runDashboardFlow: no job")
 }
 
 
