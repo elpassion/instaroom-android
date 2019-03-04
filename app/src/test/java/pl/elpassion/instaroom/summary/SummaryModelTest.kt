@@ -80,7 +80,7 @@ class SummaryModelTest : FreeSpec() {
         }
 
         "should run calendar refresh job" {
-            actualRefresh.isActive shouldBe true
+            actualRefresh.invocations shouldBe 1
         }
 
         "calendar refresh job should update state" {
@@ -105,12 +105,13 @@ class SummaryModelTest : FreeSpec() {
             println("actualRefresh = $actualRefresh")
             // we have to manually resume smokk cancelled function
             actualRefresh.resumeWith(Result.failure(CancellationException()))
+            actualRefresh.completeInvocations shouldBe 1
             mainJob.isCompleted shouldBe true
         }
 
         "dismissing cancels children" {
             actionS.accept(SummaryAction.Dismiss)
-            actualRefresh.isCancelled shouldBe true
+            actualRefresh.cancelInvocations shouldBe 1
         }
 
     }

@@ -70,13 +70,13 @@ class SummaryModelSpek {
                 "set correct state" o { stateObs.assertValue(SummaryState.Default) }
                 "set correct data" o { dataObs.assertValue(SummaryData(event, room)) }
                 "set syncing state" o { syncStateObs.assertValue(SummaryCalendarSync(false, true)) }
-                "start refreshing" o { refresh.isActive eq true }
+                "start refreshing" o { refresh.invocations eq 1 }
 
                 "On refresh success" o {
                     refresh.resume(Unit)
 
                     "set synced state" o { syncStateObs.assertValue(SummaryCalendarSync(true, false)) }
-                    "refresh is completed" o { refresh.isCompleted eq true}
+                    "refresh is completed" o { refresh.completeInvocations eq 1}
 
                     "On loop with refresh finished" o {
 
@@ -96,8 +96,7 @@ class SummaryModelSpek {
                         "On dismiss" o {
                             actionS.accept(SummaryAction.Dismiss)
 
-                            "refresh is not cancelled" o { refresh.isCancelled eq false }
-                            "refresh is completed" o { refresh.isCompleted eq true }
+                            "refresh is not cancelled" o { refresh.cancelInvocations eq 0 }
                             "flow is completed" o { mainJob.isCompleted eq true }
                         }
                     }
@@ -121,13 +120,13 @@ class SummaryModelSpek {
                     "On dismiss" o {
                         actionS.accept(SummaryAction.Dismiss)
 
-                        "refresh is cancelled" o { refresh.isCancelled eq true}
+                        "refresh is cancelled" o { refresh.cancelInvocations eq 1}
 
                         "On refresh resumed with CancellationException" o {
                             refresh.resumeWithException(CancellationException())
 
-                            "refresh is completed" o { refresh.isCompleted}
-                            "flow is completed" o { refresh.isCompleted eq true }
+                            "refresh is completed" o { refresh.completeInvocations eq 1}
+                            "flow is completed" o { mainJob.isCompleted eq true }
                         }
                     }
                 }
@@ -147,7 +146,7 @@ class SummaryModelSpek {
                 }
 
                 "set not syncing state" o { syncStateObs.assertValue(SummaryCalendarSync(false, false)) }
-                "not refreshing" o { refresh.isActive shouldBe false }
+                "not refreshing" o { refresh.invocations eq 0 }
 
                 "On user actions without refreshing" o {
 
@@ -168,7 +167,7 @@ class SummaryModelSpek {
                     "On dismiss" o {
                         actionS.accept(SummaryAction.Dismiss)
 
-                        "refresh is not cancelled" o { refresh.isCancelled eq false}
+                        "refresh is not cancelled" o { refresh.cancelInvocations eq 0}
                         "flow is completed" o { mainJob.isCompleted eq true }
                     }
                 }
