@@ -8,37 +8,32 @@ import kotlin.coroutines.*
 
 class SMokK0<T>(var invocationCheck: () -> Boolean = { true }) : Continuation<T> {
 
-    private var invocations = 0
-    private var cancelInvocations = 0
-    private var completeInvocations = 0
+    val invocations: Int
+    get() = invocations_
+    val cancelInvocations: Int
+    get() = cancelInvocations_
+    val completeInvocations
+    get() = completeInvocations_
 
-    val isActive: Boolean
-    get() = invocations == 1 && completeInvocations == 0
-
-    val isCancelled: Boolean
-    get() = cancelInvocations == 1
-
-    val isCompleted: Boolean
-    get() = completeInvocations == 1
+    private var invocations_ = 0
+    private var cancelInvocations_ = 0
+    private var completeInvocations_ = 0
 
     private var continuation: Continuation<T>? = null
 
     @InternalCoroutinesApi
     suspend fun invoke(): T {
         if (!invocationCheck()) throw SMokKException("SMokK0 fail")
-        invocations ++
+        invocations_++
         return suspendCoroutine { continuation = it
 
             val contJob = continuation!!.context[Job]
 
             contJob?.apply {
                 invokeOnCompletion(onCancelling = true) { handler ->
-                    if(completeInvocations != 0) throw SMokKException("SMokK0 already completed")
                     handler?.let {
-                        if(cancelInvocations != 0) throw SMokKException("SMokK0 already cancelled")
-                        cancelInvocations++
+                        cancelInvocations_++
                     }
-                    completeInvocations++
                 }
 
             }
@@ -49,10 +44,15 @@ class SMokK0<T>(var invocationCheck: () -> Boolean = { true }) : Continuation<T>
     override fun resumeWith(result: Result<T>) {
         val c = continuation ?: throw SMokKException("SMokK0.invoke not started")
         continuation = null
+        completeInvocations_++
         c.resumeWith(result)
     }
 
     override val context: CoroutineContext get() = continuation?.context ?: EmptyCoroutineContext
+
+    override fun toString(): String {
+        return "smokk invocations = $invocations, cancelInvocations = $cancelInvocations, completeInvocations = $completeInvocations"
+    }
 }
 
 fun <T> smokk(invocationCheck: () -> Boolean = { true }) = SMokK0<T>(invocationCheck)
