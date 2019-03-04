@@ -149,7 +149,6 @@ class AppViewModel(
                 ::initBookingFlow,
                 ::initSummaryFlow,
                 ::signOut,
-                tokenRepository::getToken,
                 ::getRooms,
                 ::runBookRoom,
                 ::runDeleteEvent,

@@ -57,7 +57,6 @@ class DashboardModelTest {
             val bookingFlow = smokk<BookingValues, BookingEvent?>()
             val summaryFlow = smokk<Event, Room, Unit>()
             val signOut = smokk<Unit>()
-            val getToken = smokk<String>()
             val deleteEvent = smokk<String, Unit>()
             val getRooms = smokk<List<Room>>()
             val bookRoom = smokk<BookingEvent, Event?>()
@@ -85,7 +84,6 @@ class DashboardModelTest {
                         { bookingValues -> bookingFlow.invoke(bookingValues) },
                         { event, room -> summaryFlow.invoke(event, room) },
                         signOut::invoke,
-                        getToken::invoke,
                         getRooms::invoke,
                         bookRoom::invoke,
                         deleteEvent::invoke,

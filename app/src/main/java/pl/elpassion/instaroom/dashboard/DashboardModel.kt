@@ -26,7 +26,6 @@ suspend fun runDashboardFlow(
     runBookingFlow: suspend (BookingValues) -> BookingEvent?,
     runSummaryFlow: suspend (Event, Room) -> Unit,
     signOut: suspend () -> Unit,
-    getToken: suspend () -> String,
     getRooms: suspend () -> List<Room>,
     bookSomeRoom: suspend (BookingEvent) -> Event?,
     deleteEvent: suspend (String) -> Unit,
