@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elpassion.android.commons.recycler.adapters.basicAdapterWithConstructors
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.dashboard_fragment.*
-import org.koin.android.viewmodel.ext.android.sharedViewModel
-import pl.elpassion.instaroom.AppViewModel
 import pl.elpassion.instaroom.LifecycleFragment
 import pl.elpassion.instaroom.R
 import pl.elpassion.instaroom.booking.BookingDialogFragment
@@ -24,12 +24,16 @@ import pl.elpassion.instaroom.util.isOwnBooked
 import pl.elpassion.instaroom.util.replaceWith
 import pl.elpassion.instaroom.util.viewEventInCalendar
 
-class DashboardFragment : LifecycleFragment() {
+class
+DashboardFragment : LifecycleFragment() {
 
     private val items = mutableListOf<DashboardItem>()
-    private var bookingDialog: BookingDialogFragment? = null
+
+//    private var bookingDialog: BookingDialogFragment? = null
     private var progressDialog: ProgressDialogFragment? = null
-    private var summaryDialog: BookingSummaryDialog? = null
+//    private var summaryDialog: BookingSummaryDialog? = null
+
+    var commandsDisposable: Disposable? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,45 +47,68 @@ class DashboardFragment : LifecycleFragment() {
 
         restoreDialogs(savedInstanceState)
 
-        model.dashboardStateD.observe(this, Observer(::updateView))
+        commandsDisposable = model.dashboardCommandS
+            .observeOn(AndroidSchedulers.mainThread())
+            .filter {
+                lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+            }
+            .subscribe(::processCommands)
         model.dashboardRoomListD.observe(this, Observer(::updateRoomsList))
         model.dashboardRefreshingD.observe(this, Observer(::updateRefreshView))
         setupMenu()
         setupList()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        commandsDisposable?.dispose()
+    }
+
+    private fun processCommands(dashboardCommand: DashboardCommand?) {
+        dashboardCommand ?: return
+
+        when (dashboardCommand) {
+
+            is DashboardCommand.Error -> showError(dashboardCommand.errorMessage)
+            is DashboardCommand.ActionInProgress -> showProgressDialog(dashboardCommand.message)
+            DashboardCommand.BookingSuccess -> showSummaryDialog()
+            DashboardCommand.ShowBookingDetails -> showBookingDetails()
+            DashboardCommand.DismissProgressDialog -> dismissProgressDialog()
+        }
+    }
+
     private fun restoreDialogs(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
-            bookingDialog = fragmentManager?.getFragment(
-                savedInstanceState,
-                BookingDialogFragment.TAG
-            ) as BookingDialogFragment?
-            println("bookingDialog is null? ${bookingDialog == null}")
+//            bookingDialog = fragmentManager?.getFragment(
+//                savedInstanceState,
+//                BookingDialogFragment.TAG
+//            ) as BookingDialogFragment?
+//            println("bookingDialog is null? ${bookingDialog == null}")
             progressDialog = fragmentManager?.getFragment(
                 savedInstanceState,
                 ProgressDialogFragment.TAG
             ) as ProgressDialogFragment?
-            println("progressDialog is null? ${bookingDialog == null}")
-            summaryDialog = fragmentManager?.getFragment(
-                savedInstanceState,
-                BookingSummaryDialog.TAG
-            ) as BookingSummaryDialog?
+//            println("progressDialog is null? ${bookingDialog == null}")
+//            summaryDialog = fragmentManager?.getFragment(
+//                savedInstanceState,
+//                BookingSummaryDialog.TAG
+//            ) as BookingSummaryDialog?
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        bookingDialog?.run {
-            if(this.isAdded) fragmentManager?.putFragment(outState, BookingDialogFragment.TAG, this)
-        }
+//        bookingDialog?.run {
+//            if(this.isAdded) fragmentManager?.putFragment(outState, BookingDialogFragment.TAG, this)
+//        }
 
         progressDialog?.run {
             if(this.isAdded) fragmentManager?.putFragment(outState, ProgressDialogFragment.TAG, this)
         }
 
-        summaryDialog?.run {
-            if(this.isAdded) fragmentManager?.putFragment(outState, BookingSummaryDialog.TAG, this)
-        }
+//        summaryDialog?.run {
+//            if(this.isAdded) fragmentManager?.putFragment(outState, BookingSummaryDialog.TAG, this)
+//        }
     }
 
     private fun updateRefreshView(dashboardRefreshing: DashboardRefreshing?) {
@@ -141,22 +168,15 @@ class DashboardFragment : LifecycleFragment() {
         model.dashboardActionS.accept(DashboardAction.DeleteEvent(eventId))
     }
 
-    private fun updateView(state: DashboardState?) {
-        state ?: return
-
-        when (state) {
-            is DashboardState.BookingDetailsState -> showBookingDetails()
-            is DashboardState.BookingInProgressState -> showProgressDialog()
-            is DashboardState.BookingSuccessState -> showSummaryDialog()
-            is DashboardState.Default -> hideDialogs()
-            is DashboardState.Error -> showError(state.errorMessage)
-        }
+    private fun dismissProgressDialog() {
+        progressDialog?.apply { if (this.isAdded) this.dismiss() }
+        progressDialog = null
     }
 
     private fun hideDialogs() {
-        bookingDialog?.apply { if (this.isAdded) this.dismiss() }
-        summaryDialog?.apply { if (this.isAdded) this.dismiss() }
-        progressDialog?.apply { if (this.isAdded) this.dismiss() }
+//        bookingDialog?.apply { if (this.isAdded) this.dismiss() }
+//        summaryDialog?.apply { if (this.isAdded) this.dismiss() }
+
     }
 
     private fun showError(errorMessage: String) {
@@ -164,25 +184,17 @@ class DashboardFragment : LifecycleFragment() {
     }
 
     private fun showSummaryDialog() {
-        if (summaryDialog != null && summaryDialog!!.isAdded) return
-
-        progressDialog?.apply { if (this.isAdded) this.dismiss() }
-        if(summaryDialog == null) summaryDialog = BookingSummaryDialog()
-        summaryDialog!!.show(fragmentManager, BookingSummaryDialog.TAG)
+        BookingSummaryDialog().show(fragmentManager, BookingSummaryDialog.TAG)
     }
 
 
-    private fun showProgressDialog() {
-        if (progressDialog != null && progressDialog!!.isAdded) return
-        if(progressDialog == null) progressDialog = ProgressDialogFragment()
+    private fun showProgressDialog(message: String) {
+        progressDialog = ProgressDialogFragment.withMessage(message)
         progressDialog!!.show(fragmentManager, ProgressDialogFragment.TAG)
     }
 
     private fun showBookingDetails() {
-        if (bookingDialog != null && bookingDialog!!.isAdded) return
-
-        if(bookingDialog == null) bookingDialog = BookingDialogFragment()
-        bookingDialog!!.show(fragmentManager, BookingDialogFragment.TAG)
+        BookingDialogFragment().show(fragmentManager, BookingDialogFragment.TAG)
     }
 
     private fun onCalendarOpen(link: String) {

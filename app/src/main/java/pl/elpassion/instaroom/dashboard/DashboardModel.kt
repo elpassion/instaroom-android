@@ -2,24 +2,22 @@ package pl.elpassion.instaroom.dashboard
 
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
+import io.reactivex.functions.Consumer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.rx2.awaitFirst
 import org.threeten.bp.Clock
 import org.threeten.bp.ZonedDateTime
 import pl.elpassion.instaroom.booking.BookingValues
-import pl.elpassion.instaroom.calendar.CalendarRefresher
 import pl.elpassion.instaroom.kalendar.BookingEvent
 import pl.elpassion.instaroom.kalendar.Event
 import pl.elpassion.instaroom.kalendar.Room
-import pl.elpassion.instaroom.kalendar.deleteEvent
 import pl.elpassion.instaroom.repository.UserRepository
 import pl.elpassion.instaroom.util.set
 import java.net.UnknownHostException
-import kotlin.coroutines.CoroutineContext
 
 suspend fun runDashboardFlow(
     actionS: Observable<DashboardAction>,
-    stateD: MutableLiveData<DashboardState>,
+    dashboardCommands: Consumer<DashboardCommand>,
     dashboardRoomListD: MutableLiveData<DashboardRoomList>,
     refreshingD: MutableLiveData<DashboardRefreshing>,
     userRepository: UserRepository,
@@ -36,10 +34,8 @@ suspend fun runDashboardFlow(
 
     var loadRoomsJob: Job? = null
 
-    suspend fun toggleErrorState(errorMessage: String) {
-        stateD.set(DashboardState.Error(errorMessage))
-//        delay(1000)
-//        stateD.set(DashboardState.Default)
+    fun toggleErrorState(errorMessage: String) {
+        dashboardCommands.accept(DashboardCommand.Error(errorMessage))
     }
 
     suspend fun loadRooms() {
@@ -60,12 +56,12 @@ suspend fun runDashboardFlow(
     suspend fun bookRoom(bookingEvent: BookingEvent, room: Room) {
         withContext(Dispatchers.IO) {
             try {
-                stateD.set(DashboardState.BookingInProgressState)
+                dashboardCommands.accept(DashboardCommand.ActionInProgress("Making an appointment..."))
                 val newEvent = bookSomeRoom(bookingEvent)
+                dashboardCommands.accept(DashboardCommand.DismissProgressDialog)
                 if(newEvent != null) {
-                    stateD.set(DashboardState.BookingSuccessState)
+                    dashboardCommands.accept(DashboardCommand.BookingSuccess)
                     runSummaryFlow(newEvent, room)
-                    stateD.set(DashboardState.Default)
                 } else {
                     toggleErrorState("Booking error...")
                 }
@@ -78,13 +74,13 @@ suspend fun runDashboardFlow(
 
 
     suspend fun processEventDelete(eventId: String) {
-        stateD.set(DashboardState.BookingInProgressState)
+        dashboardCommands.accept(DashboardCommand.ActionInProgress("Deleting an appointment..."))
 
         withContext(Dispatchers.IO) {
             try {
                 deleteEvent(eventId)
                 refreshCalendar()
-                stateD.set(DashboardState.Default)
+                dashboardCommands.accept(DashboardCommand.DismissProgressDialog)
                 loadRooms()
             } catch(e: UnknownHostException) {
                 toggleErrorState("Network exception...")
@@ -94,7 +90,6 @@ suspend fun runDashboardFlow(
 
     suspend fun selectSignOut() {
         dashboardRoomListD.set(DashboardRoomList(emptyList()))
-        stateD.set(DashboardState.Default)
         signOut()
     }
 
@@ -110,7 +105,7 @@ suspend fun runDashboardFlow(
             return
         }
 
-        stateD.set(DashboardState.BookingDetailsState)
+        dashboardCommands.accept(DashboardCommand.ShowBookingDetails)
         val bookingEvent: BookingEvent? = runBookingFlow(bookingValues)
         if(bookingEvent != null) {
             bookRoom(bookingEvent, room)
@@ -135,18 +130,6 @@ suspend fun runDashboardFlow(
     coroutineContext.cancelChildren()
 }
 
-fun printInfo(coroutineContext: CoroutineContext) {
-    val job = coroutineContext[Job]
-
-    job?.let {
-        println("runDashboardFlow: job = $it, isActive = ${it.isActive}, isCancelled = ${it.isCancelled}, isCompleted = ${it.isCompleted}")
-        it.children.forEach {
-            println("runDashboardFlow: child = $it, isActive = ${it.isActive}, isCancelled = ${it.isCancelled}, isCompleted = ${it.isCompleted}")
-        }
-    } ?: println("runDashboardFlow: no job")
-}
-
-
 sealed class DashboardAction {
 
     object RefreshRooms : DashboardAction()
@@ -154,6 +137,14 @@ sealed class DashboardAction {
 
     data class ShowBookingDetails(val room: Room) : DashboardAction()
     data class DeleteEvent(val eventId: String) : DashboardAction()
+}
+
+sealed class DashboardCommand {
+    data class Error(val errorMessage: String) : DashboardCommand()
+    data class ActionInProgress(val message: String) : DashboardCommand()
+    object BookingSuccess : DashboardCommand()
+    object ShowBookingDetails : DashboardCommand()
+    object DismissProgressDialog : DashboardCommand()
 }
 
 
@@ -165,13 +156,3 @@ data class DashboardRoomList(
 data class DashboardRefreshing(
     val isRefreshing: Boolean
 )
-
-sealed class DashboardState {
-    object Default : DashboardState()
-    data class Error(val errorMessage: String) : DashboardState()
-
-    object BookingInProgressState : DashboardState()
-    object BookingSuccessState : DashboardState()
-
-    object BookingDetailsState : DashboardState()
-}

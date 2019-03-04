@@ -41,7 +41,6 @@ class AppViewModel(
 
     val loginInfoD: LiveData<LoginInfo> get() = _loginInfoD
 
-    val dashboardStateD: LiveData<DashboardState> get() = _dashboardStateD
     val dashboardRoomListD: LiveData<DashboardRoomList> get() = _dashboardRoomListD
     val dashboardRefreshingD: LiveData<DashboardRefreshing> get() = _dashboardRefreshingD
 
@@ -61,11 +60,11 @@ class AppViewModel(
 
     val loginActionS: PublishRelay<LoginAction> = PublishRelay.create()
     val dashboardActionS: PublishRelay<DashboardAction> = PublishRelay.create()
+    val dashboardCommandS = PublishRelay.create<DashboardCommand>()
     val bookingActionS: PublishRelay<BookingAction> = PublishRelay.create()
     val summaryActionS: PublishRelay<SummaryAction> = PublishRelay.create()
 
     private val _loginInfoD = MutableLiveData<LoginInfo>()
-    private val _dashboardStateD = MutableLiveData<DashboardState>()
     private val _dashboardRoomListD = MutableLiveData<DashboardRoomList>()
     private val _dashboardRefreshingD = MutableLiveData<DashboardRefreshing>()
     private val _bookingStateD = MutableLiveData<BookingState>()
@@ -142,7 +141,7 @@ class AppViewModel(
         suspend fun initDashboardFlow() {
             runDashboardFlow(
                 dashboardActionS,
-                _dashboardStateD,
+                dashboardCommandS,
                 _dashboardRoomListD,
                 _dashboardRefreshingD,
                 userRepository,
